@@ -3,7 +3,9 @@ version: '3.8'
 services:
   onepage-browser:
     image: onepage-browser-container
-    build: ./.devcontainer
+    build: 
+      context: ./.devcontainer
+      dockerfile: Dockerfile
     ports:
       - "5900:5900"
       - "6080:6080"
@@ -15,3 +17,10 @@ services:
       - NET_ADMIN
     read_only: true
     restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: '512M'
+    env_file:
+      - .env
