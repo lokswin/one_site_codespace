@@ -1,0 +1,56 @@
+# Ignore Docker-related files
+Dockerfile
+docker-compose.yml
+
+# Ignore Git-related files and directories
+.git
+.gitignore
+
+# Ignore build artifacts
+*.log
+*.pid
+*.tmp
+*.swp
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore Python cache and virtual environment
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+venv/
+ENV/
+
+# Ignore IDE and editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Ignore node modules if using Node.js (optional)
+node_modules/
+
+# Ignore compiled binaries
+*.out
+*.o
+*.a
+*.so
+*.dylib
+
+# Ignore temporary files
+*.bak
+*.orig
+*.rej
+
+# Ignore personal files
+*.suo
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
+
+# Ignore the cleanup script (it’s only used locally)
+cleanup.sh
