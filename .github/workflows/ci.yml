@@ -10,13 +10,10 @@ on:
     branches:
       - main
 
-env:
-  ENVIRONMENT: dev
-
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment: ${{ env.ENVIRONMENT }}
+    environment: dev
 
     steps:
       - name: Checkout code
