@@ -1,0 +1,19 @@
+{
+  "name": "Onepage Browser Container",
+  "dockerFile": ".devcontainer/Dockerfile",
+  "runArgs": [
+    "--cap-drop=ALL",
+    "--cap-add=NET_ADMIN",
+    "--security-opt",
+    "no-new-privileges:true",
+    "--read-only"
+  ],
+  "context": "..",
+  "settings": {
+    "terminal.integrated.shell.linux": "/bin/bash"
+  },
+  "extensions": [
+    "ms-python.python"
+  ],
+  "postCreateCommand": "echo 'Devcontainer setup complete!'"
+}

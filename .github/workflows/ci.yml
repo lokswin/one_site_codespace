@@ -1,0 +1,24 @@
+# File .devcontainer\.github\workflows\ci.yml
+
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Build Docker image
+        run: docker build -t onepage-browser-container .
+      - name: Run Container
+        run: docker run -d -p 6080:6080 onepage-browser-container
+      - name: Test Container
+        run: curl -s -o /dev/null -w "%{http_code}" http://localhost:6080 | grep 200
