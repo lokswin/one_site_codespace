@@ -6,7 +6,7 @@
 FROM debian:bookworm-slim as novnc-builder
 
 RUN echo "Install Dependencies" && \
-    apt-get update && apt-get install -y git python3 python3-pip libssl-dev libffi-dev build-essential && \
+    apt-get update && apt-get install -y git python3 python3-pip libssl-dev libffi-dev build-essential
 
 RUN echo "Cloning noVNC repository" && \
     git clone https://github.com/novnc/noVNC.git /opt/noVNC
