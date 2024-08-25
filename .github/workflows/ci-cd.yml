@@ -32,7 +32,9 @@ jobs:
       # Build the Docker image
       - name: Build Docker image
         run: |
-          docker build --build-arg BUILDKIT_INLINE_CACHE=1 -t onepage-browser-container .
+          docker build --build-arg \
+          --build-arg VNC_PASSWORD=${{ secrets.VNC_PASSWORD }} \
+          -t onepage-browser-container .
 
   test:
     runs-on: ubuntu-latest
