@@ -6,7 +6,7 @@
 FROM debian:bookworm-slim as novnc-builder
 
 RUN echo "Install Dependencies" && \
-    apt-get update && apt-get install -y git python3 python3-pip libssl-dev libffi-dev build-essential
+    apt-get update && apt-get install -y git python3 python3-pip python3-venv libssl-dev libffi-dev build-essential
 
 RUN echo "Cloning noVNC repository" && \
     git clone https://github.com/novnc/noVNC.git /opt/noVNC
@@ -14,8 +14,13 @@ RUN echo "Cloning noVNC repository" && \
 RUN echo "Cloning websockify repository" && \
     git clone https://github.com/novnc/websockify /opt/noVNC/utils/websockify
 
-RUN echo "Installing Python dependencies for websockify" && \
-    cd /opt/noVNC && pip3 install --verbose --no-cache-dir -r utils/websockify/requirements.txt
+# Set up a virtual environment and install Python dependencies
+RUN python3 -m venv /opt/noVNC/venv && \
+    /opt/noVNC/venv/bin/pip install --upgrade pip && \
+    /opt/noVNC/venv/bin/pip install --verbose --no-cache-dir -r /opt/noVNC/utils/websockify/requirements.txt
+
+# Activate virtual environment for further steps (if needed)
+#ENV PATH="/opt/noVNC/venv/bin:$PATH"
 
 # Setup a basic VNC server entrypoint (if required)
 ENTRYPOINT ["x11vnc", "-forever", "-usepw", "-create", "-display", ":0"]
