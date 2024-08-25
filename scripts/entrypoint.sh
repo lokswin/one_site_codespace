@@ -1,4 +1,3 @@
-
 #!/bin/bash
 
 # ./scripts/entrypoint.sh
@@ -8,26 +7,26 @@
 # Exit on error
 set -e
 
-# Start Xvfb (X Virtual Frame Buffer)
-Xvfb :0 -screen 0 1024x768x16 &
+# Ensure log directory exists
+mkdir -p /var/log
 
-# Start a simple window manager (Fluxbox)
-fluxbox &
+# Start Xvfb and redirect output to log file
+Xvfb :0 -screen 0 1024x768x16 -ac -nolisten tcp > /var/log/xvfb.log 2>&1 &
 
-# Start the VNC server
-x11vnc -display :0 -forever -shared -rfbport 5900 &
+# Wait for Xvfb to start
+sleep 5
 
-# Start noVNC (VNC client in a browser)
-supervisord -c /opt/noVNC/utils/novnc.conf &
+# Start qutebrowser and redirect output to log file
+qutebrowser https://www.example.com --backend webengine > /var/log/qutebrowser.log 2>&1 &
 
-# Launch qutebrowser in fullscreen mode with ChatGPT
-qutebrowser --target=window --temp --qt-arg fullscreen https://chat.openai.com/
+# Wait for qutebrowser to start
+sleep 5
 
-# Run cleanup script to remove unnecessary components
-/usr/local/bin/cleanup.sh
+# Start x11vnc and redirect output to log file
+x11vnc -auth /tmp/.Xauthority -rfbauth /opt/noVNC/passwd -display :0 -forever -loop -rfbport 5900 -shared > /var/log/x11vnc.log 2>&1 &
+
+# Start noVNC proxy and redirect output to log file
+/opt/noVNC/utils/novnc_proxy --vnc localhost:5900 --listen 6080 > /var/log/novnc.log 2>&1 &
 
 # Wait and keep the container running
-wait -n
-
-# If any of the above processes exit, the container will stop
-exit $?
+wait
