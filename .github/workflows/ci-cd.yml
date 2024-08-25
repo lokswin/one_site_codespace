@@ -32,7 +32,7 @@ jobs:
       # Build the Docker image
       - name: Build Docker image
         run: |
-          docker build --build-arg BUILDKIT_INLINE_CACHE=1 -t onepage-browser-container .
+          docker build --build-arg BUILDKIT_INLINE_CACHE=1 -t onepage-browser-container -f ./.devcontainer/Dockerfile ./.devcontainer/
 
   test:
     runs-on: ubuntu-latest
