@@ -32,11 +32,15 @@ COPY scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
 COPY scripts/cleanup.sh /usr/local/bin/cleanup.sh
 
 # Set correct permissions
-RUN chmod +x /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/cleanup.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh /usr/local/bin/cleanup.sh
 
 # Expose necessary ports
 EXPOSE 5900 6080
+
+# Set the non-root user and working directory
+RUN useradd -m -s /bin/bash devuser
+USER devuser
+WORKDIR /home/devuser
 
 # Start the entrypoint script
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

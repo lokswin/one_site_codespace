@@ -1,19 +1,19 @@
 {
-  "name": "Onepage Browser Container",
-  "dockerFile": ".devcontainer/Dockerfile",
-  "runArgs": [
-    "--cap-drop=ALL",
-    "--cap-add=NET_ADMIN",
-    "--security-opt",
-    "no-new-privileges:true",
-    "--read-only"
-  ],
-  "context": "..",
-  "settings": {
-    "terminal.integrated.shell.linux": "/bin/bash"
+  "name": "OnePage Browser Container",
+  "build": {
+      "dockerfile": "Dockerfile",
+      "context": ".."
   },
-  "extensions": [
-    "ms-python.python"
+  "runArgs": [
+      "--cap-drop=ALL",
+      "--cap-add=NET_ADMIN",
+      "--security-opt",
+      "no-new-privileges:true",
+      "--read-only"
   ],
-  "postCreateCommand": "echo 'Devcontainer setup complete!'"
+  "settings": {
+      "terminal.integrated.defaultProfile.linux": "/bin/bash"
+  },
+  "postCreateCommand": "bash /usr/local/bin/entrypoint.sh",
+  "extensions": []
 }

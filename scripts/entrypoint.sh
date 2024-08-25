@@ -20,11 +20,10 @@ x11vnc -display :0 -forever -shared -rfbport 5900 &
 # Start noVNC (VNC client in a browser)
 supervisord -c /opt/noVNC/utils/novnc.conf &
 
-# Launch qutebrowser in fullscreen mode with onepage
+# Launch qutebrowser in fullscreen mode with ChatGPT
 qutebrowser --target=window --temp --qt-arg fullscreen https://chat.openai.com/
 
-# Run the cleanup script to remove unnecessary components
-echo "Running cleanup script..."
+# Run cleanup script to remove unnecessary components
 /usr/local/bin/cleanup.sh
 
 # Wait and keep the container running
