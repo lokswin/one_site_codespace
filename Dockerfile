@@ -15,8 +15,9 @@ RUN echo "Install Dependencies" && \
     x11vnc xvfb procps \
     xauth net-tools \
     qutebrowser \
-    ca-certificates \
-    && apt-get clean && \
+    ca-certificates && \
+    apt-get update && apt-get install -y --no-install-recommends && \
+    apt-get clean \
     rm -rf /var/lib/apt/lists/*
 
 RUN echo "Cloning noVNC repository" && \
@@ -35,12 +36,10 @@ RUN python3 -m venv /opt/noVNC/venv && \
 RUN mkdir -p /opt/noVNC && \
     echo "$VNC_PASSWORD" | x11vnc -storepasswd - /opt/noVNC/passwd
 
-RUN mkdir -p /opt/noVNC && \
-    echo "$VNC_PASSWORD" | x11vnc -storepasswd - /opt/noVNC/passwd
-
 # Activate virtual environment for further steps
 ENV PATH="/opt/noVNC/venv/bin:$PATH"
 ENV DISPLAY=:0
+ENV USER=user
 
 # Expose necessary ports for noVNC
 EXPOSE 6080
@@ -48,7 +47,15 @@ EXPOSE 6080
 # Setup a basic VNC server entrypoint
 # Copy entrypoint script and set permissions
 COPY ./scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
+COPY ./scripts/startVNCClient.sh /usr/local/bin/startVNCClient.sh
+COPY ./scripts/cleanup.sh /usr/local/bin/cleanup.sh
+COPY ./scripts/x11vnc.sh /usr/local/bin/x11vnc.sh
+
+RUN chmod +x /usr/local/bin/entrypoint.sh \
+             /usr/local/bin/startVNCClient.sh \
+             /usr/local/bin/cleanup.sh \
+             /usr/local/bin/x11vnc.sh
+
 
 # Use the external script as the entrypoint
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
