@@ -11,11 +11,6 @@ set -e
 
 echo "Starting cleanup process..."
 
-# Stop and disable services that are no longer needed
-systemctl stop apt-daily.timer
-systemctl disable apt-daily.timer
-systemctl stop apt-daily-upgrade.timer
-systemctl disable apt-daily-upgrade.timer
 
 # Remove unnecessary packages
 apt-get remove --purge -y \
@@ -55,6 +50,9 @@ rm -rf /root/.cache/*
 rm -rf /home/devuser/.cache/*
 rm -rf /root/.local/share/*
 rm -rf /home/devuser/.local/share/*
+rm -rf $HOME/.local/share/*
+rm -rf $HOME/devuser/.local/share/*
+
 
 # Remove the cleanup script itself
 rm -- "$0"

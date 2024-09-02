@@ -1,0 +1,85 @@
+02/09/2024 21:44:23 passing arg to libvncserver: -rfbauth
+02/09/2024 21:44:23 passing arg to libvncserver: /opt/noVNC/passwd
+02/09/2024 21:44:23 x11vnc version: 0.9.16 lastmod: 2019-01-05  pid: 132
+02/09/2024 21:44:23 Using X display :0
+02/09/2024 21:44:23 rootwin: 0x3ff reswin: 0x400001 dpy: 0xf9977330
+02/09/2024 21:44:23 
+02/09/2024 21:44:23 ------------------ USEFUL INFORMATION ------------------
+02/09/2024 21:44:23 
+02/09/2024 21:44:23 Wireframing: -wireframe mode is in effect for window moves.
+02/09/2024 21:44:23   If this yields undesired behavior (poor response, painting
+02/09/2024 21:44:23   errors, etc) it may be disabled:
+02/09/2024 21:44:23    - use '-nowf' to disable wireframing completely.
+02/09/2024 21:44:23    - use '-nowcr' to disable the Copy Rectangle after the
+02/09/2024 21:44:23      moved window is released in the new position.
+02/09/2024 21:44:23   Also see the -help entry for tuning parameters.
+02/09/2024 21:44:23   You can press 3 Alt_L's (Left "Alt" key) in a row to 
+02/09/2024 21:44:23   repaint the screen, also see the -fixscreen option for
+02/09/2024 21:44:23   periodic repaints.
+02/09/2024 21:44:23 
+02/09/2024 21:44:23 XFIXES available on display, resetting cursor mode
+02/09/2024 21:44:23   to: '-cursor most'.
+02/09/2024 21:44:23   to disable this behavior use: '-cursor arrow'
+02/09/2024 21:44:23   or '-noxfixes'.
+02/09/2024 21:44:23 using XFIXES for cursor drawing.
+02/09/2024 21:44:23 GrabServer control via XTEST.
+02/09/2024 21:44:23 
+02/09/2024 21:44:23 Scroll Detection: -scrollcopyrect mode is in effect to
+02/09/2024 21:44:23   use RECORD extension to try to detect scrolling windows
+02/09/2024 21:44:23   (induced by either user keystroke or mouse input).
+02/09/2024 21:44:23   If this yields undesired behavior (poor response, painting
+02/09/2024 21:44:23   errors, etc) it may be disabled via: '-noscr'
+02/09/2024 21:44:23   Also see the -help entry for tuning parameters.
+02/09/2024 21:44:23   You can press 3 Alt_L's (Left "Alt" key) in a row to 
+02/09/2024 21:44:23   repaint the screen, also see the -fixscreen option for
+02/09/2024 21:44:23   periodic repaints.
+02/09/2024 21:44:23 
+02/09/2024 21:44:23 XKEYBOARD: number of keysyms per keycode 7 is greater
+02/09/2024 21:44:23   than 4 and 51 keysyms are mapped above 4.
+02/09/2024 21:44:23   Automatically switching to -xkb mode.
+02/09/2024 21:44:23   If this makes the key mapping worse you can
+02/09/2024 21:44:23   disable it with the "-noxkb" option.
+02/09/2024 21:44:23   Also, remember "-remap DEAD" for accenting characters.
+02/09/2024 21:44:23 
+02/09/2024 21:44:23 X FBPM extension not supported.
+Xlib:  extension "DPMS" missing on display ":0".
+02/09/2024 21:44:23 X display is not capable of DPMS.
+02/09/2024 21:44:23 --------------------------------------------------------
+02/09/2024 21:44:23 
+02/09/2024 21:44:23 Default visual ID: 0x21
+02/09/2024 21:44:23 Read initial data from X display into framebuffer.
+02/09/2024 21:44:23 initialize_screen: fb_depth/fb_bpp/fb_Bpl 16/16/2048
+02/09/2024 21:44:23 
+02/09/2024 21:44:23 X display :0 is 16bpp depth=16 true color
+02/09/2024 21:44:23 
+02/09/2024 21:44:23 Autoprobing TCP port 
+02/09/2024 21:44:23 Autoprobing selected TCP port 5900
+02/09/2024 21:44:23 Autoprobing TCP6 port 
+02/09/2024 21:44:23 Autoprobing selected TCP6 port 5900
+02/09/2024 21:44:23 listen6: bind: Address already in use
+02/09/2024 21:44:23 Not listening on IPv6 interface.
+02/09/2024 21:44:23 
+02/09/2024 21:44:23 Xinerama is present and active (e.g. multi-head).
+02/09/2024 21:44:23 Xinerama: number of sub-screens: 1
+02/09/2024 21:44:23 Xinerama: no blackouts needed (only one sub-screen)
+02/09/2024 21:44:23 
+02/09/2024 21:44:23 fb read rate: 896 MB/sec
+02/09/2024 21:44:23 fast read: reset -wait  ms to: 10
+02/09/2024 21:44:23 fast read: reset -defer ms to: 10
+02/09/2024 21:44:23 The X server says there are 10 mouse buttons.
+02/09/2024 21:44:23 screen setup finished.
+02/09/2024 21:44:23 
+
+The VNC desktop is:      5f329241ce14:0
+
+******************************************************************************
+Have you tried the x11vnc '-ncache' VNC client-side pixel caching feature yet?
+
+The scheme stores pixel data offscreen on the VNC viewer side for faster
+retrieval.  It should work with any VNC viewer.  Try it by running:
+
+    x11vnc -ncache 10 ...
+
+One can also add -ncache_cr for smooth 'copyrect' window motion.
+More info: http://www.karlrunge.com/x11vnc/faq.html#faq-client-caching
+

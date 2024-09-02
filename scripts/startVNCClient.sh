@@ -2,7 +2,7 @@
 # file: ./scripts/startVNCClient.sh
 
 
-port=5911
+port=5900
 ip="$(/sbin/ifconfig \
    | grep '\<inet\>' \
    | sed -n '1p' \
@@ -21,4 +21,4 @@ if [ -f $COVISEDIR/share/covise/web/noVNC/utils/novnc_proxy ]; then
     fi
 fi
 
-echo use the following link: http://$HOSTNAME.hlrs.de:6080/vnc.h:tml?host=$HOSTNAME".hlrs.de&port="$port"&password=password&logging=debug"
+echo use the following link: http://$HOSTNAME.hlrs.de:6080/vnc.html?host=$HOSTNAME".hlrs.de&port="$port"&password=password&logging=debug"

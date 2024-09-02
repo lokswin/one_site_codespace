@@ -9,29 +9,16 @@
 # to configure a password, run:
 #   `x11vnc -storepasswd`
 
-AUTH_COOKIE="/run/user/$CURRENT_UID/gdm/Xauthority"
-mkdir -p /var/log/onepage-browser-container
-LOG_FILE="/var/log/onepage-browser-container/x11vnc.log"
+mkdir -p $LOG_ONE_PATH
+LOG_FILE="$LOG_ONE_PATH/x11vnc.log"
 # Initialize DEBUG variable
-DEBUG=0
+DEBUG=1
 
-
+# Check for x11vnc command
 hash x11vnc 2>/dev/null || { echo >&2 "You need to install x11vnc. Aborting."; exit 1; }
-#hash netstat 2>/dev/null || { echo >&2 "You need to install net-tools. Aborting."; exit 1; }
 
-# . $(dirname $0)/helpers/log4bash.sh
-# /run/user/122/gdm/Xauthority
-
-# How long to wait for vnc server to start
-SLEEP_SEC=3
-
-HAS_NETCAT="false"
-if hash netstat 2>/dev/null; then
-  HAS_NETCAT="true"
-fi
-
-DEBUG=0
-CURRENT_UID=$(id -u "$USER")
+# Determine the current UID and user
+CURRENT_UID=$(id -u "$USERNAME")
 if [[ $CURRENT_UID == 0 ]]; then
   if ! GDM_UID=$(id -u gdm); then
     logger -p syslog.error "ERROR: Failed to determine gdm UID."
@@ -42,6 +29,9 @@ if [[ $CURRENT_UID == 0 ]]; then
   echo >&2 "WARNING: x11vnc found UID==0; forcing gdm UID ${GDM_UID} ..."
   CURRENT_UID="${GDM_UID}"
 fi
+
+AUTH_COOKIE=$XAUTH_FILE
+AUTH_FILE=$VNC_AUTH_FILE
 
 CURRENT_USER="$USER"
 if [[ -z "$CURRENT_USER" ]]; then
@@ -56,16 +46,13 @@ if [[ -z "$CURRENT_USER" ]]; then
   exit 1
 fi
 
-
-# LOG_FILE="/home/$CURRENT_USER/x11vnc.log"
-
 logger -p syslog.info "Starting x11vnc for user $CURRENT_USER (uid $CURRENT_UID) ..."
 logger -p syslog.info "Logging to $LOG_FILE"
 
 echo "INFO: Starting x11vnc for user $CURRENT_USER (uid $CURRENT_UID) ..."
 echo "INFO: Logging to $LOG_FILE"
 
-# check if x11vnc is already running
+# Check if x11vnc is already running
 VNC_PID=$(pgrep -f "^[x]11vnc" --euid "$CURRENT_UID")
 if [[ -n "$VNC_PID" ]]; then
   logger -p syslog.error "ERROR: x11vnc appears to be running already for UID $CURRENT_UID (pid $VNC_PID)."
@@ -87,21 +74,25 @@ if [[ ! -e "$AUTH_COOKIE" ]]; then
 fi
 
 PW_OPT=""
-if [[ -e /etc/x11vnc.pass ]]; then
-  PW_OPT="-rfbauth /etc/x11vnc.pass"
-  logger -p syslog.info "INFO: x11vnc using authentication file /etc/x11vnc.pass"
-  echo >&2 "INFO: x11vnc using authentication file /etc/x11vnc.pass"
+#if [[ -e /etc/x11vnc.pass ]]; then
+if [[ -e "$AUTH_FILE" ]]; then
+  PW_OPT="-rfbauth $AUTH_FILE"
+  logger -p syslog.info "INFO: x11vnc using authentication file $AUTH_FILE"
+  echo "INFO: x11vnc using authentication file $AUTH_FILE"
 fi
 
-# note: use -logappend for persistent logging
+# Note: use -logappend for persistent logging
 VNC_CMD="x11vnc -bg $DISP_ARG -usepw $PW_OPT"
+if [[ "$DEBUG" == 1 ]]; then
+  logger -p syslog.info "DEBUG: Executing command: ${VNC_CMD} -auth \"$AUTH_COOKIE\" -logfile \"$LOG_FILE\" -forever -noxdamage"
+fi
 ${VNC_CMD} -auth "$AUTH_COOKIE" \
            -logfile "$LOG_FILE" \
            -forever \
            -noxdamage > /dev/null 2>&1 &
 
-# give the socket a moment to bind
-sleep ${SLEEP_SEC}
+# Give the socket a moment to bind
+sleep 3
 
 VNC_PID=$(pgrep -f "^[x]11vnc" --euid "$CURRENT_UID")
 if [[ -z "$VNC_PID" ]]; then
@@ -110,24 +101,24 @@ if [[ -z "$VNC_PID" ]]; then
   exit 3
 else
   logger -p syslog.info "INFO: Detected x11vnc running on pid $VNC_PID, waiting for socket..."
-  echo >&2 "INFO: Detected x11vnc running on pid $VNC_PID, waiting for socket..."
+  echo "INFO: Detected x11vnc running on pid $VNC_PID, waiting for socket..."
 fi
 
-# get the port number
-PORT=""
-if [ "${HAS_NETCAT}" == "true" ]; then
-  PORT=$(netstat -4 -an --tcp --program 2> /dev/null | grep "$VNC_PID" | awk '{print $4}' | awk -F":" '{print $2}' | head -n1)
-else
-  PORT=$(lsof -nPi | grep "IPv4" | grep "$VNC_PID" | awk '{print $9}' | awk -F":" '{print $2}' | head -n1)
-fi
+# Get the port number
+# PORT=""
+# if [[ "$HAS_NETCAT" == "true" ]]; then
+#   PORT=$(netstat -4 -an --tcp --program 2> /dev/null | grep "$VNC_PID" | awk '{print $4}' | awk -F":" '{print $2}' | head -n1)
+# else
+#   PORT=$(lsof -nPi | grep "IPv4" | grep "$VNC_PID" | awk '{print $9}' | awk -F":" '{print $2}' | head -n1)
+# fi
 
 # DEBUG: log all ports visible at this point in the script
 if [[ "$DEBUG" == 1 ]]; then
   TEST=$(netstat -4 -an --tcp --program)
-  logger -p syslog.error "x11vnc is able to see the following ports: $TEST"
+  logger -p syslog.debug "DEBUG: x11vnc is able to see the following ports: $TEST"
 fi
 
-# check if we were able to find the listen port, and if so, validate it
+# Check if we were able to find the listen port, and if so, validate it
 re='^[0-9]+$'
 if ! [[ $PORT =~ $re ]] ; then
   if ! [[ -z $PORT ]]; then
@@ -135,7 +126,7 @@ if ! [[ $PORT =~ $re ]] ; then
     echo >&2 "ERROR: '$PORT' is not a valid x11vnc port number."
     exit 4
   else
-    # port is null but x11vnc is running
+    # Port is null but x11vnc is running
     PORT="?"
     logger -p syslog.warn "WARNING: Unable to determine which port x11vnc is listening on."
     echo >&2 "WARNING: Unable to determine which port x11vnc is listening on."

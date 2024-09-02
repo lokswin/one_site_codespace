@@ -53,7 +53,7 @@ jobs:
       # Test the noVNC service by checking if it's accessible
       - name: Test noVNC service
         run: |
-          sleep 10  # Wait for the container to start
+          sleep 3  # Wait for the container to start
           response=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:6080)
           if [ "$response" -ne 200 ]; then
             echo "noVNC service is not accessible."

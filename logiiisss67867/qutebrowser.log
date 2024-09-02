@@ -1,12 +1,206 @@
-usage: qutebrowser [-h] [-B BASEDIR] [-C CONFIG] [-V] [-s OPTION VALUE]
-                   [-r SESSION] [-R]
-                   [--target {auto,tab,tab-bg,tab-silent,tab-bg-silent,window,private-window}]
-                   [--backend {webkit,webengine}]
-                   [--desktop-file-name DESKTOP_FILE_NAME] [--untrusted-args]
-                   [-l {critical,error,warning,info,debug,vdebug}]
-                   [--logfilter LOGFILTER] [--loglines LOGLINES] [-d]
-                   [--json-logging] [--nocolor] [--force-color] [--nowindow]
-                   [-T] [--no-err-windows] [--qt-arg NAME VALUE]
-                   [--qt-flag QT_FLAG] [-D DEBUG_FLAGS]
-                   [:command ...] [url ...]
-qutebrowser: error: unrecognized arguments: --no-sandbox
+21:44:20 DEBUG    init       earlyinit:init_log:276 Log initialized.
+21:44:20 DEBUG    init       app:run:85 Main process PID: 18
+21:44:20 DEBUG    init       app:run:87 Initializing directories...
+21:44:20 DEBUG    init       standarddir:init:354 Base directory: None
+21:44:20 DEBUG    misc       standarddir:_writable_location:274 writable location for ConfigLocation: /home/myuser67867/.config
+21:44:20 DEBUG    misc       standarddir:_writable_location:274 writable location for AppDataLocation: /home/myuser67867/.local/share
+21:44:20 DEBUG    misc       standarddir:_writable_location:274 writable location for CacheLocation: /home/myuser67867/.cache
+21:44:20 DEBUG    misc       standarddir:_writable_location:274 writable location for DownloadLocation: /home/myuser67867/Downloads
+21:44:20 DEBUG    misc       standarddir:_writable_location:274 writable location for RuntimeLocation: /tmp/runtime
+21:44:20 DEBUG    init       app:run:91 Initializing config...
+21:44:20 DEBUG    config     config:_set_value:351 Config option changed: content.tls.certificate_errors = load-insecurely
+21:44:20 DEBUG    config     config:_set_value:351 Config option changed: qt.chromium.sandboxing = disable-all
+21:44:20 DEBUG    config     config:_set_value:351 Config option changed: content.default_encoding = utf-8
+21:44:20 DEBUG    misc       elf:parse_webenginecore:325 QtWebEngine .so found at /usr/lib/x86_64-linux-gnu/libQt5WebEngineCore.so.5.15.13
+21:44:20 DEBUG    misc       elf:parse_webenginecore:331 Got versions from ELF: Versions(webengine='5.15.13', chromium='87.0.4280.144')
+21:44:20 DEBUG    init       app:run:94 Initializing application...
+21:44:20 DEBUG    misc       elf:parse_webenginecore:325 QtWebEngine .so found at /usr/lib/x86_64-linux-gnu/libQt5WebEngineCore.so.5.15.13
+21:44:20 DEBUG    misc       elf:parse_webenginecore:331 Got versions from ELF: Versions(webengine='5.15.13', chromium='87.0.4280.144')
+21:44:20 DEBUG    init       darkmode:settings:379 Darkmode variant: qt_515_3
+21:44:20 DEBUG    init       app:__init__:555 Commandline args: ['https://www.google.com', '--backend', 'webengine', '--target=window', '--config-py=/home/myuser67867/config.py', '--debug']
+21:44:20 DEBUG    init       app:__init__:556 Parsed: Namespace(basedir=None, config_py='/home/myuser67867/config.py', version=False, temp_settings=[], session=None, override_restore=False, target='window', backend='webengine', desktop_file_name='org.qutebrowser.qutebrowser', untrusted_args=False, json_args=None, temp_basedir_restarted=False, enable_webengine_inspector=False, loglevel=None, logfilter=None, loglines=2000, debug=True, json_logging=False, color=True, force_color=False, nowindow=False, temp_basedir=False, no_err_windows=False, qt_arg=None, qt_flag=None, debug_flags=[], command=['https://www.google.com'], url=[])
+21:44:20 DEBUG    init       app:__init__:557 Qt arguments: ['--enable-features=WebRTCPipeWireCapturer,OverlayScrollbar,ReducedReferrerGranularity', '--no-sandbox']
+21:44:20 DEBUG    init       app:__init__:562 Initializing application...
+21:44:20 DEBUG    ipc        ipc:send_to_running_instance:476 Connecting to /tmp/runtime/qutebrowser/ipc-5c2d50b1015ee676b8aa19f1dd5df4f9
+21:44:20 DEBUG    ipc        ipc:send_to_running_instance:506 No existing instance present (error 2)
+21:44:20 DEBUG    init       ipc:send_or_listen:536 Starting IPC server...
+21:44:20 DEBUG    ipc        ipc:__init__:210 Not calling setSocketOptions
+21:44:20 DEBUG    ipc        ipc:listen:221 Listening as /tmp/runtime/qutebrowser/ipc-5c2d50b1015ee676b8aa19f1dd5df4f9
+21:44:20 DEBUG    init       app:init:145 Starting init...
+21:44:20 DEBUG    extensions loader:_load_component:126 Importing qutebrowser.components.adblockcommands
+21:44:20 DEBUG    extensions loader:_load_component:126 Importing qutebrowser.components.braveadblock
+21:44:20 DEBUG    extensions loader:_load_component:134 Running init hook 'init'
+21:44:20 DEBUG    extensions loader:_load_component:126 Importing qutebrowser.components.caretcommands
+21:44:20 DEBUG    extensions loader:_load_component:126 Importing qutebrowser.components.hostblock
+21:44:20 DEBUG    extensions loader:_load_component:134 Running init hook 'init'
+21:44:20 DEBUG    network    hostblock:_should_be_used:83 Configured adblock method auto, adblock library usable: False
+21:44:20 INFO     message    message:info:83 Run :adblock-update to get adblock lists.
+21:44:20 DEBUG    extensions loader:_load_component:126 Importing qutebrowser.components.misccommands
+21:44:20 DEBUG    extensions loader:_load_component:126 Importing qutebrowser.components.readlinecommands
+21:44:20 DEBUG    extensions loader:_load_component:126 Importing qutebrowser.components.scrollcommands
+21:44:20 DEBUG    extensions loader:_load_component:126 Importing qutebrowser.components.utils.blockutils
+21:44:20 DEBUG    extensions loader:_load_component:126 Importing qutebrowser.components.zoomcommands
+21:44:20 DEBUG    init       app:_init_modules:454 Initializing logging from config...
+21:44:20 DEBUG    init       log:init_from_config:550 --debug flag overrides log configs
+21:44:20 DEBUG    init       app:_init_modules:458 Initializing save manager...
+21:44:20 DEBUG    init       app:_init_modules:464 Checking backend requirements...
+21:44:20 DEBUG    init       app:_init_modules:467 Initializing prompts...
+21:44:20 DEBUG    init       app:_init_modules:470 Initializing network...
+21:44:20 DEBUG    init       app:_init_modules:473 Initializing proxy...
+21:44:20 DEBUG    init       app:_init_modules:477 Initializing downloads...
+21:44:20 DEBUG    init       app:_init_modules:483 Initializing web history...
+21:44:20 DEBUG    sql        sql:run:334 pragma user_version
+21:44:20 DEBUG    sql        sql:run:334 PRAGMA journal_mode=WAL
+21:44:20 DEBUG    sql        sql:run:334 PRAGMA synchronous=NORMAL
+21:44:20 DEBUG    sql        sql:run:334 CREATE TABLE IF NOT EXISTS History (url NOT NULL, title NOT NULL, atime NOT NULL, redirect NOT NULL)
+21:44:20 DEBUG    sql        sql:run:334 CREATE TABLE IF NOT EXISTS CompletionHistory (url PRIMARY KEY, title NOT NULL, last_atime NOT NULL)
+21:44:20 DEBUG    sql        sql:run:334 CREATE INDEX IF NOT EXISTS CompletionHistoryAtimeIndex ON CompletionHistory (last_atime)
+21:44:20 DEBUG    sql        sql:run:334 CREATE TABLE IF NOT EXISTS CompletionMetaInfo (key PRIMARY KEY, value )
+21:44:20 DEBUG    sql        sql:run:334 SELECT EXISTS(SELECT * FROM CompletionMetaInfo WHERE key = :val)
+21:44:20 DEBUG    sql        sql:run:338     {':val': 'excluded_patterns'}
+21:44:20 DEBUG    sql        sql:run:334 REPLACE INTO CompletionMetaInfo (key, value) values(:key, :value)
+21:44:20 DEBUG    sql        sql:run:338     {':key': 'excluded_patterns', ':value': ''}
+21:44:20 DEBUG    sql        sql:run:334 SELECT EXISTS(SELECT * FROM CompletionMetaInfo WHERE key = :val)
+21:44:20 DEBUG    sql        sql:run:338     {':val': 'force_rebuild'}
+21:44:20 DEBUG    sql        sql:run:334 REPLACE INTO CompletionMetaInfo (key, value) values(:key, :value)
+21:44:20 DEBUG    sql        sql:run:338     {':key': 'force_rebuild', ':value': False}
+21:44:20 DEBUG    sql        sql:run:334 SELECT value FROM CompletionMetaInfo WHERE key = :key
+21:44:20 DEBUG    sql        sql:run:338     {':key': 'force_rebuild'}
+21:44:20 DEBUG    sql        sql:__enter__:256 Starting a transaction
+21:44:20 DEBUG    sql        sql:run:334 DELETE FROM History WHERE url LIKE 'data:%' OR url LIKE 'view-source:%' OR url LIKE 'qute://back%' OR url LIKE 'qute://pdfjs%'
+21:44:20 DEBUG    sql        history:_cleanup_history:282 Cleanup removed 0 items
+21:44:20 DEBUG    sql        sql:upgrade_user_version:231 Migrating from version 0.0 to 0.4
+21:44:20 DEBUG    sql        sql:run:334 PRAGMA user_version = 4
+21:44:20 DEBUG    sql        sql:__exit__:273 Committing a transaction
+21:44:20 DEBUG    sql        sql:run:334 SELECT value FROM CompletionMetaInfo WHERE key = :key
+21:44:20 DEBUG    sql        sql:run:338     {':key': 'excluded_patterns'}
+21:44:20 DEBUG    sql        sql:run:334 SELECT 1 FROM History LIMIT 1
+21:44:20 DEBUG    init       debug:__exit__:306 Initializing sql/history took 0.0254 seconds.
+21:44:20 DEBUG    init       app:_init_modules:492 Initializing command history...
+21:44:20 DEBUG    init       app:_init_modules:495 Initializing websettings...
+21:44:20 DEBUG    init       webenginesettings:init:496 Initializing qute://* handler...
+21:44:20 DEBUG    init       webenginesettings:init:500 Initializing request interceptor...
+21:44:20 DEBUG    init       webenginesettings:init:505 Initializing QtWebEngine downloads...
+21:44:20 DEBUG    init       webenginesettings:init:511 Initializing notification presenter...
+21:44:20 DEBUG    misc       elf:parse_webenginecore:325 QtWebEngine .so found at /usr/lib/x86_64-linux-gnu/libQt5WebEngineCore.so.5.15.13
+21:44:20 DEBUG    misc       elf:parse_webenginecore:331 Got versions from ELF: Versions(webengine='5.15.13', chromium='87.0.4280.144')
+21:44:20 DEBUG    misc       elf:parse_webenginecore:325 QtWebEngine .so found at /usr/lib/x86_64-linux-gnu/libQt5WebEngineCore.so.5.15.13
+21:44:20 DEBUG    misc       elf:parse_webenginecore:331 Got versions from ELF: Versions(webengine='5.15.13', chromium='87.0.4280.144')
+21:44:20 DEBUG    init       webenginesettings:init:514 Initializing global settings...
+21:44:20 DEBUG    init       webenginesettings:init:518 Initializing profiles...
+21:44:21 DEBUG    misc       elf:parse_webenginecore:325 QtWebEngine .so found at /usr/lib/x86_64-linux-gnu/libQt5WebEngineCore.so.5.15.13
+21:44:21 DEBUG    misc       elf:parse_webenginecore:331 Got versions from ELF: Versions(webengine='5.15.13', chromium='87.0.4280.144')
+21:44:21 DEBUG    config     webenginesettings:set_dictionary_language:328 Found dicts: []
+21:44:21 DEBUG    config     webenginesettings:set_dictionary_language:328 Found dicts: []
+21:44:21 DEBUG    init       webenginesettings:init:523 Misc initialization...
+21:44:21 DEBUG    config     config:_set_value:351 Config option changed: content.headers.user_agent = Mozilla/5.0 ({os_info}) AppleWebKit/{webkit_version} (KHTML, like Gecko) {upstream_browser_key}/{upstream_browser_version} Safari/{webkit_version}
+21:44:21 DEBUG    config     config:_set_value:351 Config option changed: content.headers.user_agent = Mozilla/5.0 ({os_info}; rv:90.0) Gecko/20100101 Firefox/90.0
+21:44:21 DEBUG    config     config:_set_value:351 Config option changed: content.headers.user_agent = Mozilla/5.0 ({os_info}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99 Safari/537.36
+21:44:21 DEBUG    config     config:_set_value:351 Config option changed: content.headers.accept_language = 
+21:44:21 DEBUG    config     config:_set_value:351 Config option changed: content.javascript.enabled = True
+21:44:21 DEBUG    config     config:_set_value:351 Config option changed: content.javascript.enabled = True
+21:44:21 DEBUG    config     config:_set_value:351 Config option changed: content.images = True
+21:44:21 DEBUG    config     config:_set_value:351 Config option changed: content.images = True
+21:44:21 DEBUG    config     config:_set_value:351 Config option changed: content.cookies.accept = all
+21:44:21 DEBUG    config     config:_set_value:351 Config option changed: content.cookies.accept = all
+21:44:21 DEBUG    config     config:_set_value:351 Config option changed: content.javascript.enabled = True
+21:44:21 DEBUG    config     config:_set_value:351 Config option changed: content.javascript.enabled = True
+21:44:21 DEBUG    init       app:_init_modules:499 Initializing sessions...
+21:44:21 DEBUG    init       app:_init_modules:505 Initializing quickmarks...
+21:44:21 DEBUG    save       savemanager:save:95 Save of quickmark-manager requested - dirty True, save_on_exit False, is_exit False, force False -> True
+21:44:21 DEBUG    destroy    lineparser:_after_save:81 Saved to /home/myuser67867/.config/qutebrowser/quickmarks
+21:44:21 DEBUG    init       app:_init_modules:509 Initializing bookmarks...
+21:44:21 DEBUG    save       savemanager:save:95 Save of bookmark-manager requested - dirty True, save_on_exit False, is_exit False, force False -> True
+21:44:21 DEBUG    destroy    lineparser:_after_save:81 Saved to /home/myuser67867/.config/qutebrowser/bookmarks/urls
+21:44:21 DEBUG    init       app:_init_modules:513 Initializing cookies...
+21:44:21 DEBUG    init       app:_init_modules:516 Initializing cache...
+21:44:21 DEBUG    init       app:_init_modules:519 Initializing downloads...
+21:44:21 DEBUG    init       networkmanager:__init__:159 Initializing NetworkManager
+21:44:21 DEBUG    init       networkmanager:__init__:166 NetworkManager init done
+21:44:21 DEBUG    init       app:_init_modules:522 Initializing Greasemonkey...
+21:44:21 DEBUG    greasemonkey greasemonkey:load_scripts:307 Reading scripts from: /home/myuser67867/.local/share/qutebrowser/greasemonkey
+21:44:21 DEBUG    greasemonkey greasemonkey:load_scripts:307 Reading scripts from: /home/myuser67867/.config/qutebrowser/greasemonkey
+21:44:21 DEBUG    init       app:_init_modules:525 Misc initialization...
+21:44:21 DEBUG    init       app:init:165 Initializing eventfilter...
+21:44:21 DEBUG    init       app:init:168 Connecting signals...
+21:44:21 DEBUG    init       app:_process_args:220 Initializing main window...
+21:44:21 DEBUG    init       mainwindow:_init_downloadmanager:355 Initializing downloads...
+21:44:21 DEBUG    statusbar  bar:_hide_cmd_widget:361 Hiding cmd widget
+21:44:21 DEBUG    init       mainwindow:__init__:249 Initializing modes...
+21:44:21 DEBUG    init       mainwindow:_init_geometry:292 Initial main window geometry: PyQt5.QtCore.QRect(50, 50, 800, 600)
+21:44:21 DEBUG    url        urlutils:get_path_if_valid:368 Checking if 'https://www.google.com' is a path
+21:44:21 DEBUG    url        urlutils:is_url:272 Checking if 'https://www.google.com' is a URL (autosearch=naive).
+21:44:21 DEBUG    url        urlutils:is_url:295 Contains explicit scheme
+21:44:21 DEBUG    url        urlutils:is_url:319 url = True
+21:44:21 DEBUG    url        urlutils:fuzzy_url:226 URL is a fuzzy address
+21:44:21 DEBUG    url        urlutils:fuzzy_url:228 Converting fuzzy term 'https://www.google.com' to URL -> https://www.google.com
+21:44:21 DEBUG    init       app:open_url:315 About to open URL: https://www.google.com
+21:44:21 DEBUG    webview    tabbedbrowser:tabopen:597 Creating new tab with URL PyQt5.QtCore.QUrl('https://www.google.com'), background False, related False, idx None
+21:44:21 DEBUG    webview    tabbedbrowser:_get_new_tab_idx:684 tabs.new_position last -> opening new tab at -1, next left: 0 / right: -1
+21:44:21 DEBUG    modes      tabbedbrowser:_on_current_changed:852 Current tab changed, focusing <qutebrowser.browser.webengine.webenginetab.WebEngineTab tab_id=0 url=''>
+21:44:21 DEBUG    modes      tabbedbrowser:_on_current_changed:859 Mode before tab change: normal (mode_on_change = normal)
+21:44:21 DEBUG    modes      modeman:leave:424 Ignoring leave request for KeyMode.hint (reason tab changed) as we're in mode KeyMode.normal
+21:44:21 DEBUG    modes      modeman:leave:424 Ignoring leave request for KeyMode.caret (reason tab changed) as we're in mode KeyMode.normal
+21:44:21 DEBUG    modes      modeman:leave:424 Ignoring leave request for KeyMode.insert (reason tab changed) as we're in mode KeyMode.normal
+21:44:21 DEBUG    modes      modeman:leave:424 Ignoring leave request for KeyMode.passthrough (reason tab changed) as we're in mode KeyMode.normal
+21:44:21 DEBUG    modes      tabbedbrowser:_on_current_changed:870 Mode after tab change: normal (mode_on_change = normal)
+21:44:21 DEBUG    webview    browsertab:_on_before_load_started:1042 Going to start loading: https://www.google.com
+21:44:21 DEBUG    webview    tabbedbrowser:_on_title_changed:760 Changing title for idx 0 to 'https://www.google.com'
+21:44:21 DEBUG    misc       eventfilter:eventFilter:53 <qutebrowser.browser.webengine.webview.WebEngineView object at 0x7f06420a2c20> got new child <PyQt5.QtWidgets.QWidget object at 0x7f06420a3520>, installing filter
+21:44:21 DEBUG    webview    tabbedbrowser:tabopen:597 Creating new tab with URL PyQt5.QtCore.QUrl('https://www.qutebrowser.org/quickstart.html'), background False, related True, idx None
+21:44:21 DEBUG    webview    tabbedbrowser:_get_new_tab_idx:684 tabs.new_position next -> opening new tab at 1, next left: 0 / right: 2
+21:44:21 DEBUG    webview    browsertab:_on_before_load_started:1042 Going to start loading: https://www.qutebrowser.org/quickstart.html
+21:44:21 DEBUG    webview    tabbedbrowser:_on_title_changed:760 Changing title for idx 1 to 'https://www.qutebrowser.org/quickstart.html'
+21:44:21 DEBUG    misc       eventfilter:eventFilter:53 <qutebrowser.browser.webengine.webview.WebEngineView object at 0x7f06420a36d0> got new child <PyQt5.QtWidgets.QWidget object at 0x7f06420a3e20>, installing filter
+21:44:21 DEBUG    modes      tabbedbrowser:_on_current_changed:852 Current tab changed, focusing <qutebrowser.browser.webengine.webenginetab.WebEngineTab tab_id=1 url=''>
+21:44:21 DEBUG    modes      tabbedbrowser:_on_current_changed:859 Mode before tab change: normal (mode_on_change = normal)
+21:44:21 DEBUG    modes      modeman:leave:424 Ignoring leave request for KeyMode.hint (reason tab changed) as we're in mode KeyMode.normal
+21:44:21 DEBUG    modes      modeman:leave:424 Ignoring leave request for KeyMode.caret (reason tab changed) as we're in mode KeyMode.normal
+21:44:21 DEBUG    modes      modeman:leave:424 Ignoring leave request for KeyMode.insert (reason tab changed) as we're in mode KeyMode.normal
+21:44:21 DEBUG    modes      modeman:leave:424 Ignoring leave request for KeyMode.passthrough (reason tab changed) as we're in mode KeyMode.normal
+21:44:21 DEBUG    modes      tabbedbrowser:_on_current_changed:870 Mode after tab change: normal (mode_on_change = normal)
+21:44:21 DEBUG    init       app:_open_special_pages:394 Showing changelog is disabled (setting minor, change VersionChange.unknown)
+21:44:21 DEBUG    init       app:_process_args:239 Init finished after 1.011577s
+21:44:21 DEBUG    init       app:init:177 Init done!
+21:44:21 DEBUG    misc       mainwindow:_update_overlay_geometry:350 new geometry for <qutebrowser.mainwindow.messageview.MessageView object at 0x7f06420a1630>: PyQt5.QtCore.QRect(0, 559, 801, 23)
+21:44:21 DEBUG    webview    browsertab:_on_navigation_request:1066 navigation request: url https://www.qutebrowser.org/quickstart.html, type Type.typed, is_main_frame True
+21:44:21 DEBUG    webview    webenginetab:_store_match_data:152 Active search match: 0/0
+21:44:21 DEBUG    webview    browsertab:_set_load_status:1008 load status for <qutebrowser.browser.webengine.webenginetab.WebEngineTab tab_id=1 url=''>: LoadStatus.loading
+21:44:21 DEBUG    signals    signalfilter:_filter_signals:87 emitting: cur_load_status_changed(<LoadStatus.loading: 6>) (tab 1)
+21:44:21 DEBUG    signals    signalfilter:_filter_signals:87 emitting: cur_load_started() (tab 1)
+[79:85:0902/214421.529762:ERROR:command_buffer_proxy_impl.cc(141)] ContextResult::kTransientFailure: Failed to send GpuChannelMsg_CreateCommandBuffer.
+[92:98:0902/214421.529330:ERROR:command_buffer_proxy_impl.cc(141)] ContextResult::kTransientFailure: Failed to send GpuChannelMsg_CreateCommandBuffer.
+21:44:21 DEBUG    webview    browsertab:_on_navigation_request:1066 navigation request: url https://www.google.com/, type Type.typed, is_main_frame True
+21:44:21 DEBUG    webview    webenginetab:_store_match_data:152 Active search match: 0/0
+21:44:21 DEBUG    webview    browsertab:_set_load_status:1008 load status for <qutebrowser.browser.webengine.webenginetab.WebEngineTab tab_id=0 url=''>: LoadStatus.loading
+21:44:21 DEBUG    signals    signalfilter:_filter_signals:93 ignoring: cur_load_status_changed(<LoadStatus.loading: 6>) (tab 0)
+21:44:21 DEBUG    signals    signalfilter:_filter_signals:93 ignoring: cur_load_started() (tab 0)
+21:44:22 DEBUG    misc       eventfilter:eventFilter:53 <qutebrowser.browser.webengine.webview.WebEngineView object at 0x7f06420a2c20> got new child <PyQt5.QtWidgets.QWidget object at 0x7f064210c700>, installing filter
+21:44:22 DEBUG    signals    signalfilter:_filter_signals:87 emitting: cur_url_changed(PyQt5.QtCore.QUrl('https://www.qutebrowser.org/quickstart.html')) (tab 1)
+21:44:22 DEBUG    webview    tabbedbrowser:_on_title_changed:760 Changing title for idx 1 to 'https://www.qutebrowser.org/quickstart.html'
+21:44:22 DEBUG    webview    tabbedbrowser:_on_title_changed:760 Changing title for idx 1 to 'qutebrowser quickstart | qutebrowser'
+21:44:22 DEBUG    webview    webenginetab:_on_renderer_process_pid_changed:1504 Renderer process PID for tab 0: 107
+21:44:22 DEBUG    signals    signalfilter:_filter_signals:93 ignoring: cur_url_changed(PyQt5.QtCore.QUrl('https://www.google.com/')) (tab 0)
+21:44:22 DEBUG    webview    tabbedbrowser:_on_title_changed:760 Changing title for idx 0 to 'https://www.google.com'
+21:44:22 DEBUG    misc       eventfilter:eventFilter:63 <qutebrowser.browser.webengine.webview.WebEngineView object at 0x7f06420a2c20>: removed child <PyQt5.QtCore.QObject object at 0x7f064210c550>
+21:44:22 DEBUG    webview    tabbedbrowser:_on_title_changed:760 Changing title for idx 0 to 'Google'
+21:44:23 DEBUG    webview    browsertab:_set_load_status:1008 load status for <qutebrowser.browser.webengine.webenginetab.WebEngineTab tab_id=1 url='https://www.qutebrowser.org/quickstart.html'>: LoadStatus.success_https
+21:44:23 DEBUG    signals    signalfilter:_filter_signals:87 emitting: cur_load_status_changed(<LoadStatus.success_https: 3>) (tab 1)
+21:44:23 DEBUG    sql        sql:run:334 INSERT INTO History (url, title, atime, redirect) values(:url, :title, :atime, :redirect)
+21:44:23 DEBUG    sql        sql:run:338     {':atime': 1725313463, ':redirect': False, ':title': 'qutebrowser quickstart | qutebrowser', ':url': 'https://www.qutebrowser.org/quickstart.html'}
+21:44:23 DEBUG    sql        sql:run:334 REPLACE INTO CompletionHistory (url, title, last_atime) values(:url, :title, :last_atime)
+21:44:23 DEBUG    sql        sql:run:338     {':last_atime': 1725313463, ':title': 'qutebrowser quickstart | qutebrowser', ':url': 'https://www.qutebrowser.org/quickstart.html'}
+21:44:23 DEBUG    sessions   sessions:save:337 Saving session _autosave to /home/myuser67867/.local/share/qutebrowser/sessions/_autosave.yml...
+21:44:23 DEBUG    signals    signalfilter:_filter_signals:87 emitting: cur_load_finished(True) (tab 1)
+21:44:23 DEBUG    modes      modeman:leave:424 Ignoring leave request for KeyMode.insert (reason load started) as we're in mode KeyMode.normal
+21:44:23 DEBUG    modes      tabbedbrowser:_leave_modes_on_load:740 Ignoring leave_on_load request due to setting.
+21:44:25 DEBUG    webview    browsertab:_set_load_status:1008 load status for <qutebrowser.browser.webengine.webenginetab.WebEngineTab tab_id=0 url='https://www.google.com/'>: LoadStatus.success_https
+21:44:25 DEBUG    signals    signalfilter:_filter_signals:93 ignoring: cur_load_status_changed(<LoadStatus.success_https: 3>) (tab 0)
+21:44:25 DEBUG    sql        sql:run:334 INSERT INTO History (url, title, atime, redirect) values(:url, :title, :atime, :redirect)
+21:44:25 DEBUG    sql        sql:run:338     {':atime': 1725313465, ':redirect': False, ':title': 'Google', ':url': 'https://www.google.com/'}
+21:44:25 DEBUG    sql        sql:run:334 REPLACE INTO CompletionHistory (url, title, last_atime) values(:url, :title, :last_atime)
+21:44:25 DEBUG    sql        sql:run:338     {':last_atime': 1725313465, ':title': 'Google', ':url': 'https://www.google.com/'}
+21:44:25 DEBUG    signals    signalfilter:_filter_signals:93 ignoring: cur_load_finished(True) (tab 0)
+21:45:23 DEBUG    sessions   sessions:save:337 Saving session _autosave to /home/myuser67867/.local/share/qutebrowser/sessions/_autosave.yml...
+21:49:21 DEBUG    ipc        ipc:update_atime:429 Touching /tmp/runtime/qutebrowser/ipc-5c2d50b1015ee676b8aa19f1dd5df4f9
+21:54:21 DEBUG    ipc        ipc:update_atime:429 Touching /tmp/runtime/qutebrowser/ipc-5c2d50b1015ee676b8aa19f1dd5df4f9
