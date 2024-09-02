@@ -10,10 +10,5 @@
       "--security-opt",
       "no-new-privileges:true",
       "--read-only"
-  ],
-  "settings": {
-      "terminal.integrated.defaultProfile.linux": "/bin/bash"
-  },
-  "postCreateCommand": "bash /usr/local/bin/entrypoint.sh",
-  "extensions": []
+  ]
 }
