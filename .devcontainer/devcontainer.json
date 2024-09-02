@@ -1,7 +1,7 @@
 {
   "name": "OnePage Browser Container",
   "build": {
-      "dockerfile": "Dockerfile",
+      "dockerfile": "../Dockerfile",
       "context": ".."
   },
   "runArgs": [
