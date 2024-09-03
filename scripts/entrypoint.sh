@@ -3,38 +3,77 @@
 # This script is executed when the Docker container starts.
 # It sets up the environment, starts necessary services, and launches qutebrowser.
 
-# Exit on error
+#!/bin/sh
 set -e
 
-# Ensure log directory exists
-mkdir -p $LOG_ONE_PATH
-mkdir -p /tmp/runtime && chmod 700 /tmp/runtime && \
+# Function to log messages
+log_message() {
+    echo "[INFO] $1"
+}
 
-# Create .Xauthority file for X11 authentication
-$HOME/create_xauthority.sh
+# Step 1: Environment Setup
+log_message "Step 1: Setting up environment variables..."
+export DISPLAY=:0
+export XAUTHORITY=${XAUTH_FILE}
 
-# Start Xvfb and redirect output to log file
-Xvfb :0 -screen 0 1024x768x16 -ac -nolisten tcp -audit 4 > $LOG_ONE_PATH/xvfb.log 2>&1 &
+# Step 2: Start Xvfb
+log_message "Step 2: Starting Xvfb (X virtual framebuffer)..."
+/usr/bin/Xvfb $DISPLAY -screen 0 1024x768x16 &
+XVFB_PID=$!
+sleep 5
 
+if ps -p $XVFB_PID > /dev/null; then
+    log_message "Xvfb started successfully with PID $XVFB_PID."
+else
+    log_message "[ERROR] Failed to start Xvfb. Exiting..."
+    exit 1
+fi
 
-# Wait for Xvfb to start
-sleep 3
+# Step 3: Xauthority Creation
+log_message "Step 3: Checking if Xauthority file exists..."
+if [ ! -f ${XAUTH_FILE} ]; then
+    log_message "Xauthority file not found. Creating Xauthority..."
+    /home/$USERNAME/create_xauthority.sh
 
+    if [ -f ${XAUTH_FILE} ]; then
+        log_message "Xauthority file created successfully."
+    else
+        log_message "[ERROR] Failed to create Xauthority file. Exiting..."
+        exit 1
+    fi
+else
+    log_message "Xauthority file already exists."
+fi
 
-# Start qutebrowser with --no-sandbox flag and redirect output to log file
-DISPLAY=:0 qutebrowser https://www.google.com --backend webengine --target=window --config-py=$HOME/config.py --debug > $LOG_ONE_PATH/qutebrowser.log 2>&1 &
-# Wait for qutebrowser to start
-sleep 3
+# Step 4: Start VNC Server and noVNC client
+log_message "Step 4: Starting VNC server and noVNC client..."
+/home/$USERNAME/vnc_launch.sh &
+VNC_LAUNCH_PID=$!
+sleep 5
 
-# Start x11vnc and redirect output to log file
-#x11vnc -auth /tmp/.Xauthority -rfbauth /opt/noVNC/passwd -display :0 -forever -loop -rfbport 5900 -shared > $LOG_ONE_PATH/x11vnc.log 2>&1 &
-# Start x11vnc using your script and redirect output to log file
-#$HOME/mtu.sh
+if ps -p $VNC_LAUNCH_PID > /dev/null; then
+    log_message "VNC server and noVNC client started successfully with PID $VNC_LAUNCH_PID."
+else
+    log_message "[ERROR] Failed to start VNC server and noVNC client. Exiting..."
+    exit 1
+fi
 
+# Step 5: Start qutebrowser
+log_message "Step 5: Starting qutebrowser in private browsing mode..."
+qutebrowser --temp-basedir &
+QUTE_PID=$!
+sleep 5
 
-$HOME/x11vnc.sh
+if ps -p $QUTE_PID > /dev/null; then
+    log_message "qutebrowser started successfully with PID $QUTE_PID."
+else
+    log_message "[ERROR] Failed to start qutebrowser. Exiting..."
+    exit 1
+fi
 
-$HOME/startVNCClient.sh
+# Step 6: Monitor Processes
+log_message "Step 6: Monitoring processes..."
+wait -n
 
-wait
-#$HOME/cleanup.sh
+log_message "[INFO] One of the background processes has terminated. Exiting..."
+exit $?

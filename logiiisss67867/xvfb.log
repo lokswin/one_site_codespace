@@ -1,6 +1,0 @@
-AUDIT: Mon Sep  2 21:44:20 2024: 14: client 1 connected from local host ( uid=999 gid=999 pid=18 )
-AUDIT: Mon Sep  2 21:44:23 2024: 14: client 2 connected from local host ( uid=999 gid=999 pid=132 )
-AUDIT: Mon Sep  2 21:44:23 2024: 14: client 3 connected from local host ( uid=999 gid=999 pid=132 )
-AUDIT: Mon Sep  2 21:44:23 2024: 14: client 4 connected from local host ( uid=999 gid=999 pid=132 )
-AUDIT: Mon Sep  2 21:44:23 2024: 14: client 5 connected from local host ( uid=999 gid=999 pid=132 )
-AUDIT: Mon Sep  2 21:44:23 2024: 14: client 6 connected from local host ( uid=999 gid=999 pid=132 )
