@@ -1,7 +1,7 @@
 #!/bin/bash
-# file:./scripts/entrypoint.sh
+# file: ./scripts/entrypoint.sh
 # This script is executed when the Docker container starts.
-# It sets up the environment, starts necessary services, and launches qutebrowser.
+# It sets up the environment, starts necessary services, and launches noVNC.
 
 #!/bin/sh
 set -e
@@ -13,8 +13,8 @@ log_message() {
 
 # Step 1: Environment Setup
 log_message "Step 1: Setting up environment variables..."
-export DISPLAY=:0
-export XAUTHORITY=${XAUTH_FILE}
+export DISPLAY=:1
+export XAUTHORITY=/root/.Xauthority
 
 # Step 2: Start Xvfb
 log_message "Step 2: Starting Xvfb (X virtual framebuffer)..."
@@ -31,11 +31,11 @@ fi
 
 # Step 3: Xauthority Creation
 log_message "Step 3: Checking if Xauthority file exists..."
-if [ ! -f ${XAUTH_FILE} ]; then
+if [ ! -f $XAUTHORITY ]; then
     log_message "Xauthority file not found. Creating Xauthority..."
-    /home/$USERNAME/create_xauthority.sh
+    /opt/create_xauthority.sh
 
-    if [ -f ${XAUTH_FILE} ]; then
+    if [ -f $XAUTHORITY ]; then
         log_message "Xauthority file created successfully."
     else
         log_message "[ERROR] Failed to create Xauthority file. Exiting..."
@@ -47,7 +47,7 @@ fi
 
 # Step 4: Start VNC Server and noVNC client
 log_message "Step 4: Starting VNC server and noVNC client..."
-/home/$USERNAME/vnc_launch.sh &
+/opt/vnc_launch.sh &
 VNC_LAUNCH_PID=$!
 sleep 5
 
@@ -58,21 +58,8 @@ else
     exit 1
 fi
 
-# Step 5: Start qutebrowser
-log_message "Step 5: Starting qutebrowser in private browsing mode..."
-qutebrowser --temp-basedir &
-QUTE_PID=$!
-sleep 5
-
-if ps -p $QUTE_PID > /dev/null; then
-    log_message "qutebrowser started successfully with PID $QUTE_PID."
-else
-    log_message "[ERROR] Failed to start qutebrowser. Exiting..."
-    exit 1
-fi
-
-# Step 6: Monitor Processes
-log_message "Step 6: Monitoring processes..."
+# Step 5: Monitor Processes
+log_message "Step 5: Monitoring processes..."
 wait -n
 
 log_message "[INFO] One of the background processes has terminated. Exiting..."
