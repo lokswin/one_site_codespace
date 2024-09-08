@@ -20,3 +20,10 @@ ip addr show eth0 | grep inet
 
 docker rm test-container && docker build --build-arg VNC_PASSWORD="" -t onepage-browser-container . && docker run -d --name test-container -p 6080:6080 onepage-browser-container
 
+
+run
+
+docker build --build-arg VNC_PASSWORD="" --build-arg CACHEBUST=$(date +%s) -t onepage-browser-container . ;docker stop test-container;docker rm test-container;docker run -d --name test-container -p 5901:59010 -p 6080:6080 onepage-browser-container
+
+logs
+rm -rf ./logiiisss67867/*;docker cp test-container:/var/log/vnc/. ./logiiisss67867

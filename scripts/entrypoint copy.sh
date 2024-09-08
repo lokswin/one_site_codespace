@@ -27,7 +27,7 @@ DISPLAY=:0 qutebrowser https://www.google.com --backend webengine --target=windo
 sleep 3
 
 # Start x11vnc and redirect output to log file
-#x11vnc -auth /tmp/.Xauthority -rfbauth /opt/noVNC/passwd -display :0 -forever -loop -rfbport 5900 -shared > $LOG_ONE_PATH/x11vnc.log 2>&1 &
+#x11vnc -auth /tmp/.Xauthority -rfbauth /opt/noVNC/passwd -display :0 -forever -loop -rfbport 5901 -shared > $LOG_ONE_PATH/x11vnc.log 2>&1 &
 # Start x11vnc using your script and redirect output to log file
 #$HOME/mtu.sh
 

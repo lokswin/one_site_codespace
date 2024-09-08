@@ -31,7 +31,7 @@ sleep 5
 
 # Check for novnc command
 log_message "Starting noVNC client..."
-/opt/novnc/utils/novnc_proxy --vnc localhost:5901 --listen 6080 &
+/usr/bin/websockify --web /usr/share/novnc 6080 localhost:5901  &
 sleep 5
 
 if ps -p $! > /dev/null; then
@@ -42,7 +42,12 @@ else
 fi
 
 mkdir -p /var/log/vnc
-DISPLAY=:1 qutebrowser https://www.google.com --backend webengine --target=window --config-py=/opt/config.py --debug > /var/log/vnc/qutebrowser.log 2>&1 &
+export XDG_RUNTIME_DIR=/tmp/runtime-$(whoami)
+mkdir -p $XDG_RUNTIME_DIR
+chmod 700 $XDG_RUNTIME_DIR
+
+DISPLAY=:1 qutebrowser --temp-basedir https://www.google.com --backend webengine --target=window --debug --qt-flag no-sandbox > /var/log/vnc/qutebrowser.log 2>&1 &
+# DISPLAY=:1 qutebrowser https://www.google.com --backend webengine --target=window --config-py=/opt/config.py --debug > /var/log/vnc/qutebrowser.log 2>&1 &
 
 
 log_message "VNC server and noVNC client running. Monitoring processes..."

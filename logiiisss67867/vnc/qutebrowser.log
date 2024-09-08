@@ -1,0 +1,172 @@
+19:00:17 DEBUG    init       earlyinit:init_log:275 Log initialized.
+19:00:17 DEBUG    init       app:run:83 Initializing directories...
+19:00:17 DEBUG    init       standarddir:init:336 Base directory: /tmp/qutebrowser-basedir-5z1iri26
+19:00:17 DEBUG    init       app:run:87 Initializing config...
+19:00:17 DEBUG    init       app:run:90 Initializing application...
+19:00:17 DEBUG    init       app:__init__:471 Qt arguments: ['/usr/bin/qutebrowser', '--no-sandbox', '--reduced-referrer-granularity'], based on Namespace(backend='webengine', basedir='/tmp/qutebrowser-basedir-5z1iri26', color=True, command=['https://www.google.com'], config_py=None, debug=True, debug_flags=[], enable_webengine_inspector=False, force_color=False, json_args=None, json_logging=False, logfilter=None, loglevel='info', loglines=2000, no_err_windows=False, nowindow=False, override_restore=False, qt_arg=None, qt_flag=[['no-sandbox']], session=None, target='window', temp_basedir=True, temp_basedir_restarted=None, temp_settings=[], url=[], version=False)
+19:00:17 DEBUG    init       app:__init__:476 Initializing application...
+19:00:17 DEBUG    ipc        ipc:send_to_running_instance:437 Connecting to /tmp/qutebrowser-basedir-5z1iri26/runtime/ipc-bcf11089560daa886a940a5e1e139694
+19:00:17 DEBUG    ipc        ipc:send_to_running_instance:467 No existing instance present (error 2)
+19:00:17 DEBUG    init       ipc:send_or_listen:497 Starting IPC server...
+19:00:17 DEBUG    ipc        ipc:__init__:192 Not calling setSocketOptions
+19:00:17 DEBUG    ipc        ipc:listen:203 Listening as /tmp/qutebrowser-basedir-5z1iri26/runtime/ipc-bcf11089560daa886a940a5e1e139694
+19:00:17 DEBUG    init       app:init:139 Starting init...
+19:00:17 DEBUG    extensions loader:_load_component:152 Importing qutebrowser.components.adblock
+19:00:17 DEBUG    extensions loader:_load_component:160 Running init hook 'init'
+19:00:17 DEBUG    extensions loader:_load_component:152 Importing qutebrowser.components.caretcommands
+19:00:17 DEBUG    extensions loader:_load_component:152 Importing qutebrowser.components.misccommands
+19:00:17 DEBUG    extensions loader:_load_component:152 Importing qutebrowser.components.readlinecommands
+19:00:17 DEBUG    extensions loader:_load_component:152 Importing qutebrowser.components.scrollcommands
+19:00:17 DEBUG    extensions loader:_load_component:152 Importing qutebrowser.components.zoomcommands
+19:00:17 DEBUG    init       app:_init_modules:377 Initializing save manager...
+19:00:17 DEBUG    init       app:_init_modules:383 Checking backend requirements...
+19:00:17 DEBUG    init       app:_init_modules:386 Initializing prompts...
+19:00:17 DEBUG    init       app:_init_modules:389 Initializing network...
+19:00:17 DEBUG    init       networkmanager:init:108 Default Qt ciphers: TLS_AES_256_GCM_SHA384, TLS_CHACHA20_POLY1305_SHA256, TLS_AES_128_GCM_SHA256, ECDHE-ECDSA-AES256-GCM-SHA384, ECDHE-RSA-AES256-GCM-SHA384, DHE-RSA-AES256-GCM-SHA384, ECDHE-ECDSA-CHACHA20-POLY1305, ECDHE-RSA-CHACHA20-POLY1305, DHE-RSA-CHACHA20-POLY1305, ECDHE-ECDSA-AES128-GCM-SHA256, ECDHE-RSA-AES128-GCM-SHA256, DHE-RSA-AES128-GCM-SHA256, ECDHE-ECDSA-AES256-SHA384, ECDHE-RSA-AES256-SHA384, DHE-RSA-AES256-SHA256, ECDHE-ECDSA-AES128-SHA256, ECDHE-RSA-AES128-SHA256, DHE-RSA-AES128-SHA256, ECDHE-ECDSA-AES256-SHA, ECDHE-RSA-AES256-SHA, DHE-RSA-AES256-SHA, ECDHE-ECDSA-AES128-SHA, ECDHE-RSA-AES128-SHA, DHE-RSA-AES128-SHA, RSA-PSK-AES256-GCM-SHA384, DHE-PSK-AES256-GCM-SHA384, RSA-PSK-CHACHA20-POLY1305, DHE-PSK-CHACHA20-POLY1305, ECDHE-PSK-CHACHA20-POLY1305, AES256-GCM-SHA384, PSK-AES256-GCM-SHA384, PSK-CHACHA20-POLY1305, RSA-PSK-AES128-GCM-SHA256, DHE-PSK-AES128-GCM-SHA256, AES128-GCM-SHA256, PSK-AES128-GCM-SHA256, AES256-SHA256, AES128-SHA256, ECDHE-PSK-AES256-CBC-SHA384, ECDHE-PSK-AES256-CBC-SHA, SRP-RSA-AES-256-CBC-SHA, SRP-AES-256-CBC-SHA, RSA-PSK-AES256-CBC-SHA384, DHE-PSK-AES256-CBC-SHA384, RSA-PSK-AES256-CBC-SHA, DHE-PSK-AES256-CBC-SHA, AES256-SHA, PSK-AES256-CBC-SHA384, PSK-AES256-CBC-SHA, ECDHE-PSK-AES128-CBC-SHA256, ECDHE-PSK-AES128-CBC-SHA, SRP-RSA-AES-128-CBC-SHA, SRP-AES-128-CBC-SHA, RSA-PSK-AES128-CBC-SHA256, DHE-PSK-AES128-CBC-SHA256, RSA-PSK-AES128-CBC-SHA, DHE-PSK-AES128-CBC-SHA, AES128-SHA, PSK-AES128-CBC-SHA256, PSK-AES128-CBC-SHA
+19:00:17 DEBUG    init       networkmanager:init:119 Disabling bad ciphers: 
+19:00:17 DEBUG    init       app:_init_modules:392 Initializing proxy...
+19:00:17 DEBUG    init       app:_init_modules:396 Initializing downloads...
+19:00:17 DEBUG    init       app:_init_modules:401 Initializing SQL...
+19:00:17 DEBUG    sql        sql:__init__:183 Preparing SQL query: "PRAGMA journal_mode=WAL"
+19:00:17 DEBUG    sql        sql:run:215 Running SQL query: "PRAGMA journal_mode=WAL"
+19:00:17 DEBUG    sql        sql:run:219 query bindings: {}
+19:00:18 DEBUG    sql        sql:__init__:183 Preparing SQL query: "PRAGMA synchronous=NORMAL"
+19:00:18 DEBUG    sql        sql:run:215 Running SQL query: "PRAGMA synchronous=NORMAL"
+19:00:18 DEBUG    sql        sql:run:219 query bindings: {}
+19:00:18 DEBUG    init       app:_init_modules:404 Initializing web history...
+19:00:18 DEBUG    sql        sql:__init__:183 Preparing SQL query: "CREATE TABLE IF NOT EXISTS History (url NOT NULL, title NOT NULL, atime NOT NULL, redirect NOT NULL)"
+19:00:18 DEBUG    sql        sql:run:215 Running SQL query: "CREATE TABLE IF NOT EXISTS History (url NOT NULL, title NOT NULL, atime NOT NULL, redirect NOT NULL)"
+19:00:18 DEBUG    sql        sql:run:219 query bindings: {}
+19:00:18 DEBUG    sql        sql:__init__:183 Preparing SQL query: "CREATE TABLE IF NOT EXISTS CompletionHistory (url PRIMARY KEY, title NOT NULL, last_atime NOT NULL)"
+19:00:18 DEBUG    sql        sql:run:215 Running SQL query: "CREATE TABLE IF NOT EXISTS CompletionHistory (url PRIMARY KEY, title NOT NULL, last_atime NOT NULL)"
+19:00:18 DEBUG    sql        sql:run:219 query bindings: {}
+19:00:18 DEBUG    sql        sql:__init__:183 Preparing SQL query: "CREATE INDEX IF NOT EXISTS CompletionHistoryAtimeIndex ON CompletionHistory (last_atime)"
+19:00:18 DEBUG    sql        sql:run:215 Running SQL query: "CREATE INDEX IF NOT EXISTS CompletionHistoryAtimeIndex ON CompletionHistory (last_atime)"
+19:00:18 DEBUG    sql        sql:run:219 query bindings: {}
+19:00:18 DEBUG    sql        sql:__init__:183 Preparing SQL query: "CREATE TABLE IF NOT EXISTS CompletionMetaInfo (key PRIMARY KEY, value )"
+19:00:18 DEBUG    sql        sql:run:215 Running SQL query: "CREATE TABLE IF NOT EXISTS CompletionMetaInfo (key PRIMARY KEY, value )"
+19:00:18 DEBUG    sql        sql:run:219 query bindings: {}
+19:00:18 DEBUG    sql        sql:__init__:183 Preparing SQL query: "SELECT EXISTS(SELECT * FROM CompletionMetaInfo WHERE key = :val)"
+19:00:18 DEBUG    sql        sql:run:215 Running SQL query: "SELECT EXISTS(SELECT * FROM CompletionMetaInfo WHERE key = :val)"
+19:00:18 DEBUG    sql        sql:run:219 query bindings: {':val': 'force_rebuild'}
+19:00:18 DEBUG    sql        sql:__init__:183 Preparing SQL query: "REPLACE INTO CompletionMetaInfo (key, value) values(:key, :value)"
+19:00:18 DEBUG    sql        sql:run:215 Running SQL query: "REPLACE INTO CompletionMetaInfo (key, value) values(:key, :value)"
+19:00:18 DEBUG    sql        sql:run:219 query bindings: {':key': 'force_rebuild', ':value': False}
+19:00:18 DEBUG    sql        sql:__init__:183 Preparing SQL query: "pragma user_version"
+19:00:18 DEBUG    sql        sql:run:215 Running SQL query: "pragma user_version"
+19:00:18 DEBUG    sql        sql:run:219 query bindings: {}
+19:00:18 DEBUG    sql        sql:__init__:183 Preparing SQL query: "DELETE FROM CompletionHistory"
+19:00:18 DEBUG    sql        sql:run:215 Running SQL query: "DELETE FROM CompletionHistory"
+19:00:18 DEBUG    sql        sql:run:219 query bindings: {}
+19:00:18 DEBUG    sql        sql:__init__:183 Preparing SQL query: "SELECT value FROM CompletionMetaInfo WHERE key = :key"
+19:00:18 DEBUG    sql        sql:run:215 Running SQL query: "SELECT value FROM CompletionMetaInfo WHERE key = :key"
+19:00:18 DEBUG    sql        sql:run:219 query bindings: {':key': 'force_rebuild'}
+19:00:18 DEBUG    sql        sql:__init__:183 Preparing SQL query: "SELECT count(*) FROM CompletionHistory"
+19:00:18 DEBUG    sql        sql:run:215 Running SQL query: "SELECT count(*) FROM CompletionHistory"
+19:00:18 DEBUG    sql        sql:run:219 query bindings: {}
+19:00:18 DEBUG    sql        sql:__init__:183 Preparing SQL query: "SELECT url, title, max(atime) AS atime FROM History WHERE NOT redirect and url NOT LIKE "qute://back%" GROUP BY url ORDER BY atime asc"
+19:00:18 DEBUG    sql        sql:run:215 Running SQL query: "SELECT url, title, max(atime) AS atime FROM History WHERE NOT redirect and url NOT LIKE "qute://back%" GROUP BY url ORDER BY atime asc"
+19:00:18 DEBUG    sql        sql:run:219 query bindings: {}
+19:00:18 DEBUG    sql        sql:__init__:183 Preparing SQL query: "REPLACE INTO CompletionHistory (url, title, last_atime) values(:url, :title, :last_atime)"
+19:00:18 DEBUG    sql        sql:run_batch:228 Running SQL query (batch): "REPLACE INTO CompletionHistory (url, title, last_atime) values(:url, :title, :last_atime)"
+19:00:18 DEBUG    sql        sql:__init__:183 Preparing SQL query: "pragma user_version = 2"
+19:00:18 DEBUG    sql        sql:run:215 Running SQL query: "pragma user_version = 2"
+19:00:18 DEBUG    sql        sql:run:219 query bindings: {}
+19:00:18 DEBUG    sql        sql:__init__:183 Preparing SQL query: "CREATE INDEX IF NOT EXISTS HistoryIndex ON History (url)"
+19:00:18 DEBUG    sql        sql:run:215 Running SQL query: "CREATE INDEX IF NOT EXISTS HistoryIndex ON History (url)"
+19:00:18 DEBUG    sql        sql:run:219 query bindings: {}
+19:00:18 DEBUG    sql        sql:__init__:183 Preparing SQL query: "CREATE INDEX IF NOT EXISTS HistoryAtimeIndex ON History (atime)"
+19:00:18 DEBUG    sql        sql:run:215 Running SQL query: "CREATE INDEX IF NOT EXISTS HistoryAtimeIndex ON History (atime)"
+19:00:18 DEBUG    sql        sql:run:219 query bindings: {}
+19:00:18 DEBUG    sql        sql:__init__:183 Preparing SQL query: "SELECT EXISTS(SELECT * FROM History WHERE url = :val)"
+19:00:18 DEBUG    sql        sql:__init__:183 Preparing SQL query: "SELECT * FROM History where not redirect and not url like "qute://%" and atime > :earliest and atime <= :latest ORDER BY atime desc"
+19:00:18 DEBUG    sql        sql:__init__:183 Preparing SQL query: "SELECT * FROM History where not redirect and not url like "qute://%" and atime <= :latest ORDER BY atime desc limit :limit offset :offset"
+19:00:18 DEBUG    init       app:_init_modules:411 Initializing command history...
+19:00:18 DEBUG    init       app:_init_modules:413 Initializing sessions...
+19:00:18 DEBUG    init       app:_init_modules:417 Initializing websettings...
+19:00:18 DEBUG    config     webenginesettings:set_dictionary_language:273 Found dicts: []
+19:00:18 DEBUG    config     webenginesettings:set_dictionary_language:273 Found dicts: []
+19:00:18 DEBUG    config     config:_set_value:323 Config option changed: content.headers.user_agent = Mozilla/5.0 ({os_info}) AppleWebKit/{webkit_version} (KHTML, like Gecko) {upstream_browser_key}/{upstream_browser_version} Safari/{webkit_version}
+19:00:18 DEBUG    config     config:_set_value:323 Config option changed: content.headers.user_agent = Mozilla/5.0 ({os_info}; rv:71.0) Gecko/20100101 Firefox/71.0
+19:00:18 DEBUG    config     config:_set_value:323 Config option changed: content.headers.user_agent = Mozilla/5.0 ({os_info}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99 Safari/537.36
+19:00:18 DEBUG    config     config:_set_value:323 Config option changed: content.headers.user_agent = Mozilla/5.0 ({os_info}; rv:71.0) Gecko/20100101 Firefox/71.0
+19:00:18 DEBUG    config     config:_set_value:323 Config option changed: content.javascript.enabled = True
+19:00:18 DEBUG    config     config:_set_value:323 Config option changed: content.javascript.enabled = True
+19:00:18 DEBUG    config     config:_set_value:323 Config option changed: content.images = True
+19:00:18 DEBUG    config     config:_set_value:323 Config option changed: content.images = True
+19:00:18 DEBUG    config     config:_set_value:323 Config option changed: content.javascript.enabled = True
+19:00:18 DEBUG    config     config:_set_value:323 Config option changed: content.javascript.enabled = True
+19:00:18 DEBUG    init       app:_init_modules:424 Initializing quickmarks...
+19:00:18 DEBUG    save       savemanager:save:95 Save of quickmark-manager requested - dirty True, save_on_exit False, is_exit False, force False -> True
+19:00:18 DEBUG    destroy    lineparser:_after_save:81 Saved to /tmp/qutebrowser-basedir-5z1iri26/config/quickmarks
+19:00:18 DEBUG    init       app:_init_modules:428 Initializing bookmarks...
+19:00:18 DEBUG    save       savemanager:save:95 Save of bookmark-manager requested - dirty True, save_on_exit False, is_exit False, force False -> True
+19:00:18 DEBUG    destroy    lineparser:_after_save:81 Saved to /tmp/qutebrowser-basedir-5z1iri26/config/bookmarks/urls
+19:00:18 DEBUG    init       app:_init_modules:432 Initializing cookies...
+19:00:18 DEBUG    init       app:_init_modules:435 Initializing cache...
+19:00:18 DEBUG    init       app:_init_modules:438 Initializing downloads...
+19:00:18 DEBUG    init       networkmanager:__init__:156 Initializing NetworkManager
+19:00:18 DEBUG    init       networkmanager:__init__:161 NetworkManager init done
+19:00:18 DEBUG    init       app:_init_modules:442 Initializing Greasemonkey...
+19:00:18 DEBUG    greasemonkey greasemonkey:load_scripts:284 Reading scripts from: /tmp/qutebrowser-basedir-5z1iri26/data/greasemonkey
+19:00:18 DEBUG    init       app:_init_modules:445 Misc initialization...
+19:00:18 DEBUG    init       webenginetab:init:59 Initializing qute://* handler...
+19:00:18 DEBUG    init       webenginetab:init:65 Initializing request interceptor...
+19:00:18 DEBUG    init       webenginetab:init:71 Initializing QtWebEngine downloads...
+19:00:18 DEBUG    init       webenginetab:init:78 Initializing cookie filter...
+19:00:18 DEBUG    init       app:init:157 Initializing eventfilter...
+19:00:18 DEBUG    init       app:init:160 Connecting signals...
+19:00:18 DEBUG    init       app:_process_args:197 Initializing main window...
+19:00:18 DEBUG    init       mainwindow:_init_downloadmanager:349 Initializing downloads...
+19:00:18 DEBUG    statusbar  bar:_hide_cmd_widget:325 Hiding cmd widget
+19:00:18 DEBUG    init       mainwindow:__init__:248 Initializing modes...
+19:00:18 DEBUG    init       mainwindow:_init_geometry:291 Initial main window geometry: PyQt5.QtCore.QRect(50, 50, 800, 600)
+19:00:18 DEBUG    url        urlutils:get_path_if_valid:387 Checking if 'https://www.google.com' is a path
+19:00:18 DEBUG    url        urlutils:is_url:261 Checking if 'https://www.google.com' is a URL (autosearch=naive).
+19:00:18 DEBUG    url        urlutils:is_url:284 Contains explicit scheme
+19:00:18 DEBUG    url        urlutils:is_url:303 url = True
+19:00:18 DEBUG    url        urlutils:fuzzy_url:215 URL is a fuzzy address
+19:00:18 DEBUG    url        urlutils:fuzzy_url:217 Converting fuzzy term 'https://www.google.com' to URL -> https://www.google.com
+19:00:18 DEBUG    init       app:open_url:278 About to open URL: https://www.google.com
+19:00:18 DEBUG    webview    tabbedbrowser:tabopen:583 Creating new tab with URL PyQt5.QtCore.QUrl('https://www.google.com'), background False, related False, idx None
+19:00:18 DEBUG    webview    tabbedbrowser:_get_new_tab_idx:673 tabs.new_position last -> opening new tab at -1, next left: 0 / right: -1
+19:00:18 DEBUG    webview    webview:render_widget:81 Found possibly lost focusProxy: []
+19:00:18 DEBUG    webview    webview:render_widget:81 Found possibly lost focusProxy: []
+19:00:18 DEBUG    modes      tabbedbrowser:_on_current_changed:830 Current tab changed, focusing <qutebrowser.browser.webengine.webenginetab.WebEngineTab tab_id=0 url=''>
+19:00:18 DEBUG    modes      tabbedbrowser:_on_current_changed:837 Mode before tab change: normal (mode_on_change = normal)
+19:00:18 DEBUG    modes      modeman:leave:377 Ignoring leave request for KeyMode.hint (reason tab changed) as we're in mode KeyMode.normal
+19:00:18 DEBUG    modes      modeman:leave:377 Ignoring leave request for KeyMode.caret (reason tab changed) as we're in mode KeyMode.normal
+19:00:18 DEBUG    modes      modeman:leave:377 Ignoring leave request for KeyMode.insert (reason tab changed) as we're in mode KeyMode.normal
+19:00:18 DEBUG    modes      modeman:leave:377 Ignoring leave request for KeyMode.passthrough (reason tab changed) as we're in mode KeyMode.normal
+19:00:18 DEBUG    modes      tabbedbrowser:_on_current_changed:848 Mode after tab change: normal (mode_on_change = normal)
+19:00:18 DEBUG    webview    webview:render_widget:81 Found possibly lost focusProxy: []
+19:00:18 DEBUG    webview    browsertab:_on_before_load_started:961 Going to start loading: https://www.google.com
+19:00:18 DEBUG    webview    tabbedbrowser:_on_title_changed:750 Changing title for idx 0 to 'https://www.google.com'
+19:00:18 DEBUG    webview    browsertab:_on_before_load_started:961 Going to start loading: https://www.google.com
+19:00:18 DEBUG    webview    tabbedbrowser:_on_title_changed:750 Changing title for idx 0 to 'https://www.google.com'
+19:00:18 DEBUG    misc       eventfilter:eventFilter:55 <qutebrowser.browser.webengine.webview.WebEngineView object at 0x7fba685c7790> got new child <PyQt5.QtWidgets.QWidget object at 0x7fba685d70d0>, installing filter
+19:00:18 DEBUG    webview    tabbedbrowser:_on_title_changed:750 Changing title for idx 0 to 'https://www.google.com/'
+19:00:18 DEBUG    signals    signalfilter:_filter_signals:87 emitting: cur_url_changed(PyQt5.QtCore.QUrl('https://www.google.com/')) (tab 0)
+19:00:18 DEBUG    init       app:_process_args:213 Init finished after 0.786693s
+19:00:18 DEBUG    init       app:init:169 Init done!
+19:00:18 DEBUG    misc       mainwindow:_update_overlay_geometry:344 new geometry for <qutebrowser.mainwindow.messageview.MessageView object at 0x7fba685c7280>: PyQt5.QtCore.QRect(0, 581, 801, 1)
+19:00:18 DEBUG    webview    browsertab:_set_load_status:927 load status for <qutebrowser.browser.webengine.webenginetab.WebEngineTab tab_id=0 url='https://www.google.com/'>: LoadStatus.loading
+19:00:18 DEBUG    signals    signalfilter:_filter_signals:87 emitting: cur_load_status_changed(<LoadStatus.loading: 6>) (tab 0)
+19:00:18 DEBUG    signals    signalfilter:_filter_signals:87 emitting: cur_load_started() (tab 0)
+19:00:18 DEBUG    webview    browsertab:_on_navigation_request:986 navigation request: url https://www.google.com/, type Type.typed, is_main_frame True
+19:00:18 DEBUG    webview    tabbedbrowser:_on_title_changed:750 Changing title for idx 0 to 'https://www.google.com'
+19:00:18 DEBUG    webview    tabbedbrowser:_on_title_changed:750 Changing title for idx 0 to 'Google'
+19:00:18 DEBUG    webview    browsertab:_set_load_status:927 load status for <qutebrowser.browser.webengine.webenginetab.WebEngineTab tab_id=0 url='https://www.google.com/'>: LoadStatus.success_https
+19:00:18 DEBUG    signals    signalfilter:_filter_signals:87 emitting: cur_load_status_changed(<LoadStatus.success_https: 3>) (tab 0)
+19:00:19 DEBUG    webview    browsertab:_set_load_status:927 load status for <qutebrowser.browser.webengine.webenginetab.WebEngineTab tab_id=0 url='https://www.google.com/'>: LoadStatus.success_https
+19:00:19 DEBUG    signals    signalfilter:_filter_signals:87 emitting: cur_load_status_changed(<LoadStatus.success_https: 3>) (tab 0)
+19:00:19 DEBUG    sql        sql:__init__:183 Preparing SQL query: "INSERT INTO History (url, title, atime, redirect) values(:url, :title, :atime, :redirect)"
+19:00:19 DEBUG    sql        sql:run:215 Running SQL query: "INSERT INTO History (url, title, atime, redirect) values(:url, :title, :atime, :redirect)"
+19:00:19 DEBUG    sql        sql:run:219 query bindings: {':atime': 1725822019, ':redirect': False, ':title': 'Google', ':url': 'https://www.google.com/'}
+19:00:19 DEBUG    sql        sql:__init__:183 Preparing SQL query: "REPLACE INTO CompletionHistory (url, title, last_atime) values(:url, :title, :last_atime)"
+19:00:19 DEBUG    sql        sql:run:215 Running SQL query: "REPLACE INTO CompletionHistory (url, title, last_atime) values(:url, :title, :last_atime)"
+19:00:19 DEBUG    sql        sql:run:219 query bindings: {':last_atime': 1725822019, ':title': 'Google', ':url': 'https://www.google.com/'}
+19:00:19 DEBUG    sessions   sessions:save:305 Saving session _autosave to /tmp/qutebrowser-basedir-5z1iri26/data/sessions/_autosave.yml...
+19:00:19 DEBUG    signals    signalfilter:_filter_signals:87 emitting: cur_load_finished(True) (tab 0)
+19:00:19 DEBUG    modes      modeman:leave:377 Ignoring leave request for KeyMode.insert (reason load started) as we're in mode KeyMode.normal
+19:00:19 DEBUG    modes      modeman:leave:377 Ignoring leave request for KeyMode.hint (reason load started) as we're in mode KeyMode.normal

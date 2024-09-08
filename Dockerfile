@@ -15,23 +15,14 @@ RUN apt-get update && \
 
 RUN apt-get install -y qutebrowser
 
+RUN apt-get install -y websockify 
+
 # Set environment variables
 ENV DISPLAY=:1
 
-# Create directories and download necessary components
-RUN mkdir -p /opt/novnc && \
-    mkdir -p /opt/websockify && \
-    mkdir -p /etc/supervisor/conf.d && \
-    wget https://github.com/novnc/noVNC/archive/refs/tags/v1.3.0.tar.gz -O /opt/novnc.tar.gz && \
-    tar xzf /opt/novnc.tar.gz -C /opt/novnc --strip-components=1 && \
-    rm /opt/novnc.tar.gz && \
-    wget https://github.com/novnc/websockify/archive/refs/tags/v0.10.0.tar.gz -O /opt/websockify.tar.gz && \
-    tar xzf /opt/websockify.tar.gz -C /opt/websockify --strip-components=1 && \
-    rm /opt/websockify.tar.gz
-
+RUN mkdir -p /root/.config/qutebrowser
 # Add files
 COPY ./config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY ./config/config.py /opt/config.py
 COPY ./scripts/entrypoint.sh /opt/entrypoint.sh
 COPY ./scripts/create_xauthority.sh /opt/create_xauthority.sh
 COPY ./scripts/vnc_launch.sh /opt/vnc_launch.sh
@@ -42,6 +33,9 @@ RUN chmod +x /opt/entrypoint.sh /opt/create_xauthority.sh /opt/vnc_launch.sh
 
 # Expose the VNC and noVNC ports
 EXPOSE 5901 6080
+
+ARG CACHEBUST=1
+COPY ./config/config.py /opt/config.py
 
 # Set the entrypoint
 ENTRYPOINT ["/opt/entrypoint.sh"]

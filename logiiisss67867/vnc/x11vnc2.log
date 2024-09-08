@@ -1,0 +1,87 @@
+08/09/2024 19:00:07 x11vnc version: 0.9.16 PORT=5900
+WebSocket server settings:
+  - Listen on :6080
+  - Web server. Web root: /usr/share/novnc
+  - No SSL/TLS support (no cert file)
+  - proxying from :6080 to localhost:5901
+172.22.96.1 - - [08/Sep/2024 19:00:30] code 404, message File not found
+172.22.96.1 - - [08/Sep/2024 19:00:30] code 404, message File not found
+172.22.96.1 - - [08/Sep/2024 19:00:30] code 404, message File not found
+172.22.96.1 - - [08/Sep/2024 19:00:30] code 404, message File not found
+172.22.96.1 - - [08/Sep/2024 19:00:30] code 404, message File not found
+172.22.96.1 - - [08/Sep/2024 19:00:33] code 404, message File not found
+172.22.96.1 - - [08/Sep/2024 19:00:33] code 404, message File not found
+172.22.96.1 - - [08/Sep/2024 19:00:33] code 404, message File not found
+172.22.96.1 - - [08/Sep/2024 19:00:33] code 404, message File not found
+172.22.96.1 - - [08/Sep/2024 19:00:33] code 404, message File not found
+172.22.96.1 - - [08/Sep/2024 19:00:36] code 404, message File not found
+172.22.96.1 - - [08/Sep/2024 19:00:36] code 404, message File not found
+172.22.96.1 - - [08/Sep/2024 19:00:36] code 404, message File not found
+172.22.96.1 - - [08/Sep/2024 19:00:36] code 404, message File not found
+172.22.96.1 - - [08/Sep/2024 19:00:36] code 404, message File not found
+172.22.96.1 - - [08/Sep/2024 19:00:37] code 404, message File not found
+172.22.96.1 - - [08/Sep/2024 19:00:37] code 404, message File not found
+172.22.96.1 - - [08/Sep/2024 19:00:37] code 404, message File not found
+172.22.96.1 - - [08/Sep/2024 19:00:37] code 404, message File not found
+172.22.96.1 - - [08/Sep/2024 19:00:37] code 404, message File not found
+172.22.96.1 - - [08/Sep/2024 19:00:38] code 404, message File not found
+172.22.96.1 - - [08/Sep/2024 19:00:38] code 404, message File not found
+172.22.96.1 - - [08/Sep/2024 19:00:38] code 404, message File not found
+172.22.96.1 - - [08/Sep/2024 19:00:38] code 404, message File not found
+172.22.96.1 - - [08/Sep/2024 19:00:38] code 404, message File not found
+08/09/2024 19:00:07 Client Side Caching: -ncache mode is in effect to provide
+08/09/2024 19:00:07   client-side pixel data caching.  This speeds up
+08/09/2024 19:00:07   iconifying/deiconifying windows, moving and raising
+08/09/2024 19:00:07   windows, and reposting menus.  In the simple CopyRect
+08/09/2024 19:00:07   encoding scheme used (no compression) a huge amount
+08/09/2024 19:00:07   of extra memory (20-100MB) is used on both the server and
+08/09/2024 19:00:07   client sides.  This mode works with any VNC viewer.
+08/09/2024 19:00:07   However, in most you can actually see the cached pixel
+08/09/2024 19:00:07   data by scrolling down, so you need to re-adjust its size.
+08/09/2024 19:00:07   See http://www.karlrunge.com/x11vnc/faq.html#faq-client-caching.
+08/09/2024 19:00:07   If this mode yields undesired behavior (poor response,
+08/09/2024 19:00:07   painting errors, etc) it may be disabled via: '-ncache 0'
+08/09/2024 19:00:07   You can press 3 Alt_L's (Left "Alt" key) in a row to 
+08/09/2024 19:00:07   repaint the screen, also see the -fixscreen option for
+08/09/2024 19:00:07   periodic repaints.
+08/09/2024 19:00:07 
+08/09/2024 19:00:07 XKEYBOARD: number of keysyms per keycode 7 is greater
+08/09/2024 19:00:07   than 4 and 51 keysyms are mapped above 4.
+08/09/2024 19:00:07   Automatically switching to -xkb mode.
+08/09/2024 19:00:07   If this makes the key mapping worse you can
+08/09/2024 19:00:07   disable it with the "-noxkb" option.
+08/09/2024 19:00:07   Also, remember "-remap DEAD" for accenting characters.
+08/09/2024 19:00:07 
+08/09/2024 19:00:07 X FBPM extension not supported.
+Xlib:  extension "DPMS" missing on display ":1".
+08/09/2024 19:00:07 X display is not capable of DPMS.
+08/09/2024 19:00:07 --------------------------------------------------------
+08/09/2024 19:00:07 
+08/09/2024 19:00:07 Default visual ID: 0x21
+08/09/2024 19:00:07 Read initial data from X display into framebuffer.
+08/09/2024 19:00:07 initialize_screen: fb_depth/fb_bpp/fb_Bpl 16/16/2048
+08/09/2024 19:00:07 
+08/09/2024 19:00:07 X display :1 is 16bpp depth=16 true color
+08/09/2024 19:00:07 
+08/09/2024 19:00:07 Autoprobing TCP port 
+08/09/2024 19:00:07 Autoprobing selected TCP port 5900
+08/09/2024 19:00:07 Autoprobing TCP6 port 
+08/09/2024 19:00:07 Autoprobing selected TCP6 port 5900
+08/09/2024 19:00:07 listen6: bind: Address already in use
+08/09/2024 19:00:07 Not listening on IPv6 interface.
+08/09/2024 19:00:07 
+08/09/2024 19:00:07 Xinerama is present and active (e.g. multi-head).
+08/09/2024 19:00:07 Xinerama: number of sub-screens: 1
+08/09/2024 19:00:07 Xinerama: no blackouts needed (only one sub-screen)
+08/09/2024 19:00:07 
+08/09/2024 19:00:07 fb read rate: 1018 MB/sec
+08/09/2024 19:00:07 fast read: reset -wait  ms to: 10
+08/09/2024 19:00:07 fast read: reset -defer ms to: 10
+08/09/2024 19:00:07 The X server says there are 10 mouse buttons.
+08/09/2024 19:00:07 screen setup finished.
+08/09/2024 19:00:07 
+
+The VNC desktop is:      e199ac3f0e6e:0
+2024-09-08 19:00:12 [INFO] Starting noVNC client...
+2024-09-08 19:00:17 [INFO] noVNC client started successfully.
+2024-09-08 19:00:17 [INFO] VNC server and noVNC client running. Monitoring processes...
