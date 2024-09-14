@@ -1,26 +1,30 @@
-# Use the official Python slim image for a smaller base
-FROM python:3.9-slim
+# Use an official lightweight base image
+FROM ubuntu:20.04
 
-# Install necessary packages for VNC and minimal browser control
+# Set environment variables to avoid user prompts during package installation
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install necessary packages: 
+# - xpra: for remote desktop over HTML5
+# - xvfb: virtual display
+# - fluxbox: lightweight window manager
+# - firefox: lightweight browser
+# - wget, apt-utils, python3: utilities
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    x11vnc \
+    xpra \
     xvfb \
     fluxbox \
-    websockify \
+    firefox \
+    apt-utils \
+    python3 \
     wget \
-    lynx \
-    net-tools \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Install pip packages if needed (for example, Flask for remote control)
-# RUN pip install <your_required_python_packages>
+# Expose the port for XPRA's web server (HTML5 access)
+EXPOSE 14500
 
-# Set up a minimal configuration for VNC and display
-RUN mkdir -p ~/.vnc && \
-    x11vnc -storepasswd "your_vnc_password" ~/.vnc/passwd
-
-# Expose the necessary ports for VNC and web interface (optional for NoVNC)
-EXPOSE 5901 6080
-
-# Start VNC server and minimal window manager (fluxbox)
-CMD ["sh", "-c", "Xvfb :1 -screen 0 1024x768x16 & fluxbox & x11vnc -forever -usepw -display :1"]
+# Start Xvfb, fluxbox, and XPRA when the container starts
+CMD Xvfb :1 -screen 0 1024x768x16 & \
+    DISPLAY=:1 fluxbox & \
+    xpra start :1 --bind-tcp=0.0.0.0:14500 --html=on --start-child=fluxbox --start=firefox && tail -f /dev/null
