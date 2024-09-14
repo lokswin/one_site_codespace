@@ -8,6 +8,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     fluxbox \
     websockify \
     wget \
+    firefox \
+    net-tools \
     && rm -rf /var/lib/apt/lists/*
 
 # Install pip packages if needed (for example, Flask for remote control)
