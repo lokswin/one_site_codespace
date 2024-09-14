@@ -1,14 +1,29 @@
 {
   "name": "OnePage Browser Container",
   "build": {
-      "dockerfile": "../Dockerfile",
-      "context": ".."
+    "dockerfile": "../Dockerfile",
+    "context": "..",
+    "args": {
+      "VNC_PASSWORD": "smakkLeakbroArching1"
+    }
   },
   "runArgs": [
-      "--cap-drop=ALL",
-      "--cap-add=NET_ADMIN",
-      "--security-opt",
-      "no-new-privileges:true",
-      "--read-only"
+    "--cap-drop=ALL",
+    "--cap-add=NET_ADMIN",
+    "--security-opt",
+    "no-new-privileges:true",
+    "--read-only"
+  ],
+  "portsAttributes": {
+    "5901": {
+      "label": "VNC Port"
+    },
+    "6080": {
+      "label": "Web Port"
+    }
+  },
+  "forwardPorts": [
+    5901,
+    6080
   ]
 }

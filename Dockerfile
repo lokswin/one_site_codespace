@@ -1,5 +1,5 @@
 # Use an Ubuntu base image
-FROM ubuntu:20.04
+FROM python
 
 # Install necessary packages
 RUN apt-get update && \
@@ -26,7 +26,6 @@ COPY ./config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY ./scripts/entrypoint.sh /opt/entrypoint.sh
 COPY ./scripts/create_xauthority.sh /opt/create_xauthority.sh
 COPY ./scripts/vnc_launch.sh /opt/vnc_launch.sh
-
 
 # Make scripts executable
 RUN chmod +x /opt/entrypoint.sh /opt/create_xauthority.sh /opt/vnc_launch.sh
