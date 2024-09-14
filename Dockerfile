@@ -1,40 +1,24 @@
-# Use an Ubuntu base image
-FROM python
+# Use the official Python slim image for a smaller base
+FROM python:3.9-slim
 
-# Install necessary packages
-RUN apt-get update && \
-    apt-get install -y \
+# Install necessary packages for VNC and minimal browser control
+RUN apt-get update && apt-get install -y --no-install-recommends \
     x11vnc \
     xvfb \
-    supervisor \
-    wget \
     fluxbox \
-    net-tools \
-    openssl \
-    novnc
+    websockify \
+    wget \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN apt-get install -y qutebrowser
+# Install pip packages if needed (for example, Flask for remote control)
+# RUN pip install <your_required_python_packages>
 
-RUN apt-get install -y websockify 
+# Set up a minimal configuration for VNC and display
+RUN mkdir -p ~/.vnc && \
+    x11vnc -storepasswd "your_vnc_password" ~/.vnc/passwd
 
-# Set environment variables
-ENV DISPLAY=:1
-
-RUN mkdir -p /root/.config/qutebrowser
-# Add files
-COPY ./config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY ./scripts/entrypoint.sh /opt/entrypoint.sh
-COPY ./scripts/create_xauthority.sh /opt/create_xauthority.sh
-COPY ./scripts/vnc_launch.sh /opt/vnc_launch.sh
-
-# Make scripts executable
-RUN chmod +x /opt/entrypoint.sh /opt/create_xauthority.sh /opt/vnc_launch.sh
-
-# Expose the VNC and noVNC ports
+# Expose the necessary ports for VNC and web interface (optional for NoVNC)
 EXPOSE 5901 6080
 
-ARG CACHEBUST=1
-COPY ./config/config.py /opt/config.py
-
-# Set the entrypoint
-ENTRYPOINT ["/opt/entrypoint.sh"]
+# Start VNC server and minimal window manager (fluxbox)
+CMD ["sh", "-c", "Xvfb :1 -screen 0 1024x768x16 & fluxbox & x11vnc -forever -usepw -display :1"]
