@@ -1,12 +1,8 @@
 # Use an official lightweight base image
 FROM alpine:3.20
 
-# Set environment variables to avoid user prompts during package installation
-ENV DEBIAN_FRONTEND=noninteractive
-
 # Enable debugging with an ARG
 ARG DEBUG=true
-ARG X11VNC_PASSWORD
 
 # Update and install necessary packages
 RUN apk update && apk add --no-cache \

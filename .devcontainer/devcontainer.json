@@ -4,10 +4,6 @@
     "dockerfile": "../Dockerfile",
     "context": ".."
   },
-  "runArgs": [
-    "--env X11VNC_PASSWORD=${X11VNC_PASSWORD}"
-  ],
-  "remoteUser": "root",
   "forwardPorts": [
     5901,
     6080
