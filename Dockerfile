@@ -28,7 +28,7 @@ RUN echo "${X11VNC_PASSWORD}" | x11vnc -storepasswd - /etc/x11vnc.pass
 EXPOSE 5901 6080
 
 # Create startup script for VNC and Xvfb
-COPY scripts/start.sh /usr/local/bin/start.sh
+COPY ./scripts/start.sh /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start.sh
 
 # Entry point
