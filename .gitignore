@@ -1,0 +1,49 @@
+# Ignore build artifacts
+*.log
+*.pid
+*.seed
+*.tmp
+*.swp
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore Python cache and virtual environment
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+venv/
+ENV/
+
+# Ignore IDE and editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Ignore node modules if using Node.js (optional)
+node_modules/
+
+# Ignore compiled binaries
+*.out
+*.o
+*.a
+*.so
+*.dylib
+
+# Ignore temporary files
+*.bak
+*.orig
+*.rej
+
+# Ignore personal files
+*.suo
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
+
+# Other
+logiiisss67867/

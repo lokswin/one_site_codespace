@@ -4,27 +4,36 @@ FROM ubuntu:20.04
 # Set environment variables to avoid user prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install necessary packages: 
-# - xpra: for remote desktop over HTML5
-# - xvfb: virtual display
-# - fluxbox: lightweight window manager
-# - firefox: lightweight browser
-# - wget, apt-utils, python3: utilities
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    xpra \
+# Enable debugging with an ARG
+ARG DEBUG=false# Setup password from GitHub secrets
+ARG X11VNC_PASSWORD
+
+# Update and install necessary packages
+RUN apt-get update && apt-get install -y \
+    x11vnc \
     xvfb \
     fluxbox \
+    x11-xserver-utils \
+    x11-utils \
+    net-tools \
+    lsof \
     firefox \
-    apt-utils \
-    python3 \
-    wget \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    --no-install-recommends && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-# Expose the port for XPRA's web server (HTML5 access)
-EXPOSE 14500
+RUN echo "${X11VNC_PASSWORD}" | x11vnc -storepasswd - /etc/x11vnc.pass
 
-# Start Xvfb, fluxbox, and XPRA when the container starts
-CMD Xvfb :1 -screen 0 1024x768x16 & \
-    DISPLAY=:1 fluxbox & \
-    xpra start :1 --bind-tcp=0.0.0.0:14500 --html=on --start-child=fluxbox --start=firefox && tail -f /dev/null
+# Expose necessary ports for VNC and Web access
+EXPOSE 5901 6080
+
+# Create startup script for VNC and Xvfb
+COPY scripts/start.sh /usr/local/bin/start.sh
+RUN chmod +x /usr/local/bin/start.sh
+
+# Entry point
+ENTRYPOINT ["/usr/local/bin/start.sh"]
+
+# Clean up unnecessary files to reduce container size
+RUN apt-get remove --purge -y && \
+    rm -rf /var/cache/*
