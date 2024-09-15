@@ -9,18 +9,20 @@ ARG DEBUG=true
 ARG X11VNC_PASSWORD
 
 # Update and install necessary packages
-RUN apt-get update && apt-get install -y \
-    x11vnc \
+RUN apk update && apk add --no-cache \
+    firefox \
     xvfb \
+    x11vnc \
     fluxbox \
+    xauth \
     x11-xserver-utils \
-    x11-utils \
+    bash \
     net-tools \
     lsof \
-    firefox \
-    --no-install-recommends && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    grep \
+    tini \
+    && rm -rf /var/cache/apk/* \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN echo "${X11VNC_PASSWORD}" | x11vnc -storepasswd - /etc/x11vnc.pass
 
@@ -31,9 +33,8 @@ EXPOSE 5901 6080
 COPY ./scripts/one_site_start.sh /usr/local/bin/one_site_start.sh
 RUN chmod +x /usr/local/bin/one_site_start.sh
 
-# Entry point
-ENTRYPOINT ["/usr/local/bin/one_site_start.sh"]
+# Use tini as the entrypoint for proper PID 1 handling
+ENTRYPOINT ["/sbin/tini", "--"]
 
-# Clean up unnecessary files to reduce container size
-RUN apt-get remove --purge -y && \
-    rm -rf /var/cache/*
+# Start the container with the custom script
+CMD ["/usr/local/bin/one_site_start.sh"]
