@@ -10,8 +10,7 @@
   "remoteUser": "root",
   "forwardPorts": [
     5901,
-    6080,
-    14500
+    6080
   ],
   "portsAttributes": {
     "5901": {
@@ -21,10 +20,6 @@
     "6080": {
       "visibility": "public",
       "label": "Web Port"
-    },
-    "14500": {
-      "visibility": "public",
-      "label": "XPRA Port"
     }
   }
 }

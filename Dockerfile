@@ -1,11 +1,11 @@
 # Use an official lightweight base image
-FROM ubuntu:20.04
+FROM alpine:3.20
 
 # Set environment variables to avoid user prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Enable debugging with an ARG
-ARG DEBUG=false# Setup password from GitHub secrets
+ARG DEBUG=true
 ARG X11VNC_PASSWORD
 
 # Update and install necessary packages
@@ -28,11 +28,11 @@ RUN echo "${X11VNC_PASSWORD}" | x11vnc -storepasswd - /etc/x11vnc.pass
 EXPOSE 5901 6080
 
 # Create startup script for VNC and Xvfb
-COPY ./scripts/start.sh /usr/local/bin/start.sh
-RUN chmod +x /usr/local/bin/start.sh
+COPY ./scripts/one_site_start.sh /usr/local/bin/one_site_start.sh
+RUN chmod +x /usr/local/bin/one_site_start.sh
 
 # Entry point
-ENTRYPOINT ["/usr/local/bin/start.sh"]
+ENTRYPOINT ["/usr/local/bin/one_site_start.sh"]
 
 # Clean up unnecessary files to reduce container size
 RUN apt-get remove --purge -y && \
