@@ -35,3 +35,21 @@ fi
 # Start Firefox browser
 DISPLAY=:$PORT fluxbox &
 DISPLAY=:$PORT firefox &
+
+# Start Guacamole daemon
+guacd &
+if ps aux | grep guacd; then
+  echo "guacd started successfully"
+else
+  echo "Failed to start guacd"
+  exit 1
+fi
+
+# Start Tomcat for Guacamole client
+systemctl start tomcat9
+if systemctl status tomcat9 | grep running; then
+  echo "Tomcat started successfully"
+else
+  echo "Failed to start Tomcat"
+  exit 1
+fi

@@ -6,7 +6,8 @@
   },
   "forwardPorts": [
     5901,
-    6080
+    6080,
+    8080
   ],
   "portsAttributes": {
     "5901": {

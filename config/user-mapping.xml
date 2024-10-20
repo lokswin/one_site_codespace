@@ -1,0 +1,10 @@
+<user-mapping>
+    <authorize username="yourusername" password="yourpassword">
+        <param name="totp-secret-key" value="generatedTOTPKey" />
+        <connection name="VNC Server">
+            <protocol>vnc</protocol>
+            <param name="hostname">localhost</param>
+            <param name="port">5901</param>
+        </connection>
+    </authorize>
+</user-mapping>
