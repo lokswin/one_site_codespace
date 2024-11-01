@@ -1,22 +1,8 @@
 {
-  "name": "OnePage Browser Container",
-  "build": {
-    "dockerfile": "../Dockerfile",
-    "context": ".."
-  },
-  "forwardPorts": [
-    5901,
-    6080,
-    8080
-  ],
-  "portsAttributes": {
-    "5901": {
-      "visibility": "public",
-      "label": "VNC Port"
-    },
-    "6080": {
-      "visibility": "public",
-      "label": "Web Port"
-    }
-  }
+  "name": "OnePage Docker Compose Environment",
+  "dockerComposeFile": ["../docker-compose.yml"],
+  "service": "app",
+  "workspaceFolder": "/workspace",
+  "forwardPorts": [8080],
+  "postStartCommand": "chmod +x /usr/local/bin/one_site_start.sh && /usr/local/bin/one_site_start.sh"
 }

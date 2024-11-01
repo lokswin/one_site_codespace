@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  app:
+    image: ubuntu:20.04
+    container_name: onepage-app
+    environment:
+      - DISPLAY=:15
+      - PORT=15
+      - DEBUG=true
+    ports:
+      - "8080:8080"  # Tomcat/Guacamole web interface (public)
+      - "5901:5901"  # VNC Server (private)
+      - "6080:6080"  # noVNC WebSocket (private)
+    volumes:
+      - ./guacamole.properties:/etc/guacamole/guacamole.properties
+      - ./user-mapping.xml:/etc/guacamole/user-mapping.xml
+      - ./one_site_start.sh:/usr/local/bin/one_site_start.sh
+    entrypoint: ["/usr/local/bin/one_site_start.sh"]
+    command: /bin/bash -c "apt-get update && apt-get install -y xvfb x11vnc firefox fluxbox guacamole tomcat9 openjdk-11-jre websockify sudo && chmod +x /usr/local/bin/one_site_start.sh && /usr/local/bin/one_site_start.sh"

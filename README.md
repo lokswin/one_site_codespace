@@ -1,68 +1,55 @@
-# Website Browser Container with VNC Access
+# OnePage Browser Container with OTP-Enabled Access
 
-This repository provides a containerized environment for accessing a website (free version) using GitHub Codespaces. The setup is optimized to be lightweight, secure, and easy to use, with additional support for VNC access to manage the browser remotely.
+This project provides a containerized environment with secure OTP-based access to a browser interface using Guacamole and VNC, configured with Docker. It allows users to connect to a container, authenticate using a one-time password (OTP), and access Firefox automatically through the interface.
 
-## Features
+## Project Overview
 
-- **Lightweight**: Utilizes `qutebrowser`, a minimal web browser, for accessing the website.
-- **VNC Support**: Includes an integrated VNC server (`x11vnc`) for remote access to the browser via `noVNC`.
-- **Secure**: Runs as a non-root user with restricted network access and a read-only filesystem.
-- **Open-Source**: Relies exclusively on free and open-source tools.
-- **Simplified**: Streamlined setup with minimal complexity and dependencies.
+The setup leverages open-source tools to provide a secure, accessible, and configurable development environment:
+- **Docker** for containerization.
+- **Guacamole** for remote access to the browser via VNC.
+- **Tomcat** as the web server for Guacamole.
+- **Xvfb** (X virtual framebuffer) to enable graphical applications within the container.
+- **x11vnc** as the VNC server.
+- **Firefox** as the default browser.
+
+## File Overview
+
+### `Dockerfile`
+Defines the base environment for the container, installing and configuring dependencies necessary for VNC, Guacamole, and Firefox.
+
+### `devcontainer.json`
+Configures development container settings:
+- Specifies the Dockerfile path and context.
+- Forwards necessary ports:
+  - **5901**: VNC server.
+  - **6080**: Guacamole web interface.
+  - **8080**: Tomcat server for web access.
+  
+Port visibility is configured with labels to distinguish between VNC and web interfaces.
+
+### `one_site_start.sh`
+A startup script to initialize the environment and services. It includes:
+- Verification of the display port’s availability.
+- Start-up of **Xvfb** on a specified display port for GUI applications.
+- Launch of **x11vnc** to allow remote desktop connections.
+- Start-up of **Firefox** in a virtual display session with **Fluxbox**.
+- Initiation of the Guacamole daemon (`guacd`) and Tomcat server.
+
+### `guacamole.properties`
+Configures the Guacamole server settings, defining connection properties to interact with the VNC server.
+
+### `user-mapping.xml`
+Sets up user authentication for Guacamole:
+- Defines username and password credentials.
+- Includes a TOTP (Time-Based One-Time Password) secret key for OTP authentication.
+- Specifies connection details to the **VNC Server** on `localhost:5901`.
 
 ## Setup Instructions
 
-1. **Fork and Clone the Repository**:
-   Fork this repository to your GitHub account and clone it to your local machine.
+### 1. Build and Start the Container
 
-2. **Open in GitHub Codespaces**:
-   Open the repository in GitHub Codespaces to start the environment automatically.
+Ensure Docker is installed and then use the following command to build and run the container:
 
-3. **Run the Container**:
-   The environment will start and launch `qutebrowser` in fullscreen mode, pointing to the website. The VNC server will also start, allowing remote access if needed.
-
-## Configuration
-
-- **Dockerfile**: Defines the container image and its dependencies, including the VNC server and web browser.
-- **`entrypoint.sh`**: Launches the necessary services, including `x11vnc` and `qutebrowser`.
-- **`x11vnc.sh`**: Custom script to start the VNC server with the correct display and user settings.
-- **`startVNCClient.sh`**: Script to provide a noVNC link for browser-based VNC access.
-- **`cleanup.sh`**: Cleans up temporary files and reduces image size after setup.
-
-## Security
-
-- **Non-Root Execution**: The container runs as a non-root user to enhance security.
-- **Network Restrictions**: The container is restricted to accessing only the specified website.
-- **Read-Only Filesystem**: The filesystem is mounted as read-only to prevent unauthorized modifications.
-- **VNC Password Protection**: The VNC server is secured with a password stored securely within the container.
-
-## VNC Access
-
-For remote access to the browser:
-- Access the VNC server via a web browser using the provided noVNC link.
-- Ensure the VNC server password is securely stored and configured.
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
-
-## Contributions
-
-Contributions are welcome! Please fork the repository and submit a pull request with your changes. Ensure that all code adheres to the project's guidelines and passes the CI checks.
-
-## Contact
-
-For any questions or issues, please open an issue on the [GitHub repository](https://github.com/).
-
----
-
-Feel free to modify the contact link to match your GitHub repository URL.
-
-## Testing and Validation
-
-- **Functional Testing**: Ensure that the setup works correctly in GitHub Codespaces and the VNC server starts as expected.
-- **Performance Monitoring**: Monitor the container’s performance to ensure it remains efficient, especially when using VNC.
-
-## Cleanup
-
-A `cleanup.sh` script is included to remove unnecessary files and reduce the overall image size. This script will be executed automatically as part of the container’s entrypoint to ensure a minimal footprint.
+```bash
+docker build -t onepage-browser .
+docker run -d -p 5901:5901 -p 6080:6080 -p 8080:8080 --name onepage-container onepage-browser
