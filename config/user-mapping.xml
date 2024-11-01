@@ -1,10 +1,11 @@
+<!-- user-mapping.xml -->
 <user-mapping>
-    <authorize username="yourusername" password="yourpassword">
-        <param name="totp-secret-key" value="generatedTOTPKey" />
+    <authorize username="${GUAC_USER}" password="${GUAC_PASS}">
+        <param name="totp-secret-key" value="${TOTP_SECRET_KEY}" />
         <connection name="VNC Server">
             <protocol>vnc</protocol>
-            <param name="hostname">localhost</param>
-            <param name="port">5901</param>
+            <param name="hostname">${VNC_HOSTNAME}</param>
+            <param name="port">${VNC_PORT}</param>
         </connection>
     </authorize>
 </user-mapping>

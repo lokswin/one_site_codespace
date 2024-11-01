@@ -27,3 +27,19 @@ docker build --build-arg VNC_PASSWORD="" --build-arg CACHEBUST=$(date +%s) -t on
 
 logs
 rm -rf ./logiiisss67867/*;docker cp test-container:/var/log/vnc/. ./logiiisss67867
+
+
+update docker version
+
+sudo curl -L "https://github.com/docker/compose/releases/download/$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")')/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+
+
+
+
+
+
+
+
+
+notes
+      - "127.0.0.1:555:555"  # Private, restricted to localhost

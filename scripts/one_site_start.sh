@@ -1,35 +1,18 @@
-#!/bin/bash
+#!/bin/sh
 
-# Check if Xvfb is running on the display port
-if ! pgrep Xvfb; then
-  Xvfb :$PORT -screen 0 1920x1080x24 &
-  echo "Xvfb started on display :$PORT"
-fi
+start_service() {
+  if ! pgrep "$1"; then
+    "$2" &
+    echo "$1 started"
+  fi
+}
 
-# Start x11vnc server
-if ! pgrep x11vnc; then
-  x11vnc -forever -usepw -display :$PORT -rfbport 5901 &
-  echo "x11vnc started on display :$PORT"
-fi
+export DISPLAY=${DISPLAY:-:15}
 
-# Start Firefox and Fluxbox
-if ! pgrep fluxbox; then
-  DISPLAY=:$PORT fluxbox &
-  echo "Fluxbox started"
-fi
-
-if ! pgrep firefox; then
-  DISPLAY=:$PORT firefox &
-  echo "Firefox started"
-fi
-
-# Start Guacamole daemon and Tomcat
-if ! pgrep guacd; then
-  guacd &
-  echo "Guacamole daemon started"
-fi
-
-if ! systemctl is-active --quiet tomcat9; then
-  systemctl start tomcat9
-  echo "Tomcat started"
-fi
+# Start Xvfb, x11vnc, Fluxbox, Firefox, Guacamole daemon, and Tomcat
+start_service "Xvfb" "Xvfb $DISPLAY -screen 0 1920x1080x24"
+start_service "x11vnc" "x11vnc -forever -usepw -display $DISPLAY -rfbport 5901"
+start_service "fluxbox" "DISPLAY=$DISPLAY fluxbox"
+start_service "firefox" "DISPLAY=$DISPLAY firefox-esr"
+start_service "guacd" "guacd"
+start_service "catalina.sh" "/usr/local/tomcat/bin/catalina.sh run"

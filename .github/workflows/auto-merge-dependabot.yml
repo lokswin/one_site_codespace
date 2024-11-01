@@ -1,28 +1,19 @@
-# .github/workflows/auto-merge-dependabot.yml
-name: Auto-Merge Dependabot PRs
-
+# auto-merge-dependabot.yml
+name: "Auto-merge Dependabot Updates"
 on:
   pull_request:
+    types: [opened, synchronize, reopened]
     branches:
       - main
-      - add_guac_otp
-    types:
-      - opened
-      - synchronize
 
 jobs:
-  auto-merge:
+  automerge:
     runs-on: ubuntu-latest
     if: github.actor == 'dependabot[bot]'
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up GitHub CLI
-        uses: actions/setup-node@v4
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Auto-merge Dependabot PR
+        uses: ahmadnassri/action-dependabot-auto-merge@v2
         with:
-          node-version: '14'
-
-      - name: Automatically merge Dependabot PRs
-        run: |
-          gh pr merge ${{ github.event.pull_request.number }} --squash --admin
+          github-token: "${{ secrets.GITHUB_TOKEN }}"

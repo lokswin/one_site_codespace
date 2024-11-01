@@ -1,7 +1,13 @@
-# .github/dependabot.yml
+# dependabot.yml
 version: 2
 updates:
-  - package-ecosystem: "github-actions"  # Specifies that Dependabot should check GitHub Actions
-    directory: "/"                      # Root directory where your workflow files are located
+  - package-ecosystem: "docker"
+    directory: "/"
     schedule:
-      interval: "weekly"                 # Check for updates every week
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    rebase-strategy: "auto"
+    # Set to auto-detect any insecure dependencies
+    ignore:
+      - dependency-name: "*"
+        versions: ["*"]  # Exclude certain versions if necessary

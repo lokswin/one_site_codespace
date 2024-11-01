@@ -1,119 +1,42 @@
+# ci-cd.yml
 name: CI/CD Pipeline
 
 on:
   push:
-    branches:
-      - main
-      - add_guac_otp  # Replace with the name of your additional branch
+    branches: [main]
   pull_request:
-    branches:
-      - main
-      - add_guac_otp  # Replace with the name of your additional branch
+    branches: [main]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment: dev  # Use the "dev" environment for this job
-
     steps:
-      # Checkout the repository
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      # Log in to Docker Hub
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_TOKEN }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # Build Docker Compose services
-      - name: Build Docker Compose services
-        run: |
-          docker-compose -f docker-compose.yml build --build-arg VNC_PASSWORD=${{ secrets.VNC_PASSWORD }}
-
-  test:
-    runs-on: ubuntu-latest
-    needs: build
-    environment: dev  # Use the "dev" environment for the test job
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      # Start the Docker Compose services for testing
-      - name: Start Docker Compose services
-        run: |
-          docker-compose -f docker-compose.yml up -d
-
-      # Test the noVNC service by checking if it's accessible
-      - name: Test noVNC service
-        run: |
-          sleep 5  # Wait for the services to start
-          response=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:6080)
-          if [ "$response" -ne 200 ]; then
-            echo "noVNC service is not accessible."
-            exit 1
-          fi
-
-      # Clean up Docker Compose services
-      - name: Clean up Docker Compose services
-        run: |
-          docker-compose -f docker-compose.yml down
-
-  push:
-    runs-on: ubuntu-latest
-    needs: test
-    environment: dev  # Use the "dev" environment for the push job
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      # Log in to Docker Hub
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_TOKEN }}
+          context: .
+          push: true
+          tags: user/image-name:latest
 
-      # Push the Docker Compose services to Docker Hub
-      - name: Tag and Push Docker images to Docker Hub
-        run: |
-          docker-compose -f docker-compose.yml config | grep 'image:' | awk '{print $2}' | while read image; do
-            docker tag "$image" "${{ secrets.DOCKER_USERNAME }}/$image:latest"
-            docker push "${{ secrets.DOCKER_USERNAME }}/$image:latest"
-          done
-
-  deploy-codespace:
-    needs: push
+  security_scan:
     runs-on: ubuntu-latest
-    environment: dev  # Use the "dev" environment for the Codespace deployment job
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      # Set up Codespace environment using devcontainer
-      - name: Set up Codespace environment
-        run: |
-          echo "Starting Codespace deployment..."
-          # Install the devcontainer CLI for managing the Codespace
-          curl -fsSL https://code.visualstudio.com/docs/remote/devcontainer-cli-install | sh
-          devcontainer up --workspace-folder ./.devcontainer
-
-      # Verify that Codespace is up and running
-      - name: Verify Codespace deployment
-        run: |
-          echo "Verifying Codespace environment..."
-          devcontainer exec --workspace-folder ./.devcontainer --command "echo 'Codespace environment is running successfully.'"
-
-      # Optionally commit any environment changes back to the repository
-      - name: Commit environment changes
-        if: success()
-        run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
-          git add .devcontainer/*
-          git commit -m "Update devcontainer configuration"
-          git push
+      - name: Run Docker image scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: user/image-name:latest
