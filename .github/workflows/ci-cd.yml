@@ -4,14 +4,16 @@ on:
   push:
     branches:
       - main
+      - add_guac_otp  # Replace with the name of your additional branch
   pull_request:
     branches:
       - main
+      - add_guac_otp  # Replace with the name of your additional branch
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment: dev
+    environment: dev  # Use the "dev" environment for this job
 
     steps:
       # Checkout the repository
@@ -33,6 +35,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     needs: build
+    environment: dev  # Use the "dev" environment for the test job
 
     steps:
       - name: Checkout repository
@@ -61,6 +64,7 @@ jobs:
   push:
     runs-on: ubuntu-latest
     needs: test
+    environment: dev  # Use the "dev" environment for the push job
 
     steps:
       - name: Checkout repository
@@ -84,6 +88,7 @@ jobs:
   deploy-codespace:
     needs: push
     runs-on: ubuntu-latest
+    environment: dev  # Use the "dev" environment for the Codespace deployment job
 
     steps:
       - name: Checkout repository

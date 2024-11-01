@@ -1,0 +1,7 @@
+# .github/dependabot.yml
+version: 2
+updates:
+  - package-ecosystem: "github-actions"  # Specifies that Dependabot should check GitHub Actions
+    directory: "/"                      # Root directory where your workflow files are located
+    schedule:
+      interval: "weekly"                 # Check for updates every week
