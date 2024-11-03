@@ -3,9 +3,13 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - add_guac_otp
   pull_request:
-    branches: [main]
+    branches:
+      - main
+      - add_guac_otp
 
 jobs:
   build:

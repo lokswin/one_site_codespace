@@ -5,6 +5,7 @@ on:
     types: [opened, synchronize, reopened]
     branches:
       - main
+      - add_guac_otp
 
 jobs:
   automerge:
