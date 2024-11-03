@@ -1,4 +1,10 @@
 #!/bin/sh
+# scripts/one_site_start.sh
+export GUAC_USER=${GUAC_USER}
+export GUAC_PASS=${GUAC_PASS}
+export TOTP_SECRET_KEY=${TOTP_SECRET_KEY}
+export VNC_HOSTNAME=${VNC_HOSTNAME}
+export VNC_PORT=${VNC_PORT}
 
 start_service() {
   if ! pgrep "$1"; then

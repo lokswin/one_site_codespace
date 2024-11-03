@@ -12,6 +12,7 @@ on:
       - add_guac_otp
 
 jobs:
+
   build:
     runs-on: ubuntu-latest
     environment: dev  # Specify environment to access dev secrets
@@ -33,3 +34,26 @@ jobs:
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/onespace:latest .
           docker push ${{ secrets.DOCKER_USERNAME }}/onespace:latest
+
+  deploy:
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Compose
+        uses: docker/setup-buildx-action@v1
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Build and run Docker Compose
+        env:
+          GUAC_USER: ${{ secrets.GUAC_USER }}
+          GUAC_PASS: ${{ secrets.GUAC_PASS }}
+          TOTP_SECRET_KEY: ${{ secrets.TOTP_SECRET_KEY }}
+          VNC_HOSTNAME: ${{ secrets.VNC_HOSTNAME }}
+          VNC_PORT: ${{ secrets.VNC_PORT }}
+        run: |
+          docker-compose up -d

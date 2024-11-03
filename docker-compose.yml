@@ -1,21 +1,24 @@
-# docker-compose.yml
-
 services:
   guacd:
     image: guacamole/guacd:latest
     ports:
       - "4822:4822"
+    restart: unless-stopped
 
   web:
     image: guacamole/guacamole:latest
-    depends_on:
-      guacd:
-        condition: service_healthy
     environment:
       GUACD_HOSTNAME: guacd
       GUACD_PORT: 4822
-      GUACAMOLE_HOME: /etc/guacamole  # Set GUACAMOLE_HOME as expected
+      GUACAMOLE_HOME: /etc/guacamole
+      GUAC_USER: ${GUAC_USER}
+      GUAC_PASS: ${GUAC_PASS}
+      TOTP_SECRET_KEY: ${TOTP_SECRET_KEY}
+      VNC_HOSTNAME: ${VNC_HOSTNAME}
+      VNC_PORT: ${VNC_PORT}
     ports:
       - "8080:8080"
     volumes:
-      - ./config:/etc/guacamole  # Map the local config folder to the container's GUACAMOLE_HOME
+      - ./config:/etc/guacamole
+    restart: unless-stopped
+    network_mode: "bridge"
