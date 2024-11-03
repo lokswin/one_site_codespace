@@ -1,5 +1,6 @@
-# auto-merge-dependabot.yml
+# .github/workflows/auto-merge-dependabot.yml
 name: "Auto-merge Dependabot Updates"
+
 on:
   pull_request:
     types: [opened, synchronize, reopened]
@@ -13,7 +14,8 @@ jobs:
     if: github.actor == 'dependabot[bot]'
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3  # Updated to v3
+
       - name: Auto-merge Dependabot PR
         uses: ahmadnassri/action-dependabot-auto-merge@v2
         with:
