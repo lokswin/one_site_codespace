@@ -1,22 +1,15 @@
-# .github/workflows/auto-merge-dependabot.yml
-name: "Auto-merge Dependabot Updates"
-
-on:
-  pull_request:
-    types: [opened, synchronize, reopened]
-    branches:
-      - main
-      - add_guac_otp
-
-jobs:
-  automerge:
-    runs-on: ubuntu-latest
-    if: github.actor == 'dependabot[bot]'
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3  # Updated to v3
-
-      - name: Auto-merge Dependabot PR
-        uses: ahmadnassri/action-dependabot-auto-merge@v2
-        with:
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
+# .github/dependabot.yml
+version: 2
+updates:
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    rebase-strategy: "auto"
+    # Group security updates into a single pull request for Docker dependencies
+    groups:
+      docker-security-updates:
+        applies-to: security-updates
+        patterns:
+          - "*"
