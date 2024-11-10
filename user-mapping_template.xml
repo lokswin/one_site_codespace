@@ -1,4 +1,4 @@
-<!-- config/user-mapping.xml -->
+<!-- user-mapping.xml -->
 <user-mapping>
     <authorize username="${GUAC_USER}" password="${GUAC_PASS}">
         <param name="totp-secret-key" value="${TOTP_SECRET_KEY}" />

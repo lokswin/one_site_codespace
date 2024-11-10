@@ -1,27 +1,62 @@
+networks:
+  guacnet:
+    driver: bridge
+
 services:
   guacd:
-    image: guacamole/guacd:latest
+    image: guacamole/guacd:1.5.5
     container_name: ${GUACD_HOSTNAME}
+    environment:
+      - DEBUG_ALL=${DEBUG_ALL}
+    command: ["sh", "-c", "/opt/guacamole/sbin/guacd ${DEBUG_ALL:+-L debug}"]
+    networks:
+      - guacnet
+    restart: unless-stopped
+
+  xserver:
+    image: jlesage/baseimage-gui:alpine-3.18-v4.6  # Lightweight X server and GUI environment
+    container_name: xserver_service
+    environment:
+      - DISPLAY=:0
+      - DEBUG_ALL=${DEBUG_ALL}
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix  # Share X11 socket for GUI applications
     ports:
-      - "4822:4822"
+      - "5901:5901"  # Internal VNC access port for GUI environment
+    networks:
+      - guacnet
+    restart: unless-stopped
+
+  firefox:
+    image: jlesage/firefox:v24.10.1  # Firefox with GUI support
+    container_name: firefox_service
+    environment:
+      - DISPLAY=:0
+      - DEBUG_ALL=${DEBUG_ALL}
+    networks:
+      - guacnet
     restart: unless-stopped
 
   web:
+    image: guacamole/guacamole:1.5.5
     container_name: ${GUACD_WEB_HOSTNAME}
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        GUAC_USER: ${GUAC_USER}
-        GUAC_PASS: ${GUAC_PASS}
-        TOTP_SECRET_KEY: ${TOTP_SECRET_KEY}
-        VNC_HOSTNAME: ${VNC_HOSTNAME}
-        VNC_PORT: ${VNC_PORT}
-        GUACD_HOSTNAME: ${GUACD_HOSTNAME}
-        GUACD_PORT: ${GUACD_PORT}
-        DEBUG_ALL: ${DEBUG_ALL}
-        DISPLAY: ${DISPLAY}  
+    environment:
+      - GUAC_USER=${GUAC_USER}
+      - GUAC_PASS=${GUAC_PASS}
+      - TOTP_SECRET_KEY=${TOTP_SECRET_KEY}
+      - VNC_HOSTNAME=${VNC_HOSTNAME}
+      - VNC_PORT=${VNC_PORT}
+      - GUACD_HOSTNAME=${GUACD_HOSTNAME}
+      - GUACD_PORT=${GUACD_PORT}
+      - DISPLAY=${DISPLAY}
+      - DEBUG_ALL=${DEBUG_ALL}
+    entrypoint: ["/usr/local/bin/one_site_start.sh"]
+    volumes:
+      - ./one_site_start.sh:/usr/local/bin/one_site_start.sh
     ports:
-      - "8080:8080"
+      - "${WEB_PORT:-8080}:${WEB_PORT:-8080}"
+    networks:
+      - guacnet
+    depends_on:
+      - guacd
     restart: unless-stopped
-#    network_mode: "bridge"
