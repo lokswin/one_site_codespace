@@ -1,24 +1,27 @@
 services:
   guacd:
     image: guacamole/guacd:latest
+    container_name: ${GUACD_HOSTNAME}
     ports:
       - "4822:4822"
     restart: unless-stopped
 
   web:
-    image: guacamole/guacamole:latest
-    environment:
-      GUACD_HOSTNAME: guacd
-      GUACD_PORT: 4822
-      GUACAMOLE_HOME: /etc/guacamole
-      GUAC_USER: ${GUAC_USER}
-      GUAC_PASS: ${GUAC_PASS}
-      TOTP_SECRET_KEY: ${TOTP_SECRET_KEY}
-      VNC_HOSTNAME: ${VNC_HOSTNAME}
-      VNC_PORT: ${VNC_PORT}
+    container_name: ${GUACD_WEB_HOSTNAME}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        GUAC_USER: ${GUAC_USER}
+        GUAC_PASS: ${GUAC_PASS}
+        TOTP_SECRET_KEY: ${TOTP_SECRET_KEY}
+        VNC_HOSTNAME: ${VNC_HOSTNAME}
+        VNC_PORT: ${VNC_PORT}
+        GUACD_HOSTNAME: ${GUACD_HOSTNAME}
+        GUACD_PORT: ${GUACD_PORT}
+        DEBUG_ALL: ${DEBUG_ALL}
+        DISPLAY: ${DISPLAY}  
     ports:
       - "8080:8080"
-    volumes:
-      - ./config:/etc/guacamole
     restart: unless-stopped
-    network_mode: "bridge"
+#    network_mode: "bridge"

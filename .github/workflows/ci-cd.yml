@@ -31,6 +31,8 @@ jobs:
 
       - name: Build and push Docker Compose services
         env:
+          GUACD_HOSTNAME: ${{ secrets.GUACD_HOSTNAME }}
+          GUACD_PORT: ${{ secrets.GUACD_PORT }}
           GUAC_USER: ${{ secrets.GUAC_USER }}
           GUAC_PASS: ${{ secrets.GUAC_PASS }}
           TOTP_SECRET_KEY: ${{ secrets.TOTP_SECRET_KEY }}
@@ -58,6 +60,8 @@ jobs:
 
       - name: Deploy with Docker Compose
         env:
+          GUACD_HOSTNAME: ${{ secrets.GUACD_HOSTNAME }}
+          GUACD_PORT: ${{ secrets.GUACD_PORT }}
           GUAC_USER: ${{ secrets.GUAC_USER }}
           GUAC_PASS: ${{ secrets.GUAC_PASS }}
           TOTP_SECRET_KEY: ${{ secrets.TOTP_SECRET_KEY }}

@@ -36,10 +36,17 @@ sudo curl -L "https://github.com/docker/compose/releases/download/$(curl -s http
 
 
 
+docker-compose down
+export GUACD_WEB_HOSTNAME="web_one" GUAC_USER="testuser" GUAC_PASS="testpass" TOTP_SECRET_KEY="testtotpkey" VNC_HOSTNAME="localhost" VNC_PORT="5901" GUACD_HOSTNAME="test_guacd" GUACD_PORT="4822" DEBUG_ALL="true" && docker compose -f docker-compose.yml up -d
 
 
 
+curl test_guacd:4822
 
+cat /etc/guacamole/guacamole.properties && cat /etc/guacamole/user-mapping.xml
 
 notes
       - "127.0.0.1:555:555"  # Private, restricted to localhost
+
+
+      
