@@ -7,10 +7,12 @@ services:
     image: guacamole/guacd:1.5.5
     container_name: ${GUACD_HOSTNAME}
     environment:
-      - DEBUG_ALL=${DEBUG_ALL}
-    command: ["sh", "-c", "/opt/guacamole/sbin/guacd ${DEBUG_ALL:+-L debug}"]
+      - GUACD_LOG_LEVEL=${DEBUG_LEVEL:-info}
+    ports:
+      - "${GUACD_PORT:-4822}:${GUACD_PORT:-4822}"
     networks:
       - guacnet
+    
     restart: unless-stopped
 
   xserver:
@@ -52,6 +54,8 @@ services:
       - DEBUG_ALL=${DEBUG_ALL}
     entrypoint: ["/usr/local/bin/one_site_start.sh"]
     volumes:
+      - ./logback.xml:/etc/guacamole/logback.xml
+      - ./guacamole.properties:/etc/guacamole/guacamole.properties
       - ./one_site_start.sh:/usr/local/bin/one_site_start.sh
     ports:
       - "${WEB_PORT:-8080}:${WEB_PORT:-8080}"
@@ -59,4 +63,17 @@ services:
       - guacnet
     depends_on:
       - guacd
+    restart: unless-stopped
+
+postgres:
+    image: postgres:17
+    container_name: ${POSTGRES_HOSTNAME:-postgres}
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-guacamole_user}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-guacamole_password}
+      - POSTGRES_DB=${POSTGRES_DATABASE:-guacamole_db}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - guacnet
     restart: unless-stopped

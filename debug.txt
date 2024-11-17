@@ -1,5 +1,5 @@
 # file: debug.txt
-
+docker stop $(docker ps -a -q)
 
 docker build --build-arg VNC_PASSWORD="" -t onepage-browser-container .
 
