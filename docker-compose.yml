@@ -3,77 +3,110 @@ networks:
     driver: bridge
 
 services:
-  guacd:
+  guacd_server:
     image: guacamole/guacd:1.5.5
-    container_name: ${GUACD_HOSTNAME}
+    container_name: ${GUACD_HOSTNAME:-guacd_server}
     environment:
-      - GUACD_LOG_LEVEL=${DEBUG_LEVEL:-info}
+      - GUACD_LOG_LEVEL=${DEBUG_LEVEL:-debug}
+      - HOSTNAME=${GUACD_HOSTNAME:-guacd_server}
+      - POSTGRES_USER=${POSTGRES_USER:-psql_user3}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-psql_password2}
+      - POSTGRES_DB=${POSTGRES_DATABASE:-guacamole_db}
+      - HOSTNAME=${POSTGRES_HOSTNAME:-psql_server}
     ports:
       - "${GUACD_PORT:-4822}:${GUACD_PORT:-4822}"
     networks:
       - guacnet
-    
     restart: unless-stopped
 
-  xserver:
-    image: jlesage/baseimage-gui:alpine-3.18-v4.6  # Lightweight X server and GUI environment
-    container_name: xserver_service
-    environment:
-      - DISPLAY=:0
-      - DEBUG_ALL=${DEBUG_ALL}
-    volumes:
-      - /tmp/.X11-unix:/tmp/.X11-unix  # Share X11 socket for GUI applications
-    ports:
-      - "5901:5901"  # Internal VNC access port for GUI environment
-    networks:
-      - guacnet
-    restart: unless-stopped
-
-  firefox:
-    image: jlesage/firefox:v24.10.1  # Firefox with GUI support
-    container_name: firefox_service
-    environment:
-      - DISPLAY=:0
-      - DEBUG_ALL=${DEBUG_ALL}
-    networks:
-      - guacnet
-    restart: unless-stopped
-
-  web:
+  guacd_web:
     image: guacamole/guacamole:1.5.5
-    container_name: ${GUACD_WEB_HOSTNAME}
+    container_name: ${GUACD_WEB_HOSTNAME:-guacd_web}
     environment:
-      - GUAC_USER=${GUAC_USER}
-      - GUAC_PASS=${GUAC_PASS}
-      - TOTP_SECRET_KEY=${TOTP_SECRET_KEY}
-      - VNC_HOSTNAME=${VNC_HOSTNAME}
-      - VNC_PORT=${VNC_PORT}
-      - GUACD_HOSTNAME=${GUACD_HOSTNAME}
-      - GUACD_PORT=${GUACD_PORT}
-      - DISPLAY=${DISPLAY}
-      - DEBUG_ALL=${DEBUG_ALL}
-    entrypoint: ["/usr/local/bin/one_site_start.sh"]
+      - GUAC_USER=${GUAC_USER:-my_guac_u}
+      - GUAC_PASS=${GUAC_PASS:-My_guacd_pwd9}
+      - TOTP_SECRET_KEY=${TOTP_SECRET_KEY:-My_totp_k2}
+      - VNC_HOSTNAME=${VNC_HOSTNAME:-localhost}
+      - VNC_PORT=${VNC_PORT:-7777}
+      - GUACD_HOSTNAME=${GUACD_HOSTNAME:-guacd_server}
+      - GUACD_PORT=${GUACD_PORT:-4822}
+      - DISPLAY_GUACD=${DISPLAY_GUACD:-21}
+      - DEBUG_ALL=${DEBUG_ALL:-true}
     volumes:
-      - ./logback.xml:/etc/guacamole/logback.xml
-      - ./guacamole.properties:/etc/guacamole/guacamole.properties
-      - ./one_site_start.sh:/usr/local/bin/one_site_start.sh
+      - ./custom-guacamole/logback.xml:/etc/guacamole/logback.xml
+      - ./custom-guacamole/guacamole.properties:/etc/guacamole/guacamole.properties
+      - ./custom-guacamole/extensions/guacamole-auth-totp-1.5.5.jar:/etc/guacamole/extensions/guacamole-auth-totp-1.5.5.jar
     ports:
       - "${WEB_PORT:-8080}:${WEB_PORT:-8080}"
     networks:
       - guacnet
     depends_on:
-      - guacd
+      - guacd_server
     restart: unless-stopped
 
-postgres:
+  psql_server:
     image: postgres:17
-    container_name: ${POSTGRES_HOSTNAME:-postgres}
+    container_name: ${POSTGRES_HOSTNAME:-psql_server}
     environment:
-      - POSTGRES_USER=${POSTGRES_USER:-guacamole_user}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-guacamole_password}
+      - POSTGRES_USER=${POSTGRES_USER:-psql_user3}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-psql_password2}
       - POSTGRES_DB=${POSTGRES_DATABASE:-guacamole_db}
+      - HOSTNAME=${POSTGRES_HOSTNAME:-psql_server}
+    ports:
+      - "${PSQL_PORT:-5432}:${PSQL_PORT:-5432}"
+    networks:
+      - guacnet
+    depends_on:
+      - guacd_server
+    restart: unless-stopped
+
+# SRE
+  node_exporter:
+    image: bitnami/node-exporter:1.8.2
+    container_name: ${POSTGRES_HOSTNAME:-node_exporter}
+    ports:
+      - "${NODE_EX_PORT:-9100}:${NODE_EX_PORT:-9100}"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($|/)' 
+    networks:
+      - guacnet
+    restart: unless-stopped
+
+  telegraf_collect:
+    image: telegraf:1.32.3
+    container_name: ${TELEG_HOSTNAME:-telegraf_collect}
+    environment:
+      - SCRAPE_URI=http://localhost:2375
+    ports:
+      - "9323:9323"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - guacnet
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - guacnet
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
     networks:
       - guacnet
     restart: unless-stopped
