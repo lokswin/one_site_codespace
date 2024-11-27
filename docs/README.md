@@ -53,3 +53,12 @@ Ensure Docker is installed and then use the following command to build and run t
 ```bash
 docker build -t onepage-browser .
 docker run -d -p 5901:5901 -p 6080:6080 -p 8080:8080 --name onepage-container onepage-browser
+
+
+guacamole/guacd:1.5.5
+guacamole/guacamole:1.5.5
+postgres:17
+bitnami/node-exporter:1.8.2
+telegraf:1.32.3
+prom/prometheus:latest
+grafana/grafana:latest

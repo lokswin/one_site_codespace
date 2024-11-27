@@ -13,10 +13,11 @@ services:
     environment:
       - GUACD_LOG_LEVEL=${DEBUG_LEVEL:-debug}
       - HOSTNAME=${GUACD_HOSTNAME:-guacd_server}
-      - POSTGRES_USER=${POSTGRES_USER:-psql_user3}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-psql_password2}
-      - POSTGRES_DB=${POSTGRES_DATABASE:-guacamole_db}
-      - HOSTNAME=${POSTGRES_HOSTNAME:-psql_server}
+      - POSTGRESQL_USER=${POSTGRESQL_USER:-P0G_Us3}
+      - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD:-P2g_Pwd2}
+      - POSTGRESQL_DATABASE=${POSTGRESQL_DATABASE:-guacamole_db}
+      - POSTGRESQL_HOSTNAME=${POSTGRESQL_HOSTNAME:-pds3ql_serFver}
+      - POSTGRES_PORT=${POSTGRES_PORT:-5432}
     ports:
       - "${GUACD_PORT:-4822}:${GUACD_PORT:-4822}"
     networks:
@@ -41,10 +42,15 @@ services:
       - GUACD_PORT=${GUACD_PORT:-4822}
       - DISPLAY_GUACD=${DISPLAY_GUACD:-21}
       - DEBUG_ALL=${DEBUG_ALL:-true}
+      - POSTGRESQL_USER=${POSTGRESQL_USER:-P0G_Us3}
+      - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD:-P2g_Pwd2}
+      - POSTGRESQL_DATABASE=${POSTGRESQL_DATABASE:-guacamole_db}
+      - POSTGRESQL_HOSTNAME=${POSTGRESQL_HOSTNAME:-pds3ql_serFver}
+      - POSTGRES_PORT=${POSTGRES_PORT:-5432}
     volumes:
-      - ./custom_guac/logback.xml:/etc/guacamole/logback.xml
-      - ./custom_guac/guacamole.properties:/etc/guacamole/guacamole.properties
-      - ./custom_guac/extensions/guacamole-auth-totp-1.5.5.jar:/etc/guacamole/extensions/guacamole-auth-totp-1.5.5.jar
+      - ./config/custom_guac/logback.xml:/etc/guacamole/logback.xml
+      - ./config/custom_guac/guacamole.properties:/etc/guacamole/guacamole.properties
+      - ./config/custom_guac/extensions/guacamole-auth-totp-1.5.5.jar:/etc/guacamole/extensions/guacamole-auth-totp-1.5.5.jar
     ports:
       - "${WEB_PORT:-8080}:${WEB_PORT:-8080}"
     networks:
@@ -60,14 +66,14 @@ services:
 
   psql_server:
     image: postgres:17
-    container_name: ${POSTGRES_HOSTNAME:-psql_server}
+    container_name: ${POSTGRESQL_HOSTNAME:-pds3ql_serFver}
     environment:
-      - POSTGRES_USER=${POSTGRES_USER:-psql_user3}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-psql_password2}
-      - POSTGRES_DB=${POSTGRES_DATABASE:-guacamole_db}
-      - HOSTNAME=${POSTGRES_HOSTNAME:-psql_server}
+      - POSTGRESQL_USER=${POSTGRESQL_USER:-P0G_Us3}
+      - POSTGRES_PASSWORD=${POSTGRESQL_PASSWORD:-P2g_Pwd2}
+      - POSTGRESQL_DATABASE=${POSTGRESQL_DATABASE:-guacamole_db}
+      - HOSTNAME=${POSTGRESQL_HOSTNAME:-pds3ql_serFver}
     ports:
-      - "${PSQL_PORT:-5432}:${PSQL_PORT:-5432}"
+      - "${POSTGRES_PORT:-5432}:${POSTGRES_PORT:-5432}"
     networks:
       - db_net
     depends_on:
@@ -111,10 +117,10 @@ services:
       #- SCRAPE_URI=http://localhost:2375
       - "SCRAPE_URI=${T_SCRAPE_URI:-http://localhost}:${T_SCRAPE_PORT:-2375}"
     ports:
-      - "${TELEG_PORT:-9323}:${TELEG_PORT:-9323}"
+      - "${TELEG_PORT:-9324}:${TELEG_PORT:-9323}"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./telegraf.conf/etc/telegraf/telegraf.conf
+      - ./config/telegraf.conf:/etc/telegraf/telegraf.conf
     networks:
       - monitor_net
     restart: unless-stopped
@@ -126,7 +132,7 @@ services:
 
 # scrapes data from exporters
   prometheus:
-    image: prom/prometheus:3.0.0
+    image: bitnami/prometheus:3.0.0
     container_name: ${PROMET_HOSTNAME:-prometheus}
     environment:
       - NODE_EX_HOSTNAME=${NODE_EX_HOSTNAME:-node_exporter}
@@ -137,12 +143,12 @@ services:
       - GUACD_PORT=${GUACD_PORT:-4822}
       - GUACD_WEB_HOSTNAME=${GUACD_WEB_HOSTNAME:-guacd_web}
       - WEB_PORT=${WEB_PORT:-8080}
-      - POSTGRES_HOSTNAME=${POSTGRES_HOSTNAME:-psql_server}
-      - PSQL_PORT=${PSQL_PORT:-5432}
+      - POSTGRESQL_HOSTNAME=${POSTGRESQL_HOSTNAME:-pds3ql_serFver}
+      - POSTGRES_PORT=${POSTGRES_PORT:-5432}
       - PROMET_PORT=${PROMET_PORT:-9090}
       - "PROMET_HEALTH=http://${PROMET_HOSTNAME:-localhost}:${PROMET_PORT:-9090}"
     volumes:
-      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
       - "${PROMET_PORT:-9090}:${PROMET_PORT:-9090}"
     networks:
@@ -164,7 +170,14 @@ services:
     image: grafana/grafana:11.3.1
     container_name: ${GRAFANA_HOSTNAME:-grafana}
     volumes:
-      - ./dashboards/dash1.json:/var/lib/grafana/dashboards
+      - ./config/grafana/provisioning/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml
+      - ./config/grafana/dashboards/dash1.json:/var/lib/grafana/dashboards/dash1.json
+      - ./config/grafana/dashboards/dash_doc_sys_mon.json:/var/lib/grafana/dashboards/dash_doc_sys_mon.json
+      - ./config/grafana/dashboards/dash_grafana_stats.json:/var/lib/grafana/dashboards/dash_grafana_stats.json
+      - ./config/grafana/dashboards/dash_node_ex.json:/var/lib/grafana/dashboards/dash_node_ex.json
+      - ./config/grafana/dashboards/dash_promet.json:/var/lib/grafana/dashboards/dash_promet.json
+      - ./config/grafana/dashboards/dash_sql.json:/var/lib/grafana/dashboards/dash_sql.json
+      - ./config/grafana/dashboards/dash_telegraf.json:/var/lib/grafana/dashboards/dash_telegraf.json
     ports:
       - "${GRAFANA_PORT:-3000}:${GRAFANA_PORT:-3000}"
     networks:

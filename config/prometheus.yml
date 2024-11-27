@@ -16,7 +16,7 @@ scrape_configs:
   # Monitor Prometheus itself
   - job_name: 'prometheus'
     static_configs:
-      - targets: ['localhost:${PROMET_PORT}']
+      - targets: ['${PROMET_HOST}:${PROMET_PORT}']
 
   # Monitor the guacd_server
   - job_name: 'guacd_server'
@@ -31,4 +31,10 @@ scrape_configs:
   # Monitor the database server
   - job_name: 'postgres'
     static_configs:
-      - targets: ['${POSTGRES_HOSTNAME}:${PSQL_PORT}']
+      - targets: ['${POSTGRESQL_HOSTNAME}:${POSTGRES_PORT}']
+
+  # Monitor the Grafana
+  - job_name: 'grafana'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['${GRAFANA_HOSTNAME}:${GRAFANA_PORT}']
