@@ -1,5 +1,9 @@
 networks:
-  guacnet:
+  app_net:
+    driver: bridge
+  monitor_net:
+    driver: bridge
+  db_net:
     driver: bridge
 
 services:
@@ -16,8 +20,13 @@ services:
     ports:
       - "${GUACD_PORT:-4822}:${GUACD_PORT:-4822}"
     networks:
-      - guacnet
+      - app_net
     restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "4"
 
   guacd_web:
     image: guacamole/guacamole:1.5.5
@@ -33,16 +42,21 @@ services:
       - DISPLAY_GUACD=${DISPLAY_GUACD:-21}
       - DEBUG_ALL=${DEBUG_ALL:-true}
     volumes:
-      - ./custom-guacamole/logback.xml:/etc/guacamole/logback.xml
-      - ./custom-guacamole/guacamole.properties:/etc/guacamole/guacamole.properties
-      - ./custom-guacamole/extensions/guacamole-auth-totp-1.5.5.jar:/etc/guacamole/extensions/guacamole-auth-totp-1.5.5.jar
+      - ./custom_guac/logback.xml:/etc/guacamole/logback.xml
+      - ./custom_guac/guacamole.properties:/etc/guacamole/guacamole.properties
+      - ./custom_guac/extensions/guacamole-auth-totp-1.5.5.jar:/etc/guacamole/extensions/guacamole-auth-totp-1.5.5.jar
     ports:
       - "${WEB_PORT:-8080}:${WEB_PORT:-8080}"
     networks:
-      - guacnet
+      - app_net
     depends_on:
       - guacd_server
     restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "4"
 
   psql_server:
     image: postgres:17
@@ -55,15 +69,21 @@ services:
     ports:
       - "${PSQL_PORT:-5432}:${PSQL_PORT:-5432}"
     networks:
-      - guacnet
+      - db_net
     depends_on:
       - guacd_server
     restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "4"
 
 # SRE
+# host machine metrics
   node_exporter:
     image: bitnami/node-exporter:1.8.2
-    container_name: ${POSTGRES_HOSTNAME:-node_exporter}
+    container_name: ${NODE_EX_HOSTNAME:-node_exporter}
     ports:
       - "${NODE_EX_PORT:-9100}:${NODE_EX_PORT:-9100}"
     volumes:
@@ -75,38 +95,83 @@ services:
       - '--path.sysfs=/host/sys'
       - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($|/)' 
     networks:
-      - guacnet
+      - monitor_net
     restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "4"
 
+# container-level metrics
   telegraf_collect:
     image: telegraf:1.32.3
     container_name: ${TELEG_HOSTNAME:-telegraf_collect}
     environment:
-      - SCRAPE_URI=http://localhost:2375
+      #- SCRAPE_URI=http://localhost:2375
+      - "SCRAPE_URI=${T_SCRAPE_URI:-http://localhost}:${T_SCRAPE_PORT:-2375}"
     ports:
-      - "9323:9323"
+      - "${TELEG_PORT:-9323}:${TELEG_PORT:-9323}"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - ./telegraf.conf/etc/telegraf/telegraf.conf
     networks:
-      - guacnet
+      - monitor_net
     restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "4"
 
+# scrapes data from exporters
   prometheus:
-    image: prom/prometheus:latest
-    container_name: prometheus
+    image: prom/prometheus:3.0.0
+    container_name: ${PROMET_HOSTNAME:-prometheus}
+    environment:
+      - NODE_EX_HOSTNAME=${NODE_EX_HOSTNAME:-node_exporter}
+      - NODE_EX_PORT=${NODE_EX_PORT:-9100}
+      - TELEG_HOSTNAME=${TELEG_HOSTNAME:-telegraf_collect}
+      - TELEG_PORT=${TELEG_PORT:-9323}
+      - GUACD_HOSTNAME=${GUACD_HOSTNAME:-guacd_server}
+      - GUACD_PORT=${GUACD_PORT:-4822}
+      - GUACD_WEB_HOSTNAME=${GUACD_WEB_HOSTNAME:-guacd_web}
+      - WEB_PORT=${WEB_PORT:-8080}
+      - POSTGRES_HOSTNAME=${POSTGRES_HOSTNAME:-psql_server}
+      - PSQL_PORT=${PSQL_PORT:-5432}
+      - PROMET_PORT=${PROMET_PORT:-9090}
+      - "PROMET_HEALTH=http://${PROMET_HOSTNAME:-localhost}:${PROMET_PORT:-9090}"
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
-      - "9090:9090"
+      - "${PROMET_PORT:-9090}:${PROMET_PORT:-9090}"
     networks:
-      - guacnet
+      - monitor_net
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "${PROMET_HEALTH:-http://localhost:9090}/-/ready"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
     restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "4"
 
+# monitoring visual
   grafana:
-    image: grafana/grafana:latest
-    container_name: grafana
+    image: grafana/grafana:11.3.1
+    container_name: ${GRAFANA_HOSTNAME:-grafana}
+    volumes:
+      - ./dashboards/dash1.json:/var/lib/grafana/dashboards
     ports:
-      - "3000:3000"
+      - "${GRAFANA_PORT:-3000}:${GRAFANA_PORT:-3000}"
     networks:
-      - guacnet
+      - monitor_net
     restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "4"
