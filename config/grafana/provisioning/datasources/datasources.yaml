@@ -1,0 +1,36 @@
+# config/grafana/provisioning/datasources.yaml
+
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://${PROMETHEUS_HOST}:${PROMETHEUS_PORT}
+    isDefault: true
+    editable: true
+
+  - name: PostgreSQL
+    type: postgres
+    access: proxy
+    url: ${POSTGRES_URL}
+    user: ${POSTGRES_USER}
+    database: ${POSTGRES_DB}
+    password: ${POSTGRES_PASSWORD}
+    jsonData:
+      sslmode: disable
+
+  - name: NodeExporter
+    type: prometheus
+    access: proxy
+    url: http://${NODE_EXPORTER_HOST}:${NODE_EXPORTER_PORT}
+
+  - name: Telegraf
+    type: influxdb
+    access: proxy
+    url: http://${TELEGRAF_HOST}:${TELEGRAF_PORT}
+    database: ${TELEGRAF_DB}
+    user: ${TELEGRAF_USER}
+    password: ${TELEGRAF_PASSWORD}
+
+  # Add other data sources as needed, using environment variables

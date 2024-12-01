@@ -5,6 +5,10 @@ networks:
     driver: bridge
   db_net:
     driver: bridge
+  external_network:
+    driver: bridge
+  internal_network:
+    driver: bridge
 
 services:
   guacd_server:
@@ -18,11 +22,13 @@ services:
       - POSTGRESQL_DATABASE=${POSTGRESQL_DATABASE:-guacamole_db}
       - POSTGRESQL_HOSTNAME=${POSTGRESQL_HOSTNAME:-pds3ql_serFver}
       - POSTGRES_PORT=${POSTGRES_PORT:-5432}
-    ports:
-      - "${GUACD_PORT:-4822}:${GUACD_PORT:-4822}"
+    #ports:
+    #  - "${GUACD_PORT:-4822}:${GUACD_PORT:-4822}"
     networks:
-      - app_net
+      - internal_network
     restart: unless-stopped
+    mem_limit: 1g         # Limit memory to 1GB
+    cpu_shares: 512
     logging:
       driver: "json-file"
       options:
@@ -52,12 +58,15 @@ services:
       - ./config/custom_guac/guacamole.properties:/etc/guacamole/guacamole.properties
       - ./config/custom_guac/extensions/guacamole-auth-totp-1.5.5.jar:/etc/guacamole/extensions/guacamole-auth-totp-1.5.5.jar
     ports:
-      - "${WEB_PORT:-8080}:${WEB_PORT:-8080}"
+      - "${WEB_PORT:-8080}:${WEB_PORT:-8080}" # allow trafic from outside
     networks:
-      - app_net
+      - internal_network
+      - external_network
     depends_on:
       - guacd_server
     restart: unless-stopped
+    mem_limit: 1g         # Limit memory to 1GB
+    cpu_shares: 512 
     logging:
       driver: "json-file"
       options:
@@ -72,26 +81,33 @@ services:
       - POSTGRES_PASSWORD=${POSTGRESQL_PASSWORD:-P2g_Pwd2}
       - POSTGRESQL_DATABASE=${POSTGRESQL_DATABASE:-guacamole_db}
       - HOSTNAME=${POSTGRESQL_HOSTNAME:-pds3ql_serFver}
-    ports:
-      - "${POSTGRES_PORT:-5432}:${POSTGRES_PORT:-5432}"
+    #ports:
+    #  - "${POSTGRES_PORT:-5432}:${POSTGRES_PORT:-5432}"
     networks:
-      - db_net
+      - internal_network
     depends_on:
       - guacd_server
+    mem_limit: 2g         # Limit memory to 2GB
+    cpu_shares: 1024      # Default CPU shares (higher priority)
+    cpuset: "1"           # Bind to CPU 1 only
     restart: unless-stopped
     logging:
       driver: "json-file"
       options:
         max-size: "500m"
         max-file: "4"
-
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-P0G_Us3}"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 # SRE
 # host machine metrics
   node_exporter:
     image: bitnami/node-exporter:1.8.2
     container_name: ${NODE_EX_HOSTNAME:-node_exporter}
-    ports:
-      - "${NODE_EX_PORT:-9100}:${NODE_EX_PORT:-9100}"
+    #ports:
+    #  - "${NODE_EX_PORT:-9100}:${NODE_EX_PORT:-9100}"
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
@@ -101,8 +117,10 @@ services:
       - '--path.sysfs=/host/sys'
       - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($|/)' 
     networks:
-      - monitor_net
+      - internal_network
     restart: unless-stopped
+    mem_limit: 1g         # Limit memory to 1GB
+    cpu_shares: 512
     logging:
       driver: "json-file"
       options:
@@ -116,14 +134,16 @@ services:
     environment:
       #- SCRAPE_URI=http://localhost:2375
       - "SCRAPE_URI=${T_SCRAPE_URI:-http://localhost}:${T_SCRAPE_PORT:-2375}"
-    ports:
-      - "${TELEG_PORT:-9324}:${TELEG_PORT:-9323}"
+    #ports:
+    #  - "${TELEG_PORT:-9324}:${TELEG_PORT:-9323}"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./config/telegraf.conf:/etc/telegraf/telegraf.conf
     networks:
-      - monitor_net
+      - internal_network
     restart: unless-stopped
+    mem_limit: 1g         # Limit memory to 1GB
+    cpu_shares: 512 
     logging:
       driver: "json-file"
       options:
@@ -135,6 +155,7 @@ services:
     image: bitnami/prometheus:3.0.0
     container_name: ${PROMET_HOSTNAME:-prometheus}
     environment:
+      - GOMAXPROCS=2
       - NODE_EX_HOSTNAME=${NODE_EX_HOSTNAME:-node_exporter}
       - NODE_EX_PORT=${NODE_EX_PORT:-9100}
       - TELEG_HOSTNAME=${TELEG_HOSTNAME:-telegraf_collect}
@@ -149,10 +170,14 @@ services:
       - "PROMET_HEALTH=http://${PROMET_HOSTNAME:-localhost}:${PROMET_PORT:-9090}"
     volumes:
       - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
-    ports:
-      - "${PROMET_PORT:-9090}:${PROMET_PORT:-9090}"
+    #ports:
+    #  - "${PROMET_PORT:-9090}:${PROMET_PORT:-9090}"
     networks:
-      - monitor_net
+      - internal_network
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.retention.time=10d"
+    #  - "--web.enable-lifecycle"
     healthcheck:
       test: ["CMD", "wget", "-q", "--spider", "${PROMET_HEALTH:-http://localhost:9090}/-/ready"]
       interval: 60s
@@ -170,19 +195,24 @@ services:
     image: grafana/grafana:11.3.1
     container_name: ${GRAFANA_HOSTNAME:-grafana}
     volumes:
-      - ./config/grafana/provisioning/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml
-      - ./config/grafana/dashboards/dash1.json:/var/lib/grafana/dashboards/dash1.json
-      - ./config/grafana/dashboards/dash_doc_sys_mon.json:/var/lib/grafana/dashboards/dash_doc_sys_mon.json
-      - ./config/grafana/dashboards/dash_grafana_stats.json:/var/lib/grafana/dashboards/dash_grafana_stats.json
-      - ./config/grafana/dashboards/dash_node_ex.json:/var/lib/grafana/dashboards/dash_node_ex.json
-      - ./config/grafana/dashboards/dash_promet.json:/var/lib/grafana/dashboards/dash_promet.json
-      - ./config/grafana/dashboards/dash_sql.json:/var/lib/grafana/dashboards/dash_sql.json
-      - ./config/grafana/dashboards/dash_telegraf.json:/var/lib/grafana/dashboards/dash_telegraf.json
+    # - ./config/grafana/provisioning/grafana.ini:/etc/grafana/grafana.ini
+      - ./config/grafana/provisioning/datasources/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
+      - ./config/grafana/provisioning/dashboards/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml
+      - ./config/grafana/provisioning/dashboards/dash1.json:/var/lib/grafana/dashboards/dash1.json
+      - ./config/grafana/provisioning/dashboards/dash_doc_sys_mon.json:/var/lib/grafana/dashboards/dash_doc_sys_mon.json
+      - ./config/grafana/provisioning/dashboards/dash_grafana_stats.json:/var/lib/grafana/dashboards/dash_grafana_stats.json
+      - ./config/grafana/provisioning/dashboards/dash_node_ex.json:/var/lib/grafana/dashboards/dash_node_ex.json
+      - ./config/grafana/provisioning/dashboards/dash_promet.json:/var/lib/grafana/dashboards/dash_promet.json
+      - ./config/grafana/provisioning/dashboards/dash_sql.json:/var/lib/grafana/dashboards/dash_sql.json
+      - ./config/grafana/provisioning/dashboards/dash_telegraf.json:/var/lib/grafana/dashboards/dash_telegraf.json
     ports:
-      - "${GRAFANA_PORT:-3000}:${GRAFANA_PORT:-3000}"
+      - "${GRAFANA_PORT:-3000}:${GRAFANA_PORT:-3000}" # allow trafic from outside
     networks:
-      - monitor_net
+      - internal_network
+      - external_network
     restart: unless-stopped
+    mem_limit: 1g         # Limit memory to 1GB
+    cpu_shares: 512
     logging:
       driver: "json-file"
       options:
