@@ -53,4 +53,22 @@ notes
       - "127.0.0.1:555:555"  # Private, restricted to localhost
 
 
-      
+d@d:/home/u/git_dirs/one_site_codespace# docker exec -it guacd_server sh
+/ $ nc -z localhost 4822
+/ $ nc -vz localhost 4822
+nc: connect to localhost (::1) port 4822 (tcp) failed: Connection refused
+Connection to localhost (127.0.0.1) 4822 port [tcp/*] succeeded!
+
+nc -z localhost 4822
+grafana:
+docker exec -it grafana sh
+getent hosts prometheus
+curl -u admin:admin http://localhost:3000/api/datasources
+nc -zv prometheus 9090
+curl http://prometheus:9090/-/healthy
+
+
+http://localhost:8080/guacamole
+
+docker run --rm guacamole/guacamole:1.5.5 /opt/guacamole/bin/initdb.sh --postgresql > i
+nitdb.sql

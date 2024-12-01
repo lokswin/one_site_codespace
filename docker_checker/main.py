@@ -3,6 +3,7 @@ import logging
 import os
 import yaml
 
+from colorlog import ColoredFormatter
 from config import check_required_env_variables
 from checks.env_validation import validate_env_variables
 from checks.network_validation import validate_network_connectivity
@@ -13,14 +14,31 @@ from checks.healthcheck_validation import validate_healthchecks
 from checks.service_specific import check_service_specifics
 
 def main():
-    # Set up logging
+    # Set up logging with color support
+    LOG_LEVEL = logging.INFO
+    LOGFORMAT = "%(log_color)s%(asctime)s %(levelname)s: %(message)s"
+    LOG_COLORS = {
+        'DEBUG':    'white',
+        'INFO':     'green',
+        'WARNING':  'yellow',
+        'ERROR':    'red',
+        'CRITICAL': 'bold_red',
+    }
+
+    formatter = ColoredFormatter(LOGFORMAT, log_colors=LOG_COLORS)
+    # Configure logging handlers
+    console_handler = logging.StreamHandler()
+    console_handler.setFormatter(formatter)
+    console_handler.setLevel(LOG_LEVEL)
+
+    file_handler = logging.FileHandler("docker_checker.log")
+    file_handler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s: %(message)s"))
+    file_handler.setLevel(LOG_LEVEL)
+
     logging.basicConfig(
-        level=logging.INFO,
+        level=LOG_LEVEL,
         format='%(asctime)s %(levelname)s: %(message)s',
-        handlers=[
-            logging.FileHandler("docker_checker.log"),
-            logging.StreamHandler()
-        ]
+        handlers=[console_handler, file_handler]
     )
 
     logging.info("=== Starting Automated Checks ===")

@@ -2,6 +2,7 @@
 import subprocess
 import logging
 import re
+import os  # Add this line to import the 'os' module
 
 VAR_PATTERN = re.compile(r'\$\{([^}:\s]+)(:-([^}]+))?\}')
 
@@ -12,7 +13,6 @@ def evaluate_port(port_mapping):
         var_name = match.group(1)
         default_value = match.group(3)
         return os.getenv(var_name, default_value or '')
-
     port_mapping = re.sub(VAR_PATTERN, replace_var, port_mapping)
     return port_mapping
 

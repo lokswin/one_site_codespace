@@ -3,10 +3,10 @@
 apiVersion: 1
 
 datasources:
-  - name: Prometheus
+  - name: DS_PROMETHEUS
     type: prometheus
     access: proxy
-    url: http://${PROMETHEUS_HOST}:${PROMETHEUS_PORT}
+    url: http://${PROMET_HOSTNAME}:${PROMET_PORT}
     isDefault: true
     editable: true
 
@@ -20,12 +20,12 @@ datasources:
     jsonData:
       sslmode: disable
 
-  - name: NodeExporter
+  - name: DS_PROMETHEUS_ND_EX
     type: prometheus
     access: proxy
-    url: http://${NODE_EXPORTER_HOST}:${NODE_EXPORTER_PORT}
+    url: http://${NODE_EX_HOST}:${NODE_EX_PORT}
 
-  - name: Telegraf
+  - name: DS_INFLUXDB_TELEGRAF
     type: influxdb
     access: proxy
     url: http://${TELEGRAF_HOST}:${TELEGRAF_PORT}

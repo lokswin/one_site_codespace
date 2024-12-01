@@ -78,3 +78,8 @@ Let’s clarify the roles of **Prometheus**, **Node Exporter**, **Telegraf**, an
 ---
 
 Let me know if you'd like me to review the new `docker-compose.yml` you uploaded for compatibility with this decision!
+
+
+
+pip install colorlog
+python3 docker_checker/main.py
