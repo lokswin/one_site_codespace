@@ -789,7 +789,32 @@ FROM (
 JOIN guacamole_entity          ON permissions.username = guacamole_entity.name AND guacamole_entity.type = 'USER'
 JOIN guacamole_entity affected ON permissions.affected_username = affected.name AND guacamole_entity.type = 'USER'
 JOIN guacamole_user            ON guacamole_user.entity_id = affected.entity_id;
-CREATE ROLE guacadmin WITH LOGIN PASSWORD 'your_secure_password';
+CREATE ROLE guacadmin WITH LOGIN PASSWORD 'guacadmin';
 
 -- Grant all privileges on the guacamole_db database to guacadmin
 GRANT ALL PRIVILEGES ON DATABASE guacamole_db TO guacadmin;
+
+
+--- VNC
+-- Insert a new connection into the guacamole_connection table
+INSERT INTO guacamole_connection (connection_name, protocol)
+VALUES ('Firefox VNC', 'vnc')
+RETURNING connection_id;
+
+-- Link the connection parameters to the new connection
+INSERT INTO guacamole_connection_parameter (connection_id, parameter_name, parameter_value)
+VALUES
+    (currval('guacamole_connection_connection_id_seq'), 'hostname', 'firefox-vnc'),
+    (currval('guacamole_connection_connection_id_seq'), 'port', '5900');
+
+-- Grant connection access to the default admin user (guacadmin)
+INSERT INTO guacamole_connection_permission (entity_id, connection_id, permission)
+VALUES
+    ((SELECT entity_id FROM guacamole_entity WHERE name = 'guacadmin'), currval('guacamole_connection_connection_id_seq'), 'READ');
+
+INSERT INTO guacamole_connection_permission (entity_id, connection_id, permission)
+VALUES
+    ((SELECT entity_id FROM guacamole_entity WHERE name = 'guacadmin'), 
+     (SELECT connection_id FROM guacamole_connection WHERE connection_name = 'Firefox VNC'), 
+     'READ');
+

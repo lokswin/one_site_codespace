@@ -1,6 +1,6 @@
 transform this docker command into complete docker compose container (write docker compsoe file)
 
 export debug_all if true then log level is debug
-export back-guacdport = 4822
-docker run -name back-guacd -p 4822:4822 -e GUACD_LOG_LEVEL=debug -d guacamole/guacd
+export back-guacdport = 7651
+docker run -name back-guacd -p 7651:7651 -e GUACD_LOG_LEVEL=debug -d guacamole/guacd
 

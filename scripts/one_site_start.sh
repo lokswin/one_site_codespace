@@ -7,7 +7,7 @@
 # export VNC_HOSTNAME=${VNC_HOSTNAME:-localhost}
 # export VNC_PORT=${VNC_PORT:-5901}
 # export GUACD_HOSTNAME=${GUACD_HOSTNAME:-localhost}
-# export GUACD_PORT=${GUACD_PORT:-4822}
+# export GUACD_PORT=${GUACD_PORT:-7651}
 # export DISPLAY=${DISPLAY:-:0}
 # export DEBUG_ALL=${DEBUG_ALL:-false}
 

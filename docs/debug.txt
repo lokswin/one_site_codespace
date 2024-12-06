@@ -41,11 +41,11 @@ sudo curl -L "https://github.com/docker/compose/releases/download/$(curl -s http
 
 
 docker-compose down
-export GUACD_WEB_HOSTNAME="web_one" GUAC_USER="testuser" GUAC_PASS="testpass" TOTP_SECRET_KEY="testtotpkey" VNC_HOSTNAME="localhost" VNC_PORT="5901" GUACD_HOSTNAME="test_guacd" GUACD_PORT="4822" DEBUG_ALL="true" WEB_PORT="8080" && docker compose -f docker-compose.yml up -d
+export GUACD_WEB_HOSTNAME="web_one" GUAC_USER="testuser" GUAC_PASS="testpass" TOTP_SECRET_KEY="testtotpkey" VNC_HOSTNAME="localhost" VNC_PORT="5901" GUACD_HOSTNAME="test_guacd" GUACD_PORT="7651" DEBUG_ALL="true" WEB_PORT="8080" && docker compose -f docker-compose.yml up -d
 
 
 
-curl test_guacd:4822
+curl test_guacd:7651
 
 cat /etc/guacamole/guacamole.properties && cat /etc/guacamole/user-mapping.xml
 
@@ -53,22 +53,50 @@ notes
       - "127.0.0.1:555:555"  # Private, restricted to localhost
 
 
-d@d:/home/u/git_dirs/one_site_codespace# docker exec -it guacd_server sh
-/ $ nc -z localhost 4822
-/ $ nc -vz localhost 4822
-nc: connect to localhost (::1) port 4822 (tcp) failed: Connection refused
-Connection to localhost (127.0.0.1) 4822 port [tcp/*] succeeded!
+d@d:/home/u/git_dirs/one_site_codespace# docker exec -it guacd sh
+/ $ nc -z localhost 7651
+/ $ nc -vz localhost 7651
+nc: connect to localhost (::1) port 7651 (tcp) failed: Connection refused
+Connection to localhost (127.0.0.1) 7651 port [tcp/*] succeeded!
 
-nc -z localhost 4822
+nc -z localhost 7651
 grafana:
 docker exec -it grafana sh
 getent hosts prometheus
 curl -u admin:admin http://localhost:3000/api/datasources
-nc -zv prometheus 9090
-curl http://prometheus:9090/-/healthy
+nc -zv prometheus 7342
+curl http://prometheus:7342/-/healthy
 
 
 http://localhost:8080/guacamole
 
-docker run --rm guacamole/guacamole:1.5.5 /opt/guacamole/bin/initdb.sh --postgresql > i
-nitdb.sql
+generate initdb
+docker run --rm guacamole/guacamole:1.5.5 /opt/guacamole/bin/initdb.sh --postgresql > initdb.sql
+
+search thrue logs
+docker logs prometheus 2>&1 | grep WARN
+
+Check if the connection is present in the database:
+docker exec -it pds3ql_serFver psql -U postgres -d guacamole_db -c "SELECT connection_name FROM guacamole_connection;"
+
+see why its unhealthy
+docker inspect --format='{{json .State.Health}}' node_exporter
+
+database existence and user access
+docker exec -it pds3ql_serFver sh -c "psql -U guacadmin -d postgres -c '\l' && psql -U guacadmin -d guacamole_db -c \"SELECT rolname, rolcanlogin FROM pg_roles WHERE rolname = 'guacadmin';\"" 
+
+get into db
+docker exec -it pds3ql_serFver psql -U guacadmin -d guacamole_db
+
+
+clean all networks
+docker network prune -f
+
+check connection from guacamole web to guacd 
+wget -O- http://guacd:4822
+--2024-10-00 23:000--  (try: 4)  http://guacd:4822/
+Connecting to guacd (guacd)|172.18.0.5|:4822... connected.
+HTTP request sent, awaiting response... No data received.
+Retrying.
+
+wget -O- http://pds3ql_serFver:5432

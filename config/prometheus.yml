@@ -3,21 +3,6 @@ global:
   scrape_timeout: 10s   # Set a timeout to avoid hanging scrapes
   evaluation_interval: 1m  # Evaluation interval for rule evaluations
 
-#storage:
-###  tsdb:
- #   retention: 7d  # Retain data for only 7 days
-    #max-block-duration: 1h  # Limit block duration to 1 hour
-    #min-block-duration: 30m  # Minimum block duration
-    #max-sample-size: 1048576  # Max sample size (1 MB)
-
-# query:
-#   timeout: 2m  # Query timeout set to 2 minutes
-#   max-concurrent: 10  # Limit to 20 concurrent queries
-#   max-samples: 500000  # Limit query result to 5 million samples
-#   scrape_interval: 15s # How often to scrape targets by default
-#   evaluation_interval: 15s # How often to evaluate rules
-
-
 scrape_configs:
   # Monitor Node Exporter for host-level metrics
   - job_name: 'node_exporter'
@@ -32,10 +17,10 @@ scrape_configs:
   # Monitor Prometheus itself
   - job_name: 'prometheus'
     static_configs:
-      - targets: ['${PROMET_HOST}:${PROMET_PORT}']
+      - targets: ['localhost:9091']
 
-  # Monitor the guacd_server
-  - job_name: 'guacd_server'
+  # Monitor the guacd
+  - job_name: 'guacd'
     static_configs:
       - targets: ['${GUACD_HOSTNAME}:${GUACD_PORT}']
 

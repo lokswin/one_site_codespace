@@ -47,3 +47,6 @@ node_modules/
 
 # Other
 logiiisss67867/
+
+# psql data
+db_data/

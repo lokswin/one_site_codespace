@@ -8,9 +8,6 @@ services:
   firefox_vnc:
     image: work1t/firefox_vnc:1.0.0
     container_name: ${F_VNC_HOST:-firefox_vnc}
-    # environment:
-    #   - KASM_PASSWORD=${KASM_PASSWORD:-securepassword} # Password for browser access
-    #   - KASM_RESOLUTION=${KASM_RESOLUTION:-1024x1024}  # Set resolution
     # ports:
     #   - "${F_VNC_PORT:-5900}:${F_VNC_PORT:-5900}" # Web browser VNC access
     networks:
@@ -25,29 +22,31 @@ services:
         max-size: "500m"
         max-file: "4"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5900"]
-      interval: 30s
+      test: ["CMD-SHELL", "pgrep Xvfb && pgrep fluxbox && pgrep x11vnc && pgrep firefox || exit 1"]
+      interval: 10s
       timeout: 10s
-      retries: 5
+      retries: 3
 
-  guacd_server:
+  guacd:
     image: guacamole/guacd:1.5.5
-    container_name: ${GUACD_HOSTNAME:-guacd_server}
+    container_name: ${GUACD_HOSTNAME:-guacd}
     environment:
       - GUACD_LOG_LEVEL=${DEBUG_LEVEL:-debug}
-      - HOSTNAME=${GUACD_HOSTNAME:-guacd_server}
+      - HOSTNAME=${GUACD_HOSTNAME:-guacd}
       - POSTGRESQL_USER=${POSTGRESQL_USER:-guacadmin}
       - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD:-guacadmin}
       - POSTGRESQL_DATABASE=${POSTGRESQL_DATABASE:-guacamole_db}
       - POSTGRESQL_HOSTNAME=${POSTGRESQL_HOSTNAME:-pds3ql_serFver}
       - POSTGRESQL_PORT=${POSTGRES_PORT:-5432}
-      - GUACD_PORT=${GUACD_PORT:-4822}
-    ports:
-      - "${GUACD_PORT:-4822}:${GUACD_PORT:-4822}"
+      - GUACD_HOSTNAME=guacd
+      - GUACD_PORT=7651
+    command: ["/opt/guacamole/sbin/guacd", "-b", "0.0.0.0", "-l", "${GUACD_PORT:-7651}", "-L", "${LOG_LEVEL:-info}", "-f"]
+    expose:
+     - "${GUACD_PORT:-7651}"
     networks:
       - internal_network
     restart: unless-stopped
-    mem_limit: 1g         # Limit memory to 1GB
+    mem_limit: 1g
     cpu_shares: 512
     logging:
       driver: "json-file"
@@ -55,32 +54,23 @@ services:
         max-size: "500m"
         max-file: "4"
     healthcheck:
-      test: ["CMD-SHELL", "nc -z localhost ${GUACD_PORT:-4822}"]
-      interval: 10s
+      test: ["CMD-SHELL", "nc -z localhost ${GUACD_PORT:-7651} || exit 0"]
+      interval: 5s
       timeout: 10s
-      retries: 5
-      start_period: 10s
+      retries: 3
 
   guacd_web:
     image: guacamole/guacamole:1.5.5
     container_name: ${GUACD_WEB_HOSTNAME:-guacd_web}
     environment:
-      - GUACD_HOSTNAME=guacd_server
-      - GUACD_PORT=4822
-      - GUAC_USER=${GUAC_USER:-my_guac_u}
-      - GUAC_PASS=${GUAC_PASS:-My_guacd_pwd9}
+      - GUACD_HOSTNAME=guacd
+      - GUACD_PORT=7651
       - TOTP_SECRET_KEY=${TOTP_SECRET_KEY:-My_totp_k2}
       - F_VNC_HOST=${F_VNC_HOST:-firefox_vnc}
       - F_VNC_PORT=${F_VNC_PORT:-5900}
-      #- GUACD_HOSTNAME=${GUACD_HOSTNAME:-guacd_server}
-      #- GUACD_PORT=${GUACD_PORT:-4822}
       - DISPLAY_GUACD=${DISPLAY_GUACD:-21}
       - DEBUG_ALL=${DEBUG_ALL:-true}
-      - POSTGRESQL_USER=${POSTGRESQL_USER:-guacadmin}
-      - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD:-guacadmin}
-      - POSTGRESQL_DATABASE=${POSTGRESQL_DATABASE:-guacamole_db}
-      - POSTGRESQL_HOSTNAME=${POSTGRESQL_HOSTNAME:-pds3ql_serFver}
-      - POSTGRESQL_PORT=${POSTGRES_PORT:-5432}
+      - GUACAMOLE_HOME=/etc/guacamole
     volumes:
       # simple auth - ./config/custom_guac/user-mapping.xml:/etc/guacamole/user-mapping.xml:ro
       - ./config/custom_guac/logback.xml:/etc/guacamole/logback.xml
@@ -92,17 +82,16 @@ services:
       - internal_network
       - external_network
     depends_on:
-      guacd_server:
+      guacd:
         condition: service_healthy
     restart: unless-stopped
-    mem_limit: 1g         # Limit memory to 1GB
+    mem_limit: 1g
     cpu_shares: 512
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:${WEB_PORT:-8080}/guacamole/"]
-      interval: 30s
+      interval: 10s
       timeout: 10s
-      retries: 5
-      start_period: 30s
+      retries: 3
     logging:
       driver: "json-file"
       options:
@@ -117,19 +106,19 @@ services:
       - POSTGRES_PASSWORD=guacadmin
       - POSTGRES_DB=guacamole_db
       - HOSTNAME=${POSTGRESQL_HOSTNAME:-pds3ql_serFver}
-    volumes:
-      - ./db_data:/var/lib/postgresql/data
-      - ./initdb.sql:/docker-entrypoint-initdb.d/initdb.sql
+    # volumes:
+      # - ./db_data:/var/lib/postgresql/data
+      # - ./initdb.sql:/docker-entrypoint-initdb.d/initdb.sql
     #ports:
     #  - "${POSTGRES_PORT:-5432}:${POSTGRES_PORT:-5432}"
     networks:
       - internal_network
     depends_on:
-      guacd_server:
+      guacd:
         condition: service_healthy
-    mem_limit: 2g         # Limit memory to 2GB
-    cpu_shares: 1024      # Default CPU shares (higher priority)
-    cpuset: "1"           # Bind to CPU 1 only
+    mem_limit: 2g
+    cpu_shares: 1024
+    cpuset: "1"
     restart: unless-stopped
     logging:
       driver: "json-file"
@@ -137,36 +126,37 @@ services:
         max-size: "500m"
         max-file: "4"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-guacadmin}"]
-      interval: 30s
+      test: ["CMD-SHELL", "pg_isready -U -guacadmin"]
+      interval: 10s
       timeout: 10s
-      retries: 5
+      retries: 3
 # SRE
 # host machine metrics
   node_exporter:
     image: bitnami/node-exporter:1.8.2
     container_name: ${NODE_EX_HOSTNAME:-node_exporter}
-    #ports:
-    #  - "${NODE_EX_PORT:-9100}:${NODE_EX_PORT:-9100}"
+    # ports:
+    #   - "${NODE_EX_PORT:-9100}:${NODE_EX_PORT:-9100}" # Expose metrics port
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
       - /:/rootfs:ro
+      - /run/udev:/run/udev:ro
     command:
       - '--path.procfs=/host/proc'
       - '--path.sysfs=/host/sys'
-      - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($|/)' 
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($|/)'
+      - '--collector.diskstats.device-exclude=^(z?ram|loop|fd|(h|s|v|xv)d[a-z]|nvme\\d+n\\d+p)\\d+$'
     networks:
       - internal_network
     restart: unless-stopped
-    mem_limit: 1g         # Limit memory to 1GB
-    cpu_shares: 512
+    mem_limit: 1g
+    cpu_shares: 512   
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:${NODE_EX_PORT:-9100}/metrics"]
-      interval: 30s
+      test: ["CMD-SHELL", "ps aux | grep node_exporter || exit 1"]
+      interval: 10s
       timeout: 10s
-      retries: 5
-      start_period: 30s
+      retries: 3
     logging:
       driver: "json-file"
       options:
@@ -178,8 +168,8 @@ services:
     image: telegraf:1.32.3
     container_name: ${TELEG_HOSTNAME:-telegraf_collect}
     environment:
-      #- SCRAPE_URI=http://localhost:2375
-      - "SCRAPE_URI=${T_SCRAPE_URI:-http://localhost}:${T_SCRAPE_PORT:-2375}"
+      - SCRAPE_URI=http://localhost:2375
+      #- "SCRAPE_URI=${T_SCRAPE_URI:-http://localhost}:${T_SCRAPE_PORT:-2375}"
     #ports:
     #  - "${TELEG_PORT:-9324}:${TELEG_PORT:-9323}"
     volumes:
@@ -188,14 +178,13 @@ services:
     networks:
       - internal_network
     restart: unless-stopped
-    mem_limit: 1g         # Limit memory to 1GB
+    mem_limit: 1g
     cpu_shares: 512
     healthcheck:
       test: ["CMD-SHELL", "pgrep telegraf || exit 1"]
-      interval: 30s
+      interval: 10s
       timeout: 10s
-      retries: 5
-      start_period: 30s
+      retries: 3
     logging:
       driver: "json-file"
       options:
@@ -212,28 +201,27 @@ services:
       - NODE_EX_PORT=${NODE_EX_PORT:-9100}
       - TELEG_HOSTNAME=${TELEG_HOSTNAME:-telegraf_collect}
       - TELEG_PORT=${TELEG_PORT:-9323}
-      - GUACD_HOSTNAME=${GUACD_HOSTNAME:-guacd_server}
-      - GUACD_PORT=${GUACD_PORT:-4822}
+      - GUACD_HOSTNAME=${GUACD_HOSTNAME:-guacd}
+      - GUACD_PORT=${GUACD_PORT:-7651}
       - GUACD_WEB_HOSTNAME=${GUACD_WEB_HOSTNAME:-guacd_web}
       - WEB_PORT=${WEB_PORT:-8080}
       - POSTGRESQL_HOSTNAME=${POSTGRESQL_HOSTNAME:-pds3ql_serFver}
       - POSTGRES_PORT=${POSTGRES_PORT:-5432}
-      - PROMET_PORT=${PROMET_PORT:-9090}
-      #- "PROMET_HEALTH=http://${PROMET_HOSTNAME:-localhost}:${PROMET_PORT:-9090}"
     volumes:
-      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./config/prometheus.yml:/opt/bitnami/prometheus/prometheus.yml
     #ports:
-    #  - "${PROMET_PORT:-9090}:${PROMET_PORT:-9090}"
+    #  - "${PROMET_PORT:-7342}:${PROMET_PORT:-7342}"
+    command:
+      - "--config.file=/opt/bitnami/prometheus/conf/prometheus.yml"
+      - "--web.listen-address=:7342"
+      - '--storage.tsdb.retention.time=10d'
+      - '--storage.tsdb.retention.size=3GB'
     networks:
       - internal_network
-    command:
-      - "--config.file=/etc/prometheus/prometheus.yml"
-      - "--storage.tsdb.retention.time=10d"
-    #  - "--web.enable-lifecycle"
-    mem_limit: 3g         # Limit memory to 1GB
+    mem_limit: 5g
     cpu_shares: 512
     healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost:${PROMET_PORT:-9090}/-/ready"]
+      test: ["CMD", "promtool", "check", "config", "/opt/bitnami/prometheus/conf/prometheus.yml"]
       interval: 60s
       timeout: 10s
       retries: 3
@@ -250,10 +238,9 @@ services:
     container_name: ${GRAFANA_HOSTNAME:-grafana}
     environment:
      - PROMET_HOSTNAME=${PROMET_HOSTNAME:-prometheus}
-     - PROMET_PORT=${PROMET_PORT:-9090}
+     - PROMET_PORT=${PROMET_PORT:-7342}
      - NODE_EX_PORT=${NODE_EX_PORT:-9100}
      - NODE_EX_HOSTNAME=${NODE_EX_HOSTNAME:-node_exporter}
-
     volumes:
     # - ./config/grafana/provisioning/grafana.ini:/etc/grafana/grafana.ini
       - ./config/grafana/provisioning/datasources/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
@@ -271,14 +258,15 @@ services:
       - internal_network
       - external_network
     restart: unless-stopped
-    mem_limit: 1g         # Limit memory to 1GB
-    cpu_shares: 512
+    mem_limit: 1g           # Limit memory to 2GB
+    cpu_shares: 512         # Default CPU shares (higher priority)
+    # cpuset: "1"             # Bind to CPU 1 only
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000/"]  # Check if Grafana's web interface is up
-      interval: 30s        # Time between running the check (default: 30s)
-      timeout: 10s         # Time after which the check times out (default: 30s)
-      retries: 5           # Consecutive failures needed to report unhealthy (default: 3)
-      start_period: 30s    # Start period before running the health check (default: 0s)
+      interval: 10s         # Time between running the check (default: 30s)
+      timeout: 10s          # Time after which the check times out (default: 30s)
+      retries: 3            # Consecutive failures needed to report unhealthy (default: 3)
+      # start_period: 30s    # Start period before running the health check (default: 0s)
     logging:
       driver: "json-file"
       options:
