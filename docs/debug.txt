@@ -70,33 +70,52 @@ curl http://prometheus:7342/-/healthy
 
 http://localhost:8080/guacamole
 
-generate initdb
+
+
+
+
+# psql generate initdb
 docker run --rm guacamole/guacamole:1.5.5 /opt/guacamole/bin/initdb.sh --postgresql > initdb.sql
 
-search thrue logs
+# psql Check if the connection is present in the database:
+docker exec -it guacamole_db psql -U postgres -d guacamole_db -c "SELECT connection_name FROM guacamole_connection;"
+
+# psql database existence and user access
+docker exec -it guacamole_db sh -c "psql -U guacadmin -d postgres -c '\l' && psql -U guacadmin -d guacamole_db -c \"SELECT rolname, rolcanlogin FROM pg_roles WHERE rolname = 'guacadmin';\"" 
+# psql Verify the database and user exist:
+docker exec -it guacamole_db psql -U guacadmin -d guacamole_db -c "\l"
+docker exec -it guacamole_db psql -U guacadmin -d guacamole_db -c "\du"
+# psql debug is in postgresql.conf here is location
+psql -U guacadmin -d guacamole_db -c 'SHOW config_file' 
+psql -U guacadmin -c 'SHOW config_file' 
+
+# docker search thrue logs
 docker logs prometheus 2>&1 | grep WARN
 
-Check if the connection is present in the database:
-docker exec -it pds3ql_serFver psql -U postgres -d guacamole_db -c "SELECT connection_name FROM guacamole_connection;"
-
-see why its unhealthy
+# docker see why its unhealthy
 docker inspect --format='{{json .State.Health}}' node_exporter
 
-database existence and user access
-docker exec -it pds3ql_serFver sh -c "psql -U guacadmin -d postgres -c '\l' && psql -U guacadmin -d guacamole_db -c \"SELECT rolname, rolcanlogin FROM pg_roles WHERE rolname = 'guacadmin';\"" 
-
-get into db
-docker exec -it pds3ql_serFver psql -U guacadmin -d guacamole_db
+# docker get into db
+docker exec -it guacamole_db psql -U guacadmin -d guacamole_db
 
 
-clean all networks
+# docker clean all networks
 docker network prune -f
 
-check connection from guacamole web to guacd 
+# guacd check connection from guacamole web to guacd 
 wget -O- http://guacd:4822
 --2024-10-00 23:000--  (try: 4)  http://guacd:4822/
 Connecting to guacd (guacd)|172.18.0.5|:4822... connected.
 HTTP request sent, awaiting response... No data received.
 Retrying.
 
-wget -O- http://pds3ql_serFver:5432
+
+
+# guacamole: test guacamole properties file
+docker logs guacd_web 2>&1 | grep guacamole.properties
+docker exec -it guacd_web cat /home/guacamole/.guacamole/guacamole.properties
+# guacamole: test db connection
+wget -O- http://guacamole_db:5432
+
+# guacamole test VNC connection
+wget -O- http://vnc-firefox:5900

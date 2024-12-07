@@ -15,9 +15,21 @@ RUN apk update && \
     fc-cache -f
 
 
+# Set default VNC password environment variable
+ENV VNC_PASSWORD=
+
+# Expose the VNC port
+EXPOSE 5900
+
 # Start the VNC server and Firefox when the container launches
-CMD ["bash", "-c", "Xvfb :15 -screen 0 1024x768x16 & \
-                  fluxbox & \
-                  x11vnc -display :15 -forever -nopw -listen 0.0.0.0 & \
-                  dbus-launch firefox"]
+CMD ["bash", "-c", "\
+      Xvfb :15 -screen 0 1024x768x16 & \
+      fluxbox & \
+      if [ -n \"$VNC_PASSWORD\" ]; then \
+        echo \"$VNC_PASSWORD\" | x11vnc -storepasswd /root/.vnc/passwd && \
+        x11vnc -display :15 -forever -rfbauth /root/.vnc/passwd -listen 0.0.0.0; \
+      else \
+        x11vnc -display :15 -forever -nopw -listen 0.0.0.0; \
+      fi & \
+      dbus-launch firefox"]
 

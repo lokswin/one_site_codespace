@@ -8,6 +8,8 @@ services:
   firefox_vnc:
     image: work1t/firefox_vnc:1.0.0
     container_name: ${F_VNC_HOST:-firefox_vnc}
+    environment:
+      - VNC_PASSWORD=${VNC_PASSWORD:-guacadmin}
     # ports:
     #   - "${F_VNC_PORT:-5900}:${F_VNC_PORT:-5900}" # Web browser VNC access
     networks:
@@ -33,11 +35,12 @@ services:
     environment:
       - GUACD_LOG_LEVEL=${DEBUG_LEVEL:-debug}
       - HOSTNAME=${GUACD_HOSTNAME:-guacd}
-      - POSTGRESQL_USER=${POSTGRESQL_USER:-guacadmin}
-      - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD:-guacadmin}
-      - POSTGRESQL_DATABASE=${POSTGRESQL_DATABASE:-guacamole_db}
-      - POSTGRESQL_HOSTNAME=${POSTGRESQL_HOSTNAME:-pds3ql_serFver}
-      - POSTGRESQL_PORT=${POSTGRES_PORT:-5432}
+      # delete psql vars bcs it jus protocol
+      # - POSTGRESQL_USER=${POSTGRESQL_USER:-guacadmin}
+      # - POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD:-guacadmin}
+      # - POSTGRESQL_DATABASE=${POSTGRESQL_DATABASE:-guacamole_db}
+      # - POSTGRESQL_HOSTNAME=${POSTGRESQL_HOSTNAME:-guacamole_db}
+      # - POSTGRESQL_PORT=${POSTGRES_PORT:-5432}
       - GUACD_HOSTNAME=guacd
       - GUACD_PORT=7651
     command: ["/opt/guacamole/sbin/guacd", "-b", "0.0.0.0", "-l", "${GUACD_PORT:-7651}", "-L", "${LOG_LEVEL:-info}", "-f"]
@@ -63,27 +66,31 @@ services:
     image: guacamole/guacamole:1.5.5
     container_name: ${GUACD_WEB_HOSTNAME:-guacd_web}
     environment:
+      - EXTENSION_PRIORITY="PostgreSQL"
       - GUACD_HOSTNAME=guacd
       - GUACD_PORT=7651
       - TOTP_SECRET_KEY=${TOTP_SECRET_KEY:-My_totp_k2}
-      - F_VNC_HOST=${F_VNC_HOST:-firefox_vnc}
-      - F_VNC_PORT=${F_VNC_PORT:-5900}
+      - VNC_HOSTNAME=${VNC_HOSTNAME:-firefox_vnc}
+      - VNC_PORT=${VNC_PORT:-5900}
+      - VNC_PASSWORD=${VNC_PASSWORD:-guacadmin}
       - DISPLAY_GUACD=${DISPLAY_GUACD:-21}
       - DEBUG_ALL=${DEBUG_ALL:-true}
-      - GUACAMOLE_HOME=/etc/guacamole
+      - GUACAMOLE_HOME=${GUACAMOLE_HOME:-/etc/guacamole}
     volumes:
-      # simple auth - ./config/custom_guac/user-mapping.xml:/etc/guacamole/user-mapping.xml:ro
-      - ./config/custom_guac/logback.xml:/etc/guacamole/logback.xml
-      - ./config/custom_guac/guacamole.properties:/etc/guacamole/guacamole.properties
-      - ./config/custom_guac/extensions/guacamole-auth-totp-1.5.5.jar:/etc/guacamole/extensions/guacamole-auth-totp-1.5.5.jar
+      # simple auth - ./config/custom_guac/user-mapping.xml:${GUACAMOLE_HOME:-/etc/guacamole}/user-mapping.xml:ro
+      - ./config/custom_guac/logback.xml:${GUACAMOLE_HOME:-/etc/guacamole}/logback.xml
+      - ./config/custom_guac/guacamole.properties:${GUACAMOLE_HOME:-/etc/guacamole}/guacamole.properties
+      - ./config/custom_guac/postgresql-42.7.4.jar:${GUACAMOLE_HOME:-/etc/guacamole}/lib/postgresql-42.7.4.jar
+      - ./config/custom_guac/extensions/guacamole-auth-jdbc-postgresql-1.5.5.jar:${GUACAMOLE_HOME:-/etc/guacamole}/extensions/guacamole-auth-jdbc-postgresql-1.5.5.jar
+      - ./config/custom_guac/extensions/guacamole-auth-totp-1.5.5.jar:${GUACAMOLE_HOME:-/etc/guacamole}/extensions/guacamole-auth-totp-1.5.5.jar
     ports:
       - "${WEB_PORT:-8080}:${WEB_PORT:-8080}" # allow trafic from outside
     networks:
       - internal_network
       - external_network
-    depends_on:
-      guacd:
-        condition: service_healthy
+    # depends_on:
+    #   guacd:
+    #     condition: service_healthy
     restart: unless-stopped
     mem_limit: 1g
     cpu_shares: 512
@@ -98,24 +105,23 @@ services:
         max-size: "500m"
         max-file: "4"
 
-  psql_server:
+  guacamole_db:
     image: postgres:17
-    container_name: ${POSTGRESQL_HOSTNAME:-pds3ql_serFver}
+    container_name: ${POSTGRESQL_HOSTNAME:-guacamole_db}
     environment:
       - POSTGRES_USER=guacadmin
       - POSTGRES_PASSWORD=guacadmin
-      - POSTGRES_DB=guacamole_db
-      - HOSTNAME=${POSTGRESQL_HOSTNAME:-pds3ql_serFver}
-    # volumes:
-      # - ./db_data:/var/lib/postgresql/data
+      # - POSTGRES_DB=guacamole_db
+      - HOSTNAME=${POSTGRESQL_HOSTNAME:-guacamole_db}
+    volumes:
+      - ./config/psql/init/001-create-schema.sql:/docker-entrypoint-initdb.d/001-create-schema.sql
+      - ./config/psql/init/002-create-admin-user.sql:/docker-entrypoint-initdb.d/002-create-admin-user.sql
+      - ./config/psql/init/init-guacamole.sql:/docker-entrypoint-initdb.d/init-guacamole.sql
       # - ./initdb.sql:/docker-entrypoint-initdb.d/initdb.sql
     #ports:
     #  - "${POSTGRES_PORT:-5432}:${POSTGRES_PORT:-5432}"
     networks:
       - internal_network
-    depends_on:
-      guacd:
-        condition: service_healthy
     mem_limit: 2g
     cpu_shares: 1024
     cpuset: "1"
@@ -126,10 +132,11 @@ services:
         max-size: "500m"
         max-file: "4"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U -guacadmin"]
+      test: ["CMD-SHELL", "pg_isready -U guacadmin"]
       interval: 10s
       timeout: 10s
       retries: 3
+
 # SRE
 # host machine metrics
   node_exporter:
@@ -205,7 +212,7 @@ services:
       - GUACD_PORT=${GUACD_PORT:-7651}
       - GUACD_WEB_HOSTNAME=${GUACD_WEB_HOSTNAME:-guacd_web}
       - WEB_PORT=${WEB_PORT:-8080}
-      - POSTGRESQL_HOSTNAME=${POSTGRESQL_HOSTNAME:-pds3ql_serFver}
+      - POSTGRESQL_HOSTNAME=${POSTGRESQL_HOSTNAME:-guacamole_db}
       - POSTGRES_PORT=${POSTGRES_PORT:-5432}
     volumes:
       - ./config/prometheus.yml:/opt/bitnami/prometheus/prometheus.yml

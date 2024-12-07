@@ -1,52 +1,17 @@
-# network_validation.py
+-- Insert a new connection
+INSERT INTO guacamole_connection (connection_name, protocol)
+VALUES ('Firefox VNC', 'vnc')
+RETURNING connection_id;
 
-import subprocess
-import logging
-import os  # Ensure 'os' is imported
-import re  # Ensure 're' is imported
+-- Assume the returned connection_id is stored in a variable
+-- Insert connection parameters
+INSERT INTO guacamole_connection_parameter (connection_id, parameter_name, parameter_value)
+VALUES
+    (connection_id, 'hostname', 'firefox_vnc'),
+    (connection_id, 'port', '5900'),
+    (connection_id, 'password', 'yourpassword');
 
-VAR_PATTERN = re.compile(r'\$\{([^}:\s]+)(:-([^}]+))?\}')
-
-def evaluate_env_var(var_string):
-    """Evaluate environment variable with default value."""
-    match = VAR_PATTERN.match(str(var_string))
-    if match:
-        var_name = match.group(1)
-        default_value = match.group(3) or ''
-        return os.getenv(var_name, default_value)
-    return var_string
-
-def validate_network_connectivity(compose_config):
-    """Validate network connectivity between services."""
-    logging.info("Validating network connectivity between services...")
-    services = compose_config.get('services', {})
-
-    for service_name, config in services.items():
-        depends_on = config.get('depends_on', [])
-
-        # Get and evaluate the container name for the service
-        service_container_name = config.get('container_name', service_name)
-        service_container_name = evaluate_env_var(service_container_name)
-
-        for dependency_name in depends_on:
-            # Get and evaluate the container name for the dependency
-            dependency_config = services.get(dependency_name, {})
-            dependency_container_name = dependency_config.get('container_name', dependency_name)
-            dependency_container_name = evaluate_env_var(dependency_container_name)
-
-            try:
-                logging.info(f"Checking connectivity from '{service_name}' to '{dependency_name}'...")
-
-                # Use the evaluated container names in 'docker exec'
-                response = subprocess.run(
-                    ["docker", "exec", service_container_name, "ping", "-c", "3", dependency_name],
-                    capture_output=True, text=True
-                )
-                if response.returncode == 0:
-                    logging.info(f"[OK] '{service_name}' can reach '{dependency_name}'.")
-                else:
-                    logging.warning(f"[FAIL] '{service_name}' cannot reach '{dependency_name}': {response.stderr.strip()}")
-            except Exception as e:
-                logging.error(f"[ERROR] Connectivity check failed for '{service_name}': {e}")
-
-    # The rest of your code remains unchanged
+-- Grant permission to the 'guacadmin' user
+INSERT INTO guacamole_connection_permission (entity_id, connection_id, permission)
+VALUES
+    ((SELECT entity_id FROM guacamole_entity WHERE name='guacadmin' AND type='USER'), connection_id, 'READ');
