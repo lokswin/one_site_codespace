@@ -1,0 +1,4 @@
+services:
+  fgsdngdfgF456345:
+    image: alpine:3.20
+    container_name: fgsdngdfgF456345
