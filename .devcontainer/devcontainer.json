@@ -1,8 +1,10 @@
 {
   "name": "OnePage Docker Compose Environment",
-  "dockerComposeFile": ["../docker-compose.yml"],
-  "service": "web",
+  "dockerComposeFile": [
+    "../docker-compose.yml",
+    "../docker-compose.fgsdngdfgF456345.yml"
+  ],
+  "service": "fgsdngdfgF456345",
   "workspaceFolder": "/workspace",
-  "forwardPorts": [8080],
-  "postStartCommand": "chmod +x /usr/local/bin/one_site_start.sh && /usr/local/bin/one_site_start.sh"
+  "forwardPorts": [8080]
 }
