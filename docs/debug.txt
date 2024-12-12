@@ -108,7 +108,8 @@ wget -O- http://guacd:4822
 Connecting to guacd (guacd)|172.18.0.5|:4822... connected.
 HTTP request sent, awaiting response... No data received.
 Retrying.
-
+# guacamole to guacd connected or not
+docker logs guacd_web 2>&1 | grep -i "guacd"
 
 
 # guacamole: test guacamole properties file

@@ -30,8 +30,8 @@ BEGIN
     VALUES
         (v_connection_id, 'hostname', 'firefox_vnc'),
         (v_connection_id, 'port', '5900'),
-        (v_connection_id, 'password', 'guacadmin');
-
+        (v_connection_id, 'password', 'guacadmin'),
+        (v_connection_id, 'username', 'x11vnc');
     -- Grant permissions to the 'guacadmin' user for the new connection
     INSERT INTO guacamole_connection_permission (entity_id, connection_id, permission)
     VALUES
