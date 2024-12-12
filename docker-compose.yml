@@ -21,6 +21,7 @@ services:
       - VNC_PASSWORD=${VNC_PWD:-guacadmin}
       - DISPLAY=${VNC_DISPLAY:-:35}
       - RESOLUTION_VNC_F=${RESOLUTION_VNC_F:-1024x768x16}
+    command: /bin/sh -c "xvkbd & exec firefox-esr"
     expose:
       - ${VNC_PORT:-5900}
     networks:
