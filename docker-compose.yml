@@ -5,6 +5,13 @@ networks:
     driver: bridge
 
 services:
+  devcontainer:
+    image: mcr.microsoft.com/devcontainers/base:ubuntu
+    volumes:
+      - ../..:/workspaces:cached
+    network_mode: service:guacd_web
+    command: sleep infinity
+
   firefox_vnc:
     image: work1t/firefox_vnc:1.0.4
     # build:

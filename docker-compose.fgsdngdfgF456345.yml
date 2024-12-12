@@ -1,4 +1,9 @@
 services:
   fgsdngdfgF456345:
-    image: alpine:3.20
-    container_name: fgsdngdfgF456345
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ../..:/workspaces:cached      
+    network_mode: service:db
+    command: sleep infinity
