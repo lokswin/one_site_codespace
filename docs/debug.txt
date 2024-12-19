@@ -92,7 +92,7 @@ psql -U guacadmin -c 'SHOW config_file'
 # docker search thrue logs
 docker logs prometheus 2>&1 | grep WARN
 
-# docker see why its unhealthy
+# docker see why container unhealthy
 docker inspect --format='{{json .State.Health}}' node_exporter
 
 # docker get into db
@@ -120,3 +120,10 @@ wget -O- http://guacamole_db:5432
 
 # guacamole test VNC connection
 wget -O- http://vnc-firefox:5900
+
+
+# docker run one container manual
+docker run --rm -it --entrypoint sh -v $(pwd)/config/apache_rewrite.conf:/usr/local/apache2/conf/httpd.conf:ro httpd:alpine
+# debug apache
+httpd -e debug -DFOREGROUND
+cat /usr/local/apache2/logs/error_log
