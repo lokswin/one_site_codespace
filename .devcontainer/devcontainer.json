@@ -1,21 +1,7 @@
 {
-  "name": "OnePage Browser Container",
-  "build": {
-    "dockerfile": "../Dockerfile",
-    "context": ".."
-  },
-  "forwardPorts": [
-    5901,
-    6080
-  ],
-  "portsAttributes": {
-    "5901": {
-      "visibility": "public",
-      "label": "VNC Port"
-    },
-    "6080": {
-      "visibility": "public",
-      "label": "Web Port"
-    }
-  }
+    "dockerComposeFile": "../docker-compose.yml",
+    "service": "devcontainer",
+    "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+	"forwardPorts": [8080]
+	
 }

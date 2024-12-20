@@ -1,0 +1,9 @@
+services:
+  fgsdngdfgF456345:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ../..:/workspaces:cached      
+    network_mode: service:db
+    command: sleep infinity

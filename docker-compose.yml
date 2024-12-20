@@ -1,0 +1,356 @@
+networks:
+  external_network:
+    driver: bridge
+  internal_network:
+    driver: bridge
+    # internal: true
+
+services:
+  devcontainer:
+    image: mcr.microsoft.com/devcontainers/base:alpine
+    volumes:
+      - ../..:/workspaces:cached
+    network_mode: service:guacamole_proxy
+    command: sleep infinity
+
+  apache_rewrite:
+    image: httpd:alpine
+    container_name: ${ALP_REW_HOST:-apache_rewrite}
+    volumes:
+      - ./config/apache_rewrite.conf:/usr/local/apache2/conf/httpd.conf:ro
+    ports:
+      - "8081:8081"
+    networks:
+      - internal_network
+    # restart: always
+    restart: no
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "4"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8081/ || exit 1"]
+      # interval: 30s
+      # timeout: 5s
+      # retries: 3
+      # start_period: 10s      
+      interval: 5s
+      timeout: 5s
+      retries: 3
+
+  guacamole_proxy:
+    image: nginx:alpine
+    container_name: ${NGINX_HOST:-guacamole_proxy}
+    environment:
+      - VIRTUAL_HOST=localhost
+    volumes:
+      - ./config/nginx.conf:/etc/nginx/nginx.conf:ro
+    # ports:
+    #   - "${WEB_PORT:-80}:${WEB_PORT:-80}"
+    networks:
+      - external_network
+      - internal_network
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "4"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost/ || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+
+  firefox_vnc:
+    image: work1t/firefox_vnc:1.0.4
+    container_name: ${VNC_HOST:-firefox_vnc}
+    environment:
+      - VNC_PASSWORD=${VNC_PWD:-guacadmin}
+      - DISPLAY=${VNC_DISPLAY:-:35}
+      - RESOLUTION_VNC_F=${RESOLUTION_VNC_F:-1024x768x16}
+      - MOZ_DISABLE_GPU_ACCEL=1
+    command: >
+      sh -c "apk update && apk upgrade firefox-esr && 
+      firefox-esr --width 800 --height 600 --private-window --profile /tmp"
+    volumes:
+      - ./config/user.js:/tmp/user.js
+    expose:
+      - ${VNC_PORT:-5900}
+    networks:
+      - internal_network
+    restart: unless-stopped
+    mem_limit: 2g
+    cpu_shares: 512
+    # cap_drop:
+    #   - ALL
+    # cap_add:
+    #   - SYS_ADMIN
+    #   - NET_BIND_SERVICE
+    #   - IPC_LOCK
+    #   - CHOWN
+    #   - FOWNER
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "4"
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep Xvfb && pgrep fluxbox && pgrep x11vnc && pgrep firefox || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+
+  guacd:
+    image: guacamole/guacd:1.5.5
+    container_name: ${GUACD_HOSTNAME:-guacd}
+    environment:
+      - GUACD_LOG_LEVEL=${DEBUG_LEVEL:-debug}
+      - GUACD_HOSTNAME=${GUACD_HOSTNAME:-guacd}
+      - GUACD_PORT=${GUACD_PORT:-7651}
+    command: ["/opt/guacamole/sbin/guacd", "-b", "0.0.0.0", "-l", "${GUACD_PORT:-7651}", "-L", "${LOG_LEVEL:-info}", "-f"]
+    expose:
+     - "${GUACD_PORT:-7651}"
+    networks:
+      - internal_network
+    restart: unless-stopped
+    mem_limit: 1g
+    cpu_shares: 512
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "4"
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z localhost ${GUACD_PORT:-7651} || exit 0"]
+      interval: 5s
+      timeout: 10s
+      retries: 3
+
+  guacd_web:
+    image: guacamole/guacamole:1.5.5
+    container_name: ${GUACD_WEB_HOSTNAME:-guacd_web}
+    environment:
+      - AUTH_PROVIDER=${GUACD_WEB_AU_P:-net.sourceforge.guacamole.net.auth.postgresql.PostgreSQLAuthenticationProvider}
+      - EXTENSION_PRIORITY=${GUACD_WEB_EXTENSION_PRIORITY:-"PostgreSQL"}
+      - GUACD_HOSTNAME=${GUACD_HOSTNAME:-guacd}
+      - GUACD_PORT=${GUACD_PORT:-7651}
+      - TOTP_SECRET_KEY=${TOTP_SECRET_KEY:-My_totp_k2}
+      - GUACAMOLE_HOME=${GUACAMOLE_HOME:-/etc/guacamole}
+      - POSTGRESQL_HOSTNAME=${PSQL_HOSTNAME:-guacamole_db}
+      - POSTGRESQL_PORT=${PSQL_PORT:-7240}
+      - POSTGRESQL_DATABASE=${PSQL_DB:-guacamole_db}
+      - POSTGRESQL_USER=${PSQL_USER:-guacadmin}
+      - POSTGRESQL_PASSWORD=${PSQL_PWD:-guacadmin}
+      - TOTP-ISSUER=${TOTP-ISSUER:-Guacamole}
+      - TOTP-DIGITS=${TOTP-DIGITS:-6}
+      - TOTP-PERIOD=${TOTP-PERIOD:-30}
+    volumes:
+      - ./config/custom_guac/logback.xml:${GUACAMOLE_HOME:-/etc/guacamole}/logback.xml
+      - ./config/custom_guac/postgresql-42.7.4.jar:${GUACAMOLE_HOME:-/etc/guacamole}/lib/postgresql-42.7.4.jar
+      # - ./config/custom_guac/extensions/guacamole-auth-jdbc-postgresql-1.5.5.jar:${GUACAMOLE_HOME:-/etc/guacamole}/extensions/guacamole-auth-jdbc-postgresql-1.5.5.jar
+      - ./config/custom_guac/extensions/guacamole-auth-totp-1.5.5.jar:${GUACAMOLE_HOME:-/etc/guacamole}/extensions/guacamole-auth-totp-1.5.5.jar
+    # ports:
+    #   - "${WEB_PORT:-8080}:${WEB_PORT:-8080}" # allow trafic from outside
+    networks:
+      - internal_network
+    # depends_on:
+    #   guacd:
+    #     condition: service_healthy
+    restart: unless-stopped
+    mem_limit: 1g
+    cpu_shares: 512
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${WEB_PORT:-8080}/guacamole/"]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "4"
+
+  guacamole_db:
+    image: postgres:17
+    container_name: ${PSQL_HOSTNAME:-guacamole_db}
+    environment:
+      - POSTGRES_USER=${PSQL_USER:-guacadmin}
+      - POSTGRES_PASSWORD=${PSQL_PWD:-guacadmin}
+      - HOSTNAME=${PSQL_HOSTNAME:-guacamole_db}
+      - PGPORT=${PSQL_PORT:-7240}
+    volumes:
+      - ./config/psql/init/001-create-schema.sql:/docker-entrypoint-initdb.d/001-create-schema.sql
+      - ./config/psql/init/002-create-admin-user.sql:/docker-entrypoint-initdb.d/002-create-admin-user.sql
+      - ./config/psql/init/init-guacamole.sql:/docker-entrypoint-initdb.d/init-guacamole.sql
+    expose:
+      - "${PSQL_PORT:-7240}"
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+      - IPC_LOCK
+      - SETUID
+      - SETGID
+      - FOWNER
+      - DAC_OVERRIDE
+    networks:
+      - internal_network
+    mem_limit: 2g
+    cpu_shares: 1024
+    cpuset: "1"
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "4"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U guacadmin"]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+
+# SRE
+# host machine metrics
+#   node_exporter:
+#     image: bitnami/node-exporter:1.8.2
+#     container_name: ${NODE_EX_HOSTNAME:-node_exporter}
+#     # ports:
+#     #   - "${NODE_EX_PORT:-9100}:${NODE_EX_PORT:-9100}" # Expose metrics port
+#     volumes:
+#       - /proc:/host/proc:ro
+#       - /sys:/host/sys:ro
+#       - /:/rootfs:ro
+#       - /run/udev:/run/udev:ro
+#     command:
+#       - '--path.procfs=/host/proc'
+#       - '--path.sysfs=/host/sys'
+#       - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($|/)'
+#       - '--collector.diskstats.device-exclude=^(z?ram|loop|fd|(h|s|v|xv)d[a-z]|nvme\\d+n\\d+p)\\d+$'
+#     networks:
+#       - internal_network
+#     restart: unless-stopped
+#     mem_limit: 1g
+#     cpu_shares: 512   
+#     healthcheck:
+#       test: ["CMD-SHELL", "ps aux | grep node_exporter || exit 1"]
+#       interval: 10s
+#       timeout: 10s
+#       retries: 3
+#     logging:
+#       driver: "json-file"
+#       options:
+#         max-size: "500m"
+#         max-file: "4"
+
+# # container-level metrics
+#   telegraf_collect:
+#     image: telegraf:1.32.3
+#     container_name: ${TELEG_HOSTNAME:-telegraf_collect}
+#     environment:
+#       - SCRAPE_URI=http://localhost:2375
+#       #- "SCRAPE_URI=${T_SCRAPE_URI:-http://localhost}:${T_SCRAPE_PORT:-2375}"
+#     #ports:
+#     #  - "${TELEG_PORT:-9324}:${TELEG_PORT:-9323}"
+#     volumes:
+#       - /var/run/docker.sock:/var/run/docker.sock
+#       - ./config/telegraf.conf:/etc/telegraf/telegraf.conf
+#     networks:
+#       - internal_network
+#     restart: unless-stopped
+#     mem_limit: 1g
+#     cpu_shares: 512
+#     healthcheck:
+#       test: ["CMD-SHELL", "pgrep telegraf || exit 1"]
+#       interval: 10s
+#       timeout: 10s
+#       retries: 3
+#     logging:
+#       driver: "json-file"
+#       options:
+#         max-size: "500m"
+#         max-file: "4"
+
+# # scrapes data from exporters
+#   prometheus:
+#     image: bitnami/prometheus:3.0.0
+#     container_name: ${PROMET_HOSTNAME:-prometheus}
+#     environment:
+#       - GOMAXPROCS=2
+#       - NODE_EX_HOSTNAME=${NODE_EX_HOSTNAME:-node_exporter}
+#       - NODE_EX_PORT=${NODE_EX_PORT:-9100}
+#       - TELEG_HOSTNAME=${TELEG_HOSTNAME:-telegraf_collect}
+#       - TELEG_PORT=${TELEG_PORT:-9323}
+#       - GUACD_HOSTNAME=${GUACD_HOSTNAME:-guacd}
+#       - GUACD_PORT=${GUACD_PORT:-7651}
+#       - GUACD_WEB_HOSTNAME=${GUACD_WEB_HOSTNAME:-guacd_web}
+#       - WEB_PORT=${WEB_PORT:-8080}
+#       - POSTGRESQL_HOSTNAME=${PSQL_HOSTNAME:-guacamole_db}
+#       - POSTGRES_PORT=${PSQL_PORT:-7240}
+#     volumes:
+#       - ./config/prometheus.yml:/opt/bitnami/prometheus/prometheus.yml
+#     #ports:
+#     #  - "${PROMET_PORT:-7342}:${PROMET_PORT:-7342}"
+#     command:
+#       - "--config.file=/opt/bitnami/prometheus/conf/prometheus.yml"
+#       - "--web.listen-address=:7342"
+#       - '--storage.tsdb.retention.time=10d'
+#       - '--storage.tsdb.retention.size=3GB'
+#     networks:
+#       - internal_network
+#     mem_limit: 5g
+#     cpu_shares: 512
+#     healthcheck:
+#       test: ["CMD", "promtool", "check", "config", "/opt/bitnami/prometheus/conf/prometheus.yml"]
+#       interval: 60s
+#       timeout: 10s
+#       retries: 3
+#     restart: unless-stopped
+#     logging:
+#       driver: "json-file"
+#       options:
+#         max-size: "500m"
+#         max-file: "4"
+
+# # monitoring visual
+#   grafana:
+#     image: grafana/grafana:11.3.1
+#     container_name: ${GRAFANA_HOSTNAME:-grafana}
+#     environment:
+#      - PROMET_HOSTNAME=${PROMET_HOSTNAME:-prometheus}
+#      - PROMET_PORT=${PROMET_PORT:-7342}
+#      - NODE_EX_PORT=${NODE_EX_PORT:-9100}
+#      - NODE_EX_HOSTNAME=${NODE_EX_HOSTNAME:-node_exporter}
+#     volumes:
+#     # - ./config/grafana/provisioning/grafana.ini:/etc/grafana/grafana.ini
+#       - ./config/grafana/provisioning/datasources/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
+#       - ./config/grafana/provisioning/dashboards/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml
+#       - ./config/grafana/provisioning/dashboards/dash1.json:/var/lib/grafana/dashboards/dash1.json
+#       - ./config/grafana/provisioning/dashboards/dash_doc_sys_mon.json:/var/lib/grafana/dashboards/dash_doc_sys_mon.json
+#       - ./config/grafana/provisioning/dashboards/dash_grafana_stats.json:/var/lib/grafana/dashboards/dash_grafana_stats.json
+#       - ./config/grafana/provisioning/dashboards/dash_node_ex.json:/var/lib/grafana/dashboards/dash_node_ex.json
+#       - ./config/grafana/provisioning/dashboards/dash_promet.json:/var/lib/grafana/dashboards/dash_promet.json
+#       - ./config/grafana/provisioning/dashboards/dash_sql.json:/var/lib/grafana/dashboards/dash_sql.json
+#       - ./config/grafana/provisioning/dashboards/dash_telegraf.json:/var/lib/grafana/dashboards/dash_telegraf.json
+#     ports:
+#       - "${GRAFANA_PORT:-3000}:${GRAFANA_PORT:-3000}" # allow trafic from outside
+#     networks:
+#       - internal_network
+#       - external_network
+#     restart: unless-stopped
+#     mem_limit: 1g           # Limit memory to 2GB
+#     cpu_shares: 512         # Default CPU shares (higher priority)
+#     # cpuset: "1"             # Bind to CPU 1 only
+#     healthcheck:
+#       test: ["CMD", "curl", "-f", "http://localhost:3000/"]  # Check if Grafana's web interface is up
+#       interval: 10s         # Time between running the check (default: 30s)
+#       timeout: 10s          # Time after which the check times out (default: 30s)
+#       retries: 3            # Consecutive failures needed to report unhealthy (default: 3)
+#       # start_period: 30s    # Start period before running the health check (default: 0s)
+#     logging:
+#       driver: "json-file"
+#       options:
+#         max-size: "500m"
+#         max-file: "4"

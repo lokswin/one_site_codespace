@@ -1,9 +1,0 @@
-# file: config/fluxbox-init
-# This file contains the configuration settings for Fluxbox window manager.
-# It defines appearance and behavior settings for the Fluxbox environment.
-
-session.screen0.toolbar.visible: false
-session.screen0.fullMaximization: true
-session.screen0.titlebar.left: 
-session.screen0.titlebar.right: 
-session.screen0.allowRemoteActions: false

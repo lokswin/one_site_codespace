@@ -1,0 +1,15 @@
+# .github/dependabot.yml
+version: 2
+updates:
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    rebase-strategy: "auto"
+    # Group security updates into a single pull request for Docker dependencies
+    groups:
+      docker-security-updates:
+        applies-to: security-updates
+        patterns:
+          - "*"

@@ -1,0 +1,129 @@
+# file: debug.txt
+
+sudo chown -R $(whoami):$(whoami) ./
+
+
+docker stop $(docker ps -a -q)
+
+docker build --build-arg VNC_PASSWORD="" -t onepage-browser-container .
+
+docker run -d --name test-container -p 6080:6080 onepage-browser-container
+
+docker exec -it test-container /bin/bash
+
+docker cp test-container:/tmp/log/onepage-browser-container/. ./logiiisss67867
+
+rm -rf ./logiiisss67867/*;docker cp test-container:/tmp/log/onepage-browser-container/. ./logiiisss67867
+
+rm -rf ./logiiisss67867/*;
+
+ip addr show eth0 | grep inet
+
+
+
+
+docker rm test-container && docker build --build-arg VNC_PASSWORD="" -t onepage-browser-container . && docker run -d --name test-container -p 6080:6080 onepage-browser-container
+
+
+run
+
+docker build --build-arg VNC_PASSWORD="" --build-arg CACHEBUST=$(date +%s) -t onepage-browser-container . ;docker stop test-container;docker rm test-container;docker run -d --name test-container -p 5901:59010 -p 6080:6080 onepage-browser-container
+
+logs
+rm -rf ./logiiisss67867/*;docker cp test-container:/var/log/vnc/. ./logiiisss67867
+
+
+update docker version
+
+sudo curl -L "https://github.com/docker/compose/releases/download/$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")')/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+
+
+
+
+docker-compose down
+export GUACD_WEB_HOSTNAME="web_one" GUAC_USER="testuser" GUAC_PASS="testpass" TOTP_SECRET_KEY="testtotpkey" VNC_HOSTNAME="localhost" VNC_PORT="5901" GUACD_HOSTNAME="test_guacd" GUACD_PORT="7651" DEBUG_ALL="true" WEB_PORT="8080" && docker compose -f docker-compose.yml up -d
+
+
+
+curl test_guacd:7651
+
+cat /etc/guacamole/guacamole.properties && cat /etc/guacamole/user-mapping.xml
+
+notes
+      - "127.0.0.1:555:555"  # Private, restricted to localhost
+
+
+d@d:/home/u/git_dirs/one_site_codespace# docker exec -it guacd sh
+/ $ nc -z localhost 7651
+/ $ nc -vz localhost 7651
+nc: connect to localhost (::1) port 7651 (tcp) failed: Connection refused
+Connection to localhost (127.0.0.1) 7651 port [tcp/*] succeeded!
+
+nc -z localhost 7651
+grafana:
+docker exec -it grafana sh
+getent hosts prometheus
+curl -u admin:admin http://localhost:3000/api/datasources
+nc -zv prometheus 7342
+curl http://prometheus:7342/-/healthy
+
+
+http://localhost:8080/guacamole
+
+
+
+
+
+# psql generate initdb
+docker run --rm guacamole/guacamole:1.5.5 /opt/guacamole/bin/initdb.sh --postgresql > initdb.sql
+
+# psql Check if the connection is present in the database:
+docker exec -it guacamole_db psql -U postgres -d guacamole_db -c "SELECT connection_name FROM guacamole_connection;"
+
+# psql database existence and user access
+docker exec -it guacamole_db sh -c "psql -U guacadmin -d postgres -c '\l' && psql -U guacadmin -d guacamole_db -c \"SELECT rolname, rolcanlogin FROM pg_roles WHERE rolname = 'guacadmin';\"" 
+# psql Verify the database and user exist:
+docker exec -it guacamole_db psql -U guacadmin -d guacamole_db -c "\l"
+docker exec -it guacamole_db psql -U guacadmin -d guacamole_db -c "\du"
+# psql debug is in postgresql.conf here is location
+psql -U guacadmin -d guacamole_db -c 'SHOW config_file' 
+psql -U guacadmin -c 'SHOW config_file' 
+
+# docker search thrue logs
+docker logs prometheus 2>&1 | grep WARN
+
+# docker see why container unhealthy
+docker inspect --format='{{json .State.Health}}' node_exporter
+
+# docker get into db
+docker exec -it guacamole_db psql -U guacadmin -d guacamole_db
+
+
+# docker clean all networks
+docker network prune -f
+
+# guacd check connection from guacamole web to guacd 
+wget -O- http://guacd:4822
+--2024-10-00 23:000--  (try: 4)  http://guacd:4822/
+Connecting to guacd (guacd)|172.18.0.5|:4822... connected.
+HTTP request sent, awaiting response... No data received.
+Retrying.
+# guacamole to guacd connected or not
+docker logs guacd_web 2>&1 | grep -i "guacd"
+
+
+# guacamole: test guacamole properties file
+docker logs guacd_web 2>&1 | grep guacamole.properties
+docker exec -it guacd_web cat /home/guacamole/.guacamole/guacamole.properties
+# guacamole: test db connection
+wget -O- http://guacamole_db:5432
+
+# guacamole test VNC connection
+wget -O- http://vnc-firefox:5900
+
+
+# docker run one container manual
+docker run --rm -it --entrypoint sh -v $(pwd)/config/apache_rewrite.conf:/usr/local/apache2/conf/httpd.conf:ro httpd:alpine
+# debug apache
+httpd -e debug -DFOREGROUND
+cat /usr/local/apache2/logs/error_log

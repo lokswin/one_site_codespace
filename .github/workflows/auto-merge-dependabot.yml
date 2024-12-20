@@ -1,0 +1,22 @@
+# .github/workflows/auto-merge-dependabot.yml
+name: "Auto-merge Dependabot Updates"
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+      - add_guac_otp
+
+jobs:
+  automerge:
+    runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Auto-merge Dependabot PR
+        uses: ahmadnassri/action-dependabot-auto-merge@v2
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
