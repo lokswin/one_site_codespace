@@ -127,3 +127,7 @@ docker run --rm -it --entrypoint sh -v $(pwd)/config/apache_rewrite.conf:/usr/lo
 # debug apache
 httpd -e debug -DFOREGROUND
 cat /usr/local/apache2/logs/error_log
+
+# new version of dockerfile send to registry
+docker build -t work1t/firefox_vnc:1.0.5 ./bu
+docker push work1t/firefox_vnc:1.0.5
