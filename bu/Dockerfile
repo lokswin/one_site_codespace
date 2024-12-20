@@ -43,7 +43,6 @@ RUN mkdir -p /tmp/.X11-unix && chmod 1777 /tmp/.X11-unix
 
 # Set environment variables
 ENV DISPLAY=:35
-ENV RESOLUTION_VNC_F=1280x800x24
 ENV VNC_PASSWORD=
 ENV DBUS_SYSTEM_BUS_ADDRESS=unix:path=/var/run/dbus/system_bus_socket
 # Use Tini as the entrypoint for proper signal handling
@@ -62,14 +61,14 @@ ENTRYPOINT ["/bin/ash", "-c", "\
     else \
         echo 'No display lock to delete for ${DISPLAY}'; \
     fi; \
-    Xvfb $DISPLAY -screen 0 1280x800x24 & \
+    Xvfb $DISPLAY -screen 0 ${DESKTOP_RESOLUTION:-1920x1280x24} & \
     xvfb_pid=$!; \
     x11vnc -storepasswd $VNC_PASSWORD /root/passwd; \
     x11vnc -display $DISPLAY -forever -rfbauth /root/passwd -listen 0.0.0.0 & \
     x11vnc_pid=$!; \
     openbox & \
     winman_pid=$!; \
-    dbus-launch firefox & \
+    dbus-launch firefox-esr & \
     brow_pid=$!; \
     wait $xvfb_pid $winman_pid $x11vnc_pid $brow_pid; \
 "]

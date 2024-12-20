@@ -65,16 +65,17 @@ services:
       retries: 3
 
   firefox_vnc:
-    image: work1t/firefox_vnc:1.0.4
+    image: work1t/firefox_vnc:1.0.5
     container_name: ${VNC_HOST:-firefox_vnc}
     environment:
       - VNC_PASSWORD=${VNC_PWD:-guacadmin}
       - DISPLAY=${VNC_DISPLAY:-:35}
-      - RESOLUTION_VNC_F=${RESOLUTION_VNC_F:-1024x768x16}
+      - DESKTOP_RESOLUTION=${DESKTOP_RESOLUTION:-1920x1280x24}
+      - FIREFOX_WINDOW_SIZE=${FIREFOX_WINDOW_SIZE:-640,800}
       - MOZ_DISABLE_GPU_ACCEL=1
     command: >
       sh -c "apk update && apk upgrade firefox-esr && 
-      firefox-esr --width 800 --height 600 --private-window --profile /tmp"
+      firefox-esr --window-size=${FIREFOX_WINDOW_SIZE} --private-window --profile /tmp"
     volumes:
       - ./config/user.js:/tmp/user.js
     expose:
