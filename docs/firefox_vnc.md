@@ -41,3 +41,4 @@
 | **bash**              | Command-line shell.                                                             | `bash`: Start the shell.                                                                                     |
 |                       |                                                                                 | `bash script.sh`: Run a shell script.                                                                        |
 
+resolution  Aspect Ratio (Ultra-Wide):      # 2986x1280x24 2276x1280x24

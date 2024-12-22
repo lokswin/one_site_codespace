@@ -70,12 +70,16 @@ services:
     environment:
       - VNC_PASSWORD=${VNC_PWD:-guacadmin}
       - DISPLAY=${VNC_DISPLAY:-:35}
-      - DESKTOP_RESOLUTION=${DESKTOP_RESOLUTION:-1920x1280x24}
-      - FIREFOX_WINDOW_SIZE=${FIREFOX_WINDOW_SIZE:-640,800}
-      - MOZ_DISABLE_GPU_ACCEL=1
+      - DESKTOP_RESOLUTION=${DESKTOP_RESOLUTION:-2986x1280x24}
+      - FIREFOX_WINDOW_SIZE=${FIREFOX_WINDOW_SIZE:-1024,768}
+      - MOZ_DISABLE_GPU_ACCEL=${MOZ_DISABLE_GPU_ACCEL:-1}
+      - SCREEN_DPI=${SCREEN_DPI:-96}
     command: >
-      sh -c "apk update && apk upgrade firefox-esr && 
-      firefox-esr --window-size=${FIREFOX_WINDOW_SIZE} --private-window --profile /tmp"
+      sh -c "apk update && apk upgrade && 
+        mkdir -p /tmp/firefox-profile &&
+        echo 'user_pref(\"layers.acceleration.disabled\", true);' >> /tmp/firefox-profile/prefs.js &&
+        echo 'user_pref(\"gfx.direct2d.disabled\", true);' >> /tmp/firefox-profile/prefs.js &&
+        firefox-esr --window-size=${FIREFOX_WINDOW_SIZE:-1024,768} --private-window --profile /tmp/firefox-profile"
     volumes:
       - ./config/user.js:/tmp/user.js
     expose:
@@ -83,8 +87,12 @@ services:
     networks:
       - internal_network
     restart: unless-stopped
-    mem_limit: 2g
-    cpu_shares: 512
+    mem_limit: 12g         # Allocate up to 12GB of memory
+    mem_reservation: 4g    # Ensure at least 2GB is reserved
+    cpu_shares: 1024       # Prioritize this container over others
+    cpus: "3.5"            # Specify CPU cores for this container
+    # mem_limit: 2g
+    # cpu_shares: 512
     # cap_drop:
     #   - ALL
     # cap_add:
