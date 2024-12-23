@@ -87,10 +87,10 @@ services:
     networks:
       - internal_network
     restart: unless-stopped
-    mem_limit: 12g         # Allocate up to 12GB of memory
-    mem_reservation: 4g    # Ensure at least 2GB is reserved
+    mem_limit: 2g         # Allocate up to 12GB of memory
+    mem_reservation: 1g    # Ensure at least 2GB is reserved
     cpu_shares: 1024       # Prioritize this container over others
-    cpus: "3.5"            # Specify CPU cores for this container
+    cpus: "2.0"            # Specify CPU cores for this container
     # mem_limit: 2g
     # cpu_shares: 512
     # cap_drop:
