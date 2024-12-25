@@ -2,6 +2,9 @@
     "dockerComposeFile": "../docker-compose.yml",
     "service": "devcontainer",
     "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
-	"forwardPorts": [8080]
-	
+    "forwardPorts": [80],
+    "updateContentCommand": "", // Отключение автообновлений содержимого
+    "build": {
+        "cacheFrom": ["type=local,src=/tmp/cache"]
+    }
 }
