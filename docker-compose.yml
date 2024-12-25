@@ -142,6 +142,7 @@ services:
     image: guacamole/guacamole:1.5.5
     container_name: ${GUACD_WEB_HOSTNAME:-guacd-web}
     environment:
+      - DISABLE_TRANSLATIONS=true
       - AUTH_PROVIDER=${GUACD_WEB_AU_P:-net.sourceforge.guacamole.net.auth.postgresql.PostgreSQLAuthenticationProvider}
       - EXTENSION_PRIORITY=${GUACD_WEB_EXTENSION_PRIORITY:-"PostgreSQL"}
       - GUACD_HOSTNAME=${GUACD_HOSTNAME:-guacd}
