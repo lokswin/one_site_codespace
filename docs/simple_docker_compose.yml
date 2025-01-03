@@ -1,0 +1,111 @@
+services:
+  devcontainer:
+    image: mcr.microsoft.com/devcontainers/base:alpine
+    volumes:
+      - ../..:/workspaces:cached
+    network_mode: service:guacamole-proxy
+    command: sleep infinity
+
+  apache-rewrite:
+    image: httpd:alpine
+    container_name: ${ALP_REW_HOST:-apache-rewrite}
+    volumes:
+      - ./config/apache-rewrite.conf:/usr/local/apache2/conf/httpd.conf:ro
+    ports:
+      - "8081:8081"
+    networks:
+      - internal_network
+
+  guacamole-proxy:
+    image: nginx:alpine
+    container_name: ${NGINX_HOST:-guacamole-proxy}
+    environment:
+      - VIRTUAL_HOST=localhost
+    volumes:
+      - ./config/nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "${WEB_PORT:-80}:${WEB_PORT:-80}"
+    networks:
+      - external_network
+      - internal_network
+
+  firefox_vnc:
+    image: work1t/firefox_vnc:1.0.5
+    container_name: ${VNC_HOST:-firefox_vnc}
+    environment:
+      - VNC_PASSWORD=${VNC_PWD:-guacadmin}
+      - DISPLAY=${VNC_DISPLAY:-:35}
+      - DESKTOP_RESOLUTION=${DESKTOP_RESOLUTION:-2986x1280x24}
+      - FIREFOX_WINDOW_SIZE=${FIREFOX_WINDOW_SIZE:-1024,768}
+      - MOZ_DISABLE_GPU_ACCEL=${MOZ_DISABLE_GPU_ACCEL:-1}
+      - SCREEN_DPI=${SCREEN_DPI:-96}
+    command: >
+      sh -c "apk update && apk upgrade && 
+        mkdir -p /tmp/firefox-profile &&
+        echo 'user_pref(\"layers.acceleration.disabled\", true);' >> /tmp/firefox-profile/prefs.js &&
+        echo 'user_pref(\"gfx.direct2d.disabled\", true);' >> /tmp/firefox-profile/prefs.js &&
+        firefox-esr --window-size=${FIREFOX_WINDOW_SIZE:-1024,768} --private-window --profile /tmp/firefox-profile"
+    volumes:
+      - ./config/user.js:/tmp/user.js
+    expose:
+      - ${VNC_PORT:-5900}
+    networks:
+      - internal_network
+
+  guacd:
+    image: guacamole/guacd:1.5.5
+    container_name: ${GUACD_HOSTNAME:-guacd}
+    environment:
+      - GUACD_LOG_LEVEL=${DEBUG_LEVEL:-debug}
+      - GUACD_HOSTNAME=${GUACD_HOSTNAME:-guacd}
+      - GUACD_PORT=${GUACD_PORT:-7651}
+    command: ["/opt/guacamole/sbin/guacd", "-b", "0.0.0.0", "-l", "${GUACD_PORT:-7651}", "-L", "${LOG_LEVEL:-info}", "-f"]
+    expose:
+     - "${GUACD_PORT:-7651}"
+    networks:
+      - internal_network
+
+  guacd-web:
+    image: guacamole/guacamole:1.5.5
+    container_name: ${GUACD_WEB_HOSTNAME:-guacd-web}
+    environment:
+      - AUTH_PROVIDER=${GUACD_WEB_AU_P:-net.sourceforge.guacamole.net.auth.postgresql.PostgreSQLAuthenticationProvider}
+      - EXTENSION_PRIORITY=${GUACD_WEB_EXTENSION_PRIORITY:-"PostgreSQL"}
+      - GUACD_HOSTNAME=${GUACD_HOSTNAME:-guacd}
+      - GUACD_PORT=${GUACD_PORT:-7651}
+      - TOTP_SECRET_KEY=${TOTP_SECRET_KEY:-My_totp_k2}
+      - GUACAMOLE_HOME=${GUACAMOLE_HOME:-/etc/guacamole}
+      - POSTGRESQL_HOSTNAME=${PSQL_HOSTNAME:-guacamole_db}
+      - POSTGRESQL_PORT=${PSQL_PORT:-7240}
+      - POSTGRESQL_DATABASE=${PSQL_DB:-guacamole_db}
+      - POSTGRESQL_USER=${PSQL_USER:-guacadmin}
+      - POSTGRESQL_PASSWORD=${PSQL_PWD:-guacadmin}
+      - TOTP-ISSUER=${TOTP-ISSUER:-Guacamole}
+      - TOTP-DIGITS=${TOTP-DIGITS:-6}
+      - TOTP-PERIOD=${TOTP-PERIOD:-30}
+    volumes:
+      - ./config/custom_guac/logback.xml:${GUACAMOLE_HOME:-/etc/guacamole}/logback.xml
+      - ./config/custom_guac/postgresql-42.7.4.jar:${GUACAMOLE_HOME:-/etc/guacamole}/lib/postgresql-42.7.4.jar
+      - ./config/custom_guac/extensions/guacamole-auth-totp-1.5.5.jar:${GUACAMOLE_HOME:-/etc/guacamole}/extensions/guacamole-auth-totp-1.5.5.jar
+    ports:
+      - "${WEB_PORT:-8080}:${WEB_PORT:-8080}" # allow trafic from outside
+    networks:
+      - internal_network
+
+  guacamole_db:
+    image: postgres:17
+    container_name: ${PSQL_HOSTNAME:-guacamole_db}
+    environment:
+      - POSTGRES_USER=${PSQL_USER:-guacadmin}
+      - POSTGRES_PASSWORD=${PSQL_PWD:-guacadmin}
+      - HOSTNAME=${PSQL_HOSTNAME:-guacamole_db}
+      - PGPORT=${PSQL_PORT:-7240}
+    volumes:
+      - ./config/psql/init/001-create-schema.sql:/docker-entrypoint-initdb.d/001-create-schema.sql
+      - ./config/psql/init/002-create-admin-user.sql:/docker-entrypoint-initdb.d/002-create-admin-user.sql
+      - ./config/psql/init/init-guacamole.sql:/docker-entrypoint-initdb.d/init-guacamole.sql
+    expose:
+      - "${PSQL_PORT:-7240}"
+    networks:
+      - internal_network
+

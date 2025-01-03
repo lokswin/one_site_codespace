@@ -2,7 +2,7 @@
 
 sudo chown -R $(whoami):$(whoami) ./
 
-
+# docker stop all containers
 docker stop $(docker ps -a -q)
 
 docker build --build-arg VNC_PASSWORD="" -t onepage-browser-container .
