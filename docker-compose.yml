@@ -13,33 +13,6 @@ services:
     network_mode: service:guacamole-proxy
     command: sleep infinity
 
-  apache-rewrite:
-    image: httpd:alpine
-    container_name: ${ALP_REW_HOST:-apache-rewrite}
-    volumes:
-      - ./config/apache-rewrite.conf:/usr/local/apache2/conf/httpd.conf:ro
-    ports:
-      - "8081:8081"
-    networks:
-      - internal_network
-    # restart: always
-    restart: no
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "500m"
-        max-file: "4"
-    healthcheck:
-      #test: ["CMD-SHELL", "wget -qO- http://localhost:8081/ || exit 1"]
-      test: ["CMD-SHELL", "if wget -qO- http://127.0.0.1:8081/guacamole/#/ > /dev/null; then echo 'Health check passed' >> /proc/1/fd/1; exit 0; else echo 'Health check failed' >> /proc/1/fd/1; exit 1; fi"]
-      # interval: 30s
-      # timeout: 5s
-      # retries: 3
-      # start_period: 10s      
-      interval: 15s
-      timeout: 5s
-      retries: 3
-
   guacamole-proxy:
     image: nginx:alpine
     container_name: ${NGINX_HOST:-guacamole-proxy}
@@ -48,7 +21,7 @@ services:
     volumes:
       - ./config/nginx.conf:/etc/nginx/nginx.conf:ro
     ports:
-      - "${WEB_PORT:-80}:${WEB_PORT:-80}"
+      - "${WEB_PORT:-8080}:${WEB_PORT:-80}"
     networks:
       - external_network
       - internal_network
@@ -59,7 +32,7 @@ services:
         max-size: "500m"
         max-file: "4"
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost/guacamole/#/ || exit 1"]
+      test: ["CMD-SHELL", "curl -f http://localhost/agu-agu/ || exit 1"]
       interval: 15s
       timeout: 5s
       retries: 3
@@ -225,143 +198,143 @@ services:
 
 # SRE
 # host machine metrics
-#   node_exporter:
-#     image: bitnami/node-exporter:1.8.2
-#     container_name: ${NODE_EX_HOSTNAME:-node_exporter}
-#     # ports:
-#     #   - "${NODE_EX_PORT:-9100}:${NODE_EX_PORT:-9100}" # Expose metrics port
-#     volumes:
-#       - /proc:/host/proc:ro
-#       - /sys:/host/sys:ro
-#       - /:/rootfs:ro
-#       - /run/udev:/run/udev:ro
-#     command:
-#       - '--path.procfs=/host/proc'
-#       - '--path.sysfs=/host/sys'
-#       - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($|/)'
-#       - '--collector.diskstats.device-exclude=^(z?ram|loop|fd|(h|s|v|xv)d[a-z]|nvme\\d+n\\d+p)\\d+$'
-#     networks:
-#       - internal_network
-#     restart: unless-stopped
-#     mem_limit: 1g
-#     cpu_shares: 512   
-#     healthcheck:
-#       test: ["CMD-SHELL", "ps aux | grep node_exporter || exit 1"]
-#       interval: 15s
-#       timeout: 10s
-#       retries: 3
-#     logging:
-#       driver: "json-file"
-#       options:
-#         max-size: "500m"
-#         max-file: "4"
+  node_exporter:
+    image: bitnami/node-exporter:1.8.2
+    container_name: ${NODE_EX_HOSTNAME:-node_exporter}
+    # ports:
+    #   - "${NODE_EX_PORT:-9100}:${NODE_EX_PORT:-9100}" # Expose metrics port
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+      - /run/udev:/run/udev:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($|/)'
+      - '--collector.diskstats.device-exclude=^(z?ram|loop|fd|(h|s|v|xv)d[a-z]|nvme\\d+n\\d+p)\\d+$'
+    networks:
+      - internal_network
+    restart: unless-stopped
+    mem_limit: 1g
+    cpu_shares: 512   
+    healthcheck:
+      test: ["CMD-SHELL", "ps aux | grep node_exporter || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "4"
 
-# # container-level metrics
-#   telegraf_collect:
-#     image: telegraf:1.32.3
-#     container_name: ${TELEG_HOSTNAME:-telegraf_collect}
-#     environment:
-#       - SCRAPE_URI=http://localhost:2375
-#       #- "SCRAPE_URI=${T_SCRAPE_URI:-http://localhost}:${T_SCRAPE_PORT:-2375}"
-#     #ports:
-#     #  - "${TELEG_PORT:-9324}:${TELEG_PORT:-9323}"
-#     volumes:
-#       - /var/run/docker.sock:/var/run/docker.sock
-#       - ./config/telegraf.conf:/etc/telegraf/telegraf.conf
-#     networks:
-#       - internal_network
-#     restart: unless-stopped
-#     mem_limit: 1g
-#     cpu_shares: 512
-#     healthcheck:
-#       test: ["CMD-SHELL", "pgrep telegraf || exit 1"]
-#       interval: 15s
-#       timeout: 10s
-#       retries: 3
-#     logging:
-#       driver: "json-file"
-#       options:
-#         max-size: "500m"
-#         max-file: "4"
+# container-level metrics
+  telegraf_collect:
+    image: telegraf:1.32.3
+    container_name: ${TELEG_HOSTNAME:-telegraf_collect}
+    environment:
+      - SCRAPE_URI=http://localhost:2375
+      #- "SCRAPE_URI=${T_SCRAPE_URI:-http://localhost}:${T_SCRAPE_PORT:-2375}"
+    #ports:
+    #  - "${TELEG_PORT:-9324}:${TELEG_PORT:-9323}"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./config/telegraf.conf:/etc/telegraf/telegraf.conf
+    networks:
+      - internal_network
+    restart: unless-stopped
+    mem_limit: 1g
+    cpu_shares: 512
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep telegraf || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "4"
 
-# # scrapes data from exporters
-#   prometheus:
-#     image: bitnami/prometheus:3.0.0
-#     container_name: ${PROMET_HOSTNAME:-prometheus}
-#     environment:
-#       - GOMAXPROCS=2
-#       - NODE_EX_HOSTNAME=${NODE_EX_HOSTNAME:-node_exporter}
-#       - NODE_EX_PORT=${NODE_EX_PORT:-9100}
-#       - TELEG_HOSTNAME=${TELEG_HOSTNAME:-telegraf_collect}
-#       - TELEG_PORT=${TELEG_PORT:-9323}
-#       - GUACD_HOSTNAME=${GUACD_HOSTNAME:-guacd}
-#       - GUACD_PORT=${GUACD_PORT:-7651}
-#       - GUACD_WEB_HOSTNAME=${GUACD_WEB_HOSTNAME:-guacd-web}
-#       - WEB_PORT=${WEB_PORT:-8080}
-#       - POSTGRESQL_HOSTNAME=${PSQL_HOSTNAME:-guacamole_db}
-#       - POSTGRES_PORT=${PSQL_PORT:-7240}
-#     volumes:
-#       - ./config/prometheus.yml:/opt/bitnami/prometheus/prometheus.yml
-#     #ports:
-#     #  - "${PROMET_PORT:-7342}:${PROMET_PORT:-7342}"
-#     command:
-#       - "--config.file=/opt/bitnami/prometheus/conf/prometheus.yml"
-#       - "--web.listen-address=:7342"
-#       - '--storage.tsdb.retention.time=10d'
-#       - '--storage.tsdb.retention.size=3GB'
-#     networks:
-#       - internal_network
-#     mem_limit: 5g
-#     cpu_shares: 512
-#     healthcheck:
-#       test: ["CMD", "promtool", "check", "config", "/opt/bitnami/prometheus/conf/prometheus.yml"]
-#       interval: 60s
-#       timeout: 10s
-#       retries: 3
-#     restart: unless-stopped
-#     logging:
-#       driver: "json-file"
-#       options:
-#         max-size: "500m"
-#         max-file: "4"
+# scrapes data from exporters
+  prometheus:
+    image: bitnami/prometheus:3.0.0
+    container_name: ${PROMET_HOSTNAME:-prometheus}
+    environment:
+      - GOMAXPROCS=2
+      - NODE_EX_HOSTNAME=${NODE_EX_HOSTNAME:-node_exporter}
+      - NODE_EX_PORT=${NODE_EX_PORT:-9100}
+      - TELEG_HOSTNAME=${TELEG_HOSTNAME:-telegraf_collect}
+      - TELEG_PORT=${TELEG_PORT:-9323}
+      - GUACD_HOSTNAME=${GUACD_HOSTNAME:-guacd}
+      - GUACD_PORT=${GUACD_PORT:-7651}
+      - GUACD_WEB_HOSTNAME=${GUACD_WEB_HOSTNAME:-guacd-web}
+      - WEB_PORT=${WEB_PORT:-8080}
+      - POSTGRESQL_HOSTNAME=${PSQL_HOSTNAME:-guacamole_db}
+      - POSTGRES_PORT=${PSQL_PORT:-7240}
+    volumes:
+      - ./config/prometheus.yml:/opt/bitnami/prometheus/prometheus.yml
+    #ports:
+    #  - "${PROMET_PORT:-7342}:${PROMET_PORT:-7342}"
+    command:
+      - "--config.file=/opt/bitnami/prometheus/conf/prometheus.yml"
+      - "--web.listen-address=:7342"
+      - '--storage.tsdb.retention.time=10d'
+      - '--storage.tsdb.retention.size=3GB'
+    networks:
+      - internal_network
+    mem_limit: 5g
+    cpu_shares: 512
+    healthcheck:
+      test: ["CMD", "promtool", "check", "config", "/opt/bitnami/prometheus/conf/prometheus.yml"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "4"
 
-# # monitoring visual
-#   grafana:
-#     image: grafana/grafana:11.3.1
-#     container_name: ${GRAFANA_HOSTNAME:-grafana}
-#     environment:
-#      - PROMET_HOSTNAME=${PROMET_HOSTNAME:-prometheus}
-#      - PROMET_PORT=${PROMET_PORT:-7342}
-#      - NODE_EX_PORT=${NODE_EX_PORT:-9100}
-#      - NODE_EX_HOSTNAME=${NODE_EX_HOSTNAME:-node_exporter}
-#     volumes:
-#     # - ./config/grafana/provisioning/grafana.ini:/etc/grafana/grafana.ini
-#       - ./config/grafana/provisioning/datasources/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
-#       - ./config/grafana/provisioning/dashboards/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml
-#       - ./config/grafana/provisioning/dashboards/dash1.json:/var/lib/grafana/dashboards/dash1.json
-#       - ./config/grafana/provisioning/dashboards/dash_doc_sys_mon.json:/var/lib/grafana/dashboards/dash_doc_sys_mon.json
-#       - ./config/grafana/provisioning/dashboards/dash_grafana_stats.json:/var/lib/grafana/dashboards/dash_grafana_stats.json
-#       - ./config/grafana/provisioning/dashboards/dash_node_ex.json:/var/lib/grafana/dashboards/dash_node_ex.json
-#       - ./config/grafana/provisioning/dashboards/dash_promet.json:/var/lib/grafana/dashboards/dash_promet.json
-#       - ./config/grafana/provisioning/dashboards/dash_sql.json:/var/lib/grafana/dashboards/dash_sql.json
-#       - ./config/grafana/provisioning/dashboards/dash_telegraf.json:/var/lib/grafana/dashboards/dash_telegraf.json
-#     ports:
-#       - "${GRAFANA_PORT:-3000}:${GRAFANA_PORT:-3000}" # allow trafic from outside
-#     networks:
-#       - internal_network
-#       - external_network
-#     restart: unless-stopped
-#     mem_limit: 1g           # Limit memory to 2GB
-#     cpu_shares: 512         # Default CPU shares (higher priority)
-#     # cpuset: "1"             # Bind to CPU 1 only
-#     healthcheck:
-#       test: ["CMD", "curl", "-f", "http://localhost:3000/"]  # Check if Grafana's web interface is up
-#       interval: 15s         # Time between running the check (default: 30s)
-#       timeout: 10s          # Time after which the check times out (default: 30s)
-#       retries: 3            # Consecutive failures needed to report unhealthy (default: 3)
-#       # start_period: 30s    # Start period before running the health check (default: 0s)
-#     logging:
-#       driver: "json-file"
-#       options:
-#         max-size: "500m"
-#         max-file: "4"
+# monitoring visual
+  grafana:
+    image: grafana/grafana:11.3.1
+    container_name: ${GRAFANA_HOSTNAME:-grafana}
+    environment:
+     - PROMET_HOSTNAME=${PROMET_HOSTNAME:-prometheus}
+     - PROMET_PORT=${PROMET_PORT:-7342}
+     - NODE_EX_PORT=${NODE_EX_PORT:-9100}
+     - NODE_EX_HOSTNAME=${NODE_EX_HOSTNAME:-node_exporter}
+    volumes:
+    # - ./config/grafana/provisioning/grafana.ini:/etc/grafana/grafana.ini
+      - ./config/grafana/provisioning/datasources/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
+      - ./config/grafana/provisioning/dashboards/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml
+      - ./config/grafana/provisioning/dashboards/dash1.json:/var/lib/grafana/dashboards/dash1.json
+      - ./config/grafana/provisioning/dashboards/dash_doc_sys_mon.json:/var/lib/grafana/dashboards/dash_doc_sys_mon.json
+      - ./config/grafana/provisioning/dashboards/dash_grafana_stats.json:/var/lib/grafana/dashboards/dash_grafana_stats.json
+      - ./config/grafana/provisioning/dashboards/dash_node_ex.json:/var/lib/grafana/dashboards/dash_node_ex.json
+      - ./config/grafana/provisioning/dashboards/dash_promet.json:/var/lib/grafana/dashboards/dash_promet.json
+      - ./config/grafana/provisioning/dashboards/dash_sql.json:/var/lib/grafana/dashboards/dash_sql.json
+      - ./config/grafana/provisioning/dashboards/dash_telegraf.json:/var/lib/grafana/dashboards/dash_telegraf.json
+    ports:
+      - "${GRAFANA_PORT:-3000}:${GRAFANA_PORT:-3000}" # allow trafic from outside
+    networks:
+      - internal_network
+      - external_network
+    restart: unless-stopped
+    mem_limit: 1g           # Limit memory to 2GB
+    cpu_shares: 512         # Default CPU shares (higher priority)
+    # cpuset: "1"             # Bind to CPU 1 only
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/"]  # Check if Grafana's web interface is up
+      interval: 15s         # Time between running the check (default: 30s)
+      timeout: 10s          # Time after which the check times out (default: 30s)
+      retries: 3            # Consecutive failures needed to report unhealthy (default: 3)
+      # start_period: 30s    # Start period before running the health check (default: 0s)
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "4"

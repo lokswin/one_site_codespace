@@ -1,13 +1,13 @@
 # OnePage Browser Container with OTP-Enabled Access
 
-This project provides a containerized environment with secure OTP-based access to a browser interface using Guacamole and VNC, configured with Docker. It allows users to connect to a container, authenticate using a one-time password (OTP), and access Firefox automatically through the interface.
+This project provides a containerized environment with secure OTP-based access to a browser interface using Guacamole and VNC, configured with Docker-Compose. It allows users to connect to a container, authenticate using a one-time password (OTP), and access Firefox automatically through the interface.
 
 ## Project Overview
 
 The setup leverages open-source tools to provide a secure, accessible, and configurable development environment:
 - **Docker** for containerization.
 - **Guacamole** for remote access to the browser via VNC.
-- **Tomcat** as the web server for Guacamole.
+- **PSQL** for Guacamole authentification.
 - **Xvfb** (X virtual framebuffer) to enable graphical applications within the container.
 - **x11vnc** as the VNC server.
 - **Firefox** as the default browser.

@@ -6,16 +6,6 @@ services:
     network_mode: service:guacamole-proxy
     command: sleep infinity
 
-  apache-rewrite:
-    image: httpd:alpine
-    container_name: ${ALP_REW_HOST:-apache-rewrite}
-    volumes:
-      - ./config/apache-rewrite.conf:/usr/local/apache2/conf/httpd.conf:ro
-    ports:
-      - "8081:8081"
-    networks:
-      - internal_network
-
   guacamole-proxy:
     image: nginx:alpine
     container_name: ${NGINX_HOST:-guacamole-proxy}
@@ -109,3 +99,20 @@ services:
     networks:
       - internal_network
 
+  node_exporter:
+    image: bitnami/node-exporter:1.8.2
+    container_name: ${NODE_EX_HOSTNAME:-node_exporter}
+
+# container-level metrics
+  telegraf_collect:
+    image: telegraf:1.32.3
+
+
+# scrapes data from exporters
+  prometheus:
+    image: bitnami/prometheus:3.0.0
+
+
+# monitoring visual
+  grafana:
+    image: grafana/grafana:11.3.1
