@@ -1,7 +1,7 @@
 {
   "__inputs": [
     {
-      "name": "DS_PROMETHEUS",
+      "name": "DS_PROMETHEUS_UID",
       "label": "Prometheus",
       "description": "",
       "type": "datasource",
@@ -101,7 +101,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "DS_PROMETHEUS_UID"
       },
       "fieldConfig": {
         "defaults": {
@@ -156,7 +156,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "DS_PROMETHEUS_UID"
           },
           "editorMode": "code",
           "expr": "grafana_build_info{instance=\"$instance\"}",
@@ -196,7 +196,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "DS_PROMETHEUS_UID"
       },
       "description": "Count of Active users",
       "fieldConfig": {
@@ -246,7 +246,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "DS_PROMETHEUS_UID"
           },
           "editorMode": "code",
           "expr": "grafana_stat_totals_active_admins{instance=\"$instance\"}",
@@ -259,7 +259,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "DS_PROMETHEUS_UID"
           },
           "editorMode": "code",
           "expr": "grafana_stat_totals_active_editors{instance=\"$instance\"}",
@@ -272,7 +272,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "DS_PROMETHEUS_UID"
           },
           "editorMode": "code",
           "expr": "grafana_stat_totals_active_viewers{instance=\"$instance\"}",
@@ -289,7 +289,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "DS_PROMETHEUS_UID"
       },
       "description": "total amount of dashboards",
       "fieldConfig": {
@@ -339,7 +339,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "DS_PROMETHEUS_UID"
           },
           "editorMode": "code",
           "expr": "grafana_stat_totals_dashboard{instance=\"$instance\"}",
@@ -355,7 +355,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "DS_PROMETHEUS_UID"
       },
       "description": "Show if instance us Up or Down. Default Prometheus Metric.\n\nIf target is not reachable this will have 0 value",
       "fieldConfig": {
@@ -436,7 +436,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "DS_PROMETHEUS_UID"
           },
           "editorMode": "code",
           "expr": "up{instance=\"$instance\"}",
@@ -452,7 +452,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "DS_PROMETHEUS_UID"
       },
       "description": "total amount of alerts",
       "fieldConfig": {
@@ -502,7 +502,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "DS_PROMETHEUS_UID"
           },
           "editorMode": "code",
           "expr": "sum(grafana_alerting_alerts{instance=\"$instance\"})",
@@ -518,7 +518,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "DS_PROMETHEUS_UID"
       },
       "description": "Total Service Accounts",
       "fieldConfig": {
@@ -568,7 +568,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "DS_PROMETHEUS_UID"
           },
           "editorMode": "code",
           "expr": "grafana_stat_total_service_accounts{instance=\"$instance\"}",
@@ -581,7 +581,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "DS_PROMETHEUS_UID"
           },
           "editorMode": "code",
           "expr": "grafana_stat_total_service_account_tokens{instance=\"$instance\"}",
@@ -599,7 +599,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "DS_PROMETHEUS_UID"
       },
       "description": "total amount of users",
       "fieldConfig": {
@@ -649,7 +649,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "DS_PROMETHEUS_UID"
           },
           "editorMode": "code",
           "expr": "grafana_stat_total_users{instance=\"$instance\"}",
@@ -665,7 +665,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "DS_PROMETHEUS_UID"
       },
       "description": "Total amount of Admins",
       "fieldConfig": {
@@ -729,7 +729,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "DS_PROMETHEUS_UID"
           },
           "editorMode": "code",
           "expr": "grafana_stat_totals_admins{instance=\"$instance\"}",
@@ -745,7 +745,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "DS_PROMETHEUS_UID"
       },
       "description": "total amount of orgs",
       "fieldConfig": {
@@ -795,7 +795,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "DS_PROMETHEUS_UID"
           },
           "editorMode": "code",
           "expr": "grafana_stat_total_orgs{instance=\"$instance\"}",
@@ -811,7 +811,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "DS_PROMETHEUS_UID"
       },
       "description": "total amount of folders",
       "fieldConfig": {
@@ -875,7 +875,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "DS_PROMETHEUS_UID"
           },
           "editorMode": "code",
           "expr": "grafana_stat_totals_folder{instance=\"$instance\"}",
@@ -891,7 +891,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "DS_PROMETHEUS_UID"
       },
       "description": "Access Evaluations Total in Timeframe",
       "fieldConfig": {
@@ -938,7 +938,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "DS_PROMETHEUS_UID"
           },
           "editorMode": "code",
           "expr": "increase(grafana_access_evaluation_count{instance=\"$instance\"}[$__interval])",
@@ -966,7 +966,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "DS_PROMETHEUS_UID"
       },
       "description": "State of the Alerts in orgs",
       "fieldConfig": {
@@ -1075,7 +1075,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "DS_PROMETHEUS_UID"
           },
           "editorMode": "code",
           "expr": "grafana_alerting_alerts{instance=\"$instance\"}",
@@ -1092,7 +1092,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "DS_PROMETHEUS_UID"
       },
       "description": "State of the Alerts in orgs",
       "fieldConfig": {
@@ -1232,7 +1232,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "DS_PROMETHEUS_UID"
           },
           "editorMode": "code",
           "expr": "increase(grafana_alerting_alerts{instance=\"$instance\"}[$__interval]) > 0",
@@ -1275,7 +1275,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "DS_PROMETHEUS_UID"
       },
       "description": "Average user and system CPU time spent in seconds.",
       "fieldConfig": {
@@ -1360,7 +1360,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "DS_PROMETHEUS_UID"
           },
           "editorMode": "code",
           "expr": "avg(rate(process_cpu_seconds_total{instance=\"$instance\"}[$__rate_interval]))",
@@ -1378,7 +1378,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "DS_PROMETHEUS_UID"
       },
       "description": "Virtual and Resident memory size in bytes, averages over 5 min interval",
       "fieldConfig": {
@@ -1463,7 +1463,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "DS_PROMETHEUS_UID"
           },
           "editorMode": "code",
           "expr": "avg(rate(process_resident_memory_bytes{instance=\"$instance\"}[$__rate_interval]))",
@@ -1476,7 +1476,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "DS_PROMETHEUS_UID"
           },
           "editorMode": "code",
           "expr": "avg(rate(process_virtual_memory_bytes{instance=\"$instance\"}[$__rate_interval]))",
@@ -1493,7 +1493,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "DS_PROMETHEUS_UID"
       },
       "description": "Number of open file descriptors",
       "fieldConfig": {
@@ -1578,7 +1578,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "DS_PROMETHEUS_UID"
           },
           "editorMode": "code",
           "expr": "process_open_fds{instance=\"$instance\"}",
@@ -1608,7 +1608,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "DS_PROMETHEUS_UID"
       },
       "fieldConfig": {
         "defaults": {
@@ -1673,7 +1673,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "DS_PROMETHEUS_UID"
           },
           "editorMode": "code",
           "expr": "grafana_database_conn_open{instance=\"$instance\"} /\ngrafana_database_conn_max_open{instance=\"$instance\"} *100",
@@ -1689,7 +1689,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "DS_PROMETHEUS_UID"
       },
       "fieldConfig": {
         "defaults": {
@@ -1767,7 +1767,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "DS_PROMETHEUS_UID"
           },
           "editorMode": "code",
           "expr": "grafana_database_conn_open{instance=\"$instance\"}",
@@ -1783,7 +1783,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "DS_PROMETHEUS_UID"
       },
       "fieldConfig": {
         "defaults": {
@@ -1861,7 +1861,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "DS_PROMETHEUS_UID"
           },
           "editorMode": "code",
           "expr": "increase(grafana_database_conn_wait_count_total{instance=\"$instance\"}[$__interval])",
@@ -1877,7 +1877,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "DS_PROMETHEUS_UID"
       },
       "fieldConfig": {
         "defaults": {
@@ -1955,7 +1955,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "DS_PROMETHEUS_UID"
           },
           "editorMode": "code",
           "expr": "increase(grafana_database_conn_wait_duration_seconds{instance=\"$instance\"}[$__interval])",
@@ -1997,7 +1997,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "DS_PROMETHEUS_UID"
       },
       "description": "http response status",
       "fieldConfig": {
@@ -2050,7 +2050,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "DS_PROMETHEUS_UID"
           },
           "editorMode": "code",
           "expr": "increase(grafana_api_response_status_total{instance=\"$instance\"}[$__interval])",
@@ -2064,7 +2064,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "DS_PROMETHEUS_UID"
           },
           "editorMode": "code",
           "expr": "increase(grafana_page_response_status_total{instance=\"$instance\"}[$__interval])",
@@ -2078,7 +2078,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "DS_PROMETHEUS_UID"
           },
           "editorMode": "code",
           "expr": "increase(grafana_proxy_response_status_total{instance=\"$instance\"}[$__interval])",
@@ -2096,7 +2096,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "DS_PROMETHEUS_UID"
       },
       "description": "http response status",
       "fieldConfig": {
@@ -2176,7 +2176,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "DS_PROMETHEUS_UID"
           },
           "editorMode": "code",
           "expr": "increase(grafana_api_response_status_total{instance=\"$instance\"}[$__interval])",
@@ -2190,7 +2190,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "DS_PROMETHEUS_UID"
           },
           "editorMode": "code",
           "expr": "increase(grafana_page_response_status_total{instance=\"$instance\"}[$__interval])",
@@ -2204,7 +2204,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "DS_PROMETHEUS_UID"
           },
           "editorMode": "code",
           "expr": "increase(grafana_proxy_response_status_total{instance=\"$instance\"}[$__interval])",
@@ -2222,7 +2222,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "DS_PROMETHEUS_UID"
       },
       "description": "api login counters",
       "fieldConfig": {
@@ -2307,7 +2307,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "DS_PROMETHEUS_UID"
           },
           "editorMode": "code",
           "expr": "grafana_api_login_post_total{instance=\"$instance\"}",
@@ -2321,7 +2321,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "DS_PROMETHEUS_UID"
           },
           "editorMode": "code",
           "expr": "grafana_api_login_oauth_total{instance=\"$instance\"}",
@@ -2364,7 +2364,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "DS_PROMETHEUS_UID"
       },
       "description": "average dashboard get duration",
       "fieldConfig": {
@@ -2449,7 +2449,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "DS_PROMETHEUS_UID"
           },
           "editorMode": "code",
           "expr": "rate(grafana_api_dashboard_get_milliseconds_sum{instance=\"$instance\"}[$__rate_interval]) / rate(grafana_api_dashboard_get_milliseconds_count{instance=\"$instance\"}[$__rate_interval])",
@@ -2466,7 +2466,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "DS_PROMETHEUS_UID"
       },
       "description": "\nThe provided Prometheus query is designed to calculate the 50th | 90 | 99 percentile (median) of the latency distribution for Grafana alerting notifications over a specified time range. Here's a breakdown of the query and its description:",
       "fieldConfig": {
@@ -2566,7 +2566,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "DS_PROMETHEUS_UID"
           },
           "editorMode": "code",
           "expr": "grafana_api_dashboard_get_milliseconds{instance=\"$instance\"}",
@@ -2609,7 +2609,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "DS_PROMETHEUS_UID"
       },
       "description": "average dashboard save duration over  $__rate_interval minutes",
       "fieldConfig": {
@@ -2694,7 +2694,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "DS_PROMETHEUS_UID"
           },
           "editorMode": "code",
           "expr": "rate(grafana_api_dashboard_save_milliseconds_sum{instance=\"$instance\"}[$__rate_interval]) / rate(grafana_api_dashboard_save_milliseconds_count{instance=\"$instance\"}[$__rate_interval])",
@@ -2711,7 +2711,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "DS_PROMETHEUS_UID"
       },
       "description": "Dashboard Save Duration Quantiles",
       "fieldConfig": {
@@ -2811,7 +2811,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "DS_PROMETHEUS_UID"
           },
           "editorMode": "code",
           "expr": "grafana_api_dashboard_save_milliseconds{instance=\"$instance\",}",
@@ -2854,7 +2854,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "DS_PROMETHEUS_UID"
       },
       "description": "average dashboard search duration over $__rate_interval minutes",
       "fieldConfig": {
@@ -2939,7 +2939,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "DS_PROMETHEUS_UID"
           },
           "editorMode": "code",
           "expr": "rate(grafana_api_dashboard_search_milliseconds_sum{instance=\"$instance\"}[$__rate_interval]) / \nrate(grafana_api_dashboard_search_milliseconds_count{instance=\"$instance\"}[$__rate_interval])",
@@ -2956,7 +2956,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "DS_PROMETHEUS_UID"
       },
       "description": "Dashboard Search Duration Quantiles",
       "fieldConfig": {
@@ -3056,7 +3056,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "DS_PROMETHEUS_UID"
           },
           "editorMode": "code",
           "expr": "grafana_api_dashboard_search_milliseconds{instance=\"$instance\"}",
@@ -3104,7 +3104,7 @@
         "current": {},
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS}"
+          "uid": "DS_PROMETHEUS_UID"
         },
         "definition": "label_values(grafana_stat_total_orgs,job)",
         "hide": 0,
@@ -3127,7 +3127,7 @@
         "current": {},
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS}"
+          "uid": "DS_PROMETHEUS_UID"
         },
         "definition": "label_values(up{job=\"$job\"},instance)",
         "hide": 0,

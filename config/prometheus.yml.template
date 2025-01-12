@@ -1,3 +1,4 @@
+# config/prometheus.yml
 global:
   scrape_interval: 30s  # Reduce scrape frequency to save resources
   scrape_timeout: 10s   # Set a timeout to avoid hanging scrapes
@@ -17,7 +18,7 @@ scrape_configs:
   # Monitor Prometheus itself
   - job_name: 'prometheus'
     static_configs:
-      - targets: ['localhost:9091']
+      - targets: ['${PROMET_HOSTNAME}:${PROMET_PORT}']
 
   # Monitor the guacd
   - job_name: 'guacd'

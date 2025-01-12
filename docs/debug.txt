@@ -131,3 +131,21 @@ cat /usr/local/apache2/logs/error_log
 # new version of dockerfile send to registry
 docker build -t work1t/firefox_vnc:1.0.5 ./bu
 docker push work1t/firefox_vnc:1.0.5
+
+# prometheus see targets
+curl http://prometheus:7342/targets
+
+# prometheus see config file
+docker exec -it prometheus bash
+cat /opt/bitnami/prometheus/prometheus.yml
+
+
+# Verify Connectivity from Grafana to Prometheus
+docker exec -it grafana curl http://prometheus:7342/metrics
+docker exec -it grafana curl http://prometheus:7342/metrics | grep -i "prometheus_tsdb_head_chunks"
+
+# docker build up down
+
+docker-compose down -v grafana;docker-compose up -d grafana
+
+docker-compose down -v ;docker-compose up -d 

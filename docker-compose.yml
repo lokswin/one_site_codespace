@@ -7,14 +7,15 @@ networks:
 
 services:
   devcontainer:
-    image: mcr.microsoft.com/devcontainers/base:alpine
+    container_name: ${DEVCONTAINER_HOST:-devcontainer}
+    image: mcr.microsoft.com/devcontainers/base:alpine-3.20
     volumes:
       - ../..:/workspaces:cached
     network_mode: service:guacamole-proxy
     command: sleep infinity
 
   guacamole-proxy:
-    image: nginx:alpine
+    image: nginx:1.27.3-alpine
     container_name: ${NGINX_HOST:-guacamole-proxy}
     environment:
       - VIRTUAL_HOST=localhost
@@ -275,18 +276,30 @@ services:
       - WEB_PORT=${WEB_PORT:-8080}
       - POSTGRESQL_HOSTNAME=${PSQL_HOSTNAME:-guacamole_db}
       - POSTGRES_PORT=${PSQL_PORT:-7240}
+      - PROMET_HOSTNAME=${PROMET_HOSTNAME:-prometheus}
+      - PROMET_PORT=${PROMET_PORT:-7342}
     volumes:
-      - ./config/prometheus.yml:/opt/bitnami/prometheus/prometheus.yml
-    #ports:
-    #  - "${PROMET_PORT:-7342}:${PROMET_PORT:-7342}"
-    command:
-      - "--config.file=/opt/bitnami/prometheus/conf/prometheus.yml"
-      - "--web.listen-address=:7342"
-      - '--storage.tsdb.retention.time=10d'
-      - '--storage.tsdb.retention.size=3GB'
+      - ./config/prometheus.yml.template:/opt/bitnami/prometheus/prometheus.yml.template
+      - ./config/prometheus-entrypoint.sh:/opt/bitnami/prometheus/entrypoint.sh
+    ports:
+      - "${PROMET_PORT:-7342}:${PROMET_PORT:-7342}"
+    # command:
+    #   - "--config.file=/opt/bitnami/prometheus/conf/prometheus.yml"
+    #   - "--web.listen-address=:${PROMET_PORT:-7342}"
+    #   - '--storage.tsdb.retention.time=10d'
+    #   - '--storage.tsdb.retention.size=3GB'
+    entrypoint: ["/bin/sh", "/opt/bitnami/prometheus/entrypoint.sh"]
+    # entrypoint: >
+    #   sh -c "apt-get update && apt-get install -y gettext && \
+    #         envsubst < /opt/bitnami/prometheus/prometheus.yml.template > /opt/bitnami/prometheus/prometheus.yml &&
+    #         exec /opt/bitnami/prometheus/bin/prometheus \
+    #             --config.file=/opt/bitnami/prometheus/prometheus.yml \
+    #             --web.listen-address=:${PROMET_PORT:-7342} \
+    #             --storage.tsdb.retention.time=10d \
+    #             --storage.tsdb.retention.size=3GB"
     networks:
       - internal_network
-    mem_limit: 5g
+    mem_limit: 1g
     cpu_shares: 512
     healthcheck:
       test: ["CMD", "promtool", "check", "config", "/opt/bitnami/prometheus/conf/prometheus.yml"]
@@ -305,21 +318,28 @@ services:
     image: grafana/grafana:11.3.1
     container_name: ${GRAFANA_HOSTNAME:-grafana}
     environment:
+     - GF_DASHBOARDS_DEFAULT_DATASOURCE=DS_PROMETHEUS
      - PROMET_HOSTNAME=${PROMET_HOSTNAME:-prometheus}
      - PROMET_PORT=${PROMET_PORT:-7342}
      - NODE_EX_PORT=${NODE_EX_PORT:-9100}
      - NODE_EX_HOSTNAME=${NODE_EX_HOSTNAME:-node_exporter}
     volumes:
     # - ./config/grafana/provisioning/grafana.ini:/etc/grafana/grafana.ini
-      - ./config/grafana/provisioning/datasources/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
-      - ./config/grafana/provisioning/dashboards/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml
-      - ./config/grafana/provisioning/dashboards/dash1.json:/var/lib/grafana/dashboards/dash1.json
-      - ./config/grafana/provisioning/dashboards/dash_doc_sys_mon.json:/var/lib/grafana/dashboards/dash_doc_sys_mon.json
-      - ./config/grafana/provisioning/dashboards/dash_grafana_stats.json:/var/lib/grafana/dashboards/dash_grafana_stats.json
-      - ./config/grafana/provisioning/dashboards/dash_node_ex.json:/var/lib/grafana/dashboards/dash_node_ex.json
+      - ./config/grafana/provisioning/datasources/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
+      - ./config/grafana/provisioning/dashboards/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml
+      # - ./config/grafana/provisioning/dashboards/dash_doc_sys_mon.json:/var/lib/grafana/dashboards/dash_doc_sys_mon.json
+      # - ./config/grafana/provisioning/dashboards/dash_grafana_stats.json:/var/lib/grafana/dashboards/dash_grafana_stats.json
+      # - ./config/grafana/provisioning/dashboards/dash_node_ex.json:/var/lib/grafana/dashboards/dash_node_ex.json
       - ./config/grafana/provisioning/dashboards/dash_promet.json:/var/lib/grafana/dashboards/dash_promet.json
-      - ./config/grafana/provisioning/dashboards/dash_sql.json:/var/lib/grafana/dashboards/dash_sql.json
-      - ./config/grafana/provisioning/dashboards/dash_telegraf.json:/var/lib/grafana/dashboards/dash_telegraf.json
+      # - ./config/grafana/provisioning/dashboards/dash_sql.json:/var/lib/grafana/dashboards/dash_sql.json
+      # - ./config/grafana/provisioning/dashboards/dash_telegraf.json:/var/lib/grafana/dashboards/dash_telegraf.json
+    #   - ./config/grafana/update_placeholders.sh:/tmp/update_placeholders.sh
+    # entrypoint: >
+    #   sh -c "
+    #   echo 'Starting dashboard placeholder replacement...' &&
+    #   /tmp/update_placeholders.sh &&
+    #   echo 'Dashboard placeholder replacement completed. Starting Grafana...' &&
+    #   /run.sh"
     ports:
       - "${GRAFANA_PORT:-3000}:${GRAFANA_PORT:-3000}" # allow trafic from outside
     networks:

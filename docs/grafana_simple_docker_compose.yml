@@ -1,0 +1,83 @@
+  prometheus:
+    image: bitnami/prometheus:3.0.0
+    container_name: ${PROMET_HOSTNAME:-prometheus}
+    environment:
+      - GOMAXPROCS=2
+      - NODE_EX_HOSTNAME=${NODE_EX_HOSTNAME:-node_exporter}
+      - NODE_EX_PORT=${NODE_EX_PORT:-9100}
+      - TELEG_HOSTNAME=${TELEG_HOSTNAME:-telegraf_collect}
+      - TELEG_PORT=${TELEG_PORT:-9323}
+      - GUACD_HOSTNAME=${GUACD_HOSTNAME:-guacd}
+      - GUACD_PORT=${GUACD_PORT:-7651}
+      - GUACD_WEB_HOSTNAME=${GUACD_WEB_HOSTNAME:-guacd-web}
+      - WEB_PORT=${WEB_PORT:-8080}
+      - POSTGRESQL_HOSTNAME=${PSQL_HOSTNAME:-guacamole_db}
+      - POSTGRES_PORT=${PSQL_PORT:-7240}
+      - PROMET_HOSTNAME=${PROMET_HOSTNAME:-prometheus}
+      - PROMET_PORT=${PROMET_PORT:-7342}
+    volumes:
+      - ./config/prometheus.yml:/opt/bitnami/prometheus/prometheus.yml
+    ports:
+      - "${PROMET_PORT:-7342}:${PROMET_PORT:-7342}"
+    command:
+      - "--config.file=/opt/bitnami/prometheus/conf/prometheus.yml"
+      - "--web.listen-address=:7342"
+      - '--storage.tsdb.retention.time=10d'
+      - '--storage.tsdb.retention.size=3GB'
+    networks:
+      - internal_network
+    healthcheck:
+      test: ["CMD", "promtool", "check", "config", "/opt/bitnami/prometheus/conf/prometheus.yml"]
+
+
+  grafana:
+    image: grafana/grafana:11.3.1
+    container_name: ${GRAFANA_HOSTNAME:-grafana}
+    environment:
+     - PROMET_HOSTNAME=${PROMET_HOSTNAME:-prometheus}
+     - PROMET_PORT=${PROMET_PORT:-1233}
+     - NODE_EX_PORT=${NODE_EX_PORT:-1244}
+     - NODE_EX_HOSTNAME=${NODE_EX_HOSTNAME:-node_exporter}
+    volumes:
+      - ./config/grafana/provisioning/datasources/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
+      - ./config/grafana/provisioning/dashboards/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml
+      - ./config/grafana/provisioning/dashboards/dash1.json:/var/lib/grafana/dashboards/dash1.json
+      - ./config/grafana/provisioning/dashboards/dash_doc_sys_mon.json:/var/lib/grafana/dashboards/dash_doc_sys_mon.json
+      - ./config/grafana/provisioning/dashboards/dash_grafana_stats.json:/var/lib/grafana/dashboards/dash_grafana_stats.json
+      - ./config/grafana/provisioning/dashboards/dash_node_ex.json:/var/lib/grafana/dashboards/dash_node_ex.json
+      - ./config/grafana/provisioning/dashboards/dash_promet.json:/var/lib/grafana/dashboards/dash_promet.json
+      - ./config/grafana/provisioning/dashboards/dash_sql.json:/var/lib/grafana/dashboards/dash_sql.json
+      - ./config/grafana/provisioning/dashboards/dash_telegraf.json:/var/lib/grafana/dashboards/dash_telegraf.json
+    ports:
+      - "${GRAFANA_PORT:-3000}:${GRAFANA_PORT:-3000}" # allow trafic from outside
+
+# SRE
+# host machine metrics
+  node_exporter:
+    image: bitnami/node-exporter:1.8.2
+    container_name: ${NODE_EX_HOSTNAME:-node_exporter}
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+      - /run/udev:/run/udev:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($|/)'
+      - '--collector.diskstats.device-exclude=^(z?ram|loop|fd|(h|s|v|xv)d[a-z]|nvme\\d+n\\d+p)\\d+$'
+    networks:
+      - internal_network
+
+# container-level metrics
+  telegraf_collect:
+    image: telegraf:1.32.3
+    container_name: ${TELEG_HOSTNAME:-telegraf_collect}
+    environment:
+      - SCRAPE_URI=http://localhost:2375
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./config/telegraf.conf:/etc/telegraf/telegraf.conf
+    networks:
+      - internal_network
+
