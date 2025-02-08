@@ -1,17 +1,24 @@
-I want to setup automaticaly log rotation for all of the containers
-Setup otp
-setup proxy
-setup monitoring
-setup vnc
+Separate monitoring and non monitoring containers write comment to run eeach of them.
+Docker compose profiles
 
- this is too  often I need to cheque expired session not too often
+I want to setup automaticaly log rotation for all of the containers
+Setup otp - v
+A) Setup proxy - x
+    A.A) Create nginx container - v
+    A.B) Create firewall to imitate 503 for proxy
+    A.C) Setup nginx to work with firewall
+setup monitoring - x
+setup vnc - v
+
+
+This is too often I need to Checking expired sessions not too often
 20:25:32.394 [pool-1-thread-1] DEBUG o.a.g.rest.auth.HashTokenSessionMap - Checking for expired sessions...
 
 
- - SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ENV "VNC_PASSWORD") (line 19)
+- SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ENV "VNC_PASSWORD") (line 19)
 
-- study and use\not use docker compose secret feauture
+- Study and use\not use docker compose secret feauture
 
-- add grafana psql user automaticaly into psql container (SECURITY)
+- Add grafana psql user automaticaly into psql container (SECURITY) For psql monitoring?
 
-- switch to variables + github (SECURITY)
+- Switch to variables + github (SECURITY)
